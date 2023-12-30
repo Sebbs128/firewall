@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yarp.Extensions.Firewall", "src\Yarp.Extensions.Firewall\Yarp.Extensions.Firewall.csproj", "{420BEE28-ECDA-4556-90A8-4226099AC14F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E6F79643-8A7F-4BC0-9B3E-9C31BE12891A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DACE61A2-5A67-4169-946A-67FC99579AEB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yarp.Extensions.Firewall.Tests", "test\Yarp.Extensions.Firewall.Tests\Yarp.Extensions.Firewall.Tests.csproj", "{24E8D898-9660-4C7D-8823-6F04C846E3EE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DF5FCAF4-C802-41EC-BCBF-24FFD77AB515}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yarp.Extensions.Firewall.Telemetry.Consumption", "src\Yarp.Extensions.Firewall.Telemetry.Consumption\Yarp.Extensions.Firewall.Telemetry.Consumption.csproj", "{EF42B4C8-7F63-4392-8E61-8D493FF69B79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yarp.Extensions.Firewall.FunctionalTests", "test\Yarp.Extensions.Firewall.FunctionalTests\Yarp.Extensions.Firewall.FunctionalTests.csproj", "{7BF0DA4A-1E92-4348-9786-6162CE8DF167}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{420BEE28-ECDA-4556-90A8-4226099AC14F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{420BEE28-ECDA-4556-90A8-4226099AC14F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{420BEE28-ECDA-4556-90A8-4226099AC14F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{420BEE28-ECDA-4556-90A8-4226099AC14F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24E8D898-9660-4C7D-8823-6F04C846E3EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24E8D898-9660-4C7D-8823-6F04C846E3EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24E8D898-9660-4C7D-8823-6F04C846E3EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24E8D898-9660-4C7D-8823-6F04C846E3EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF42B4C8-7F63-4392-8E61-8D493FF69B79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF42B4C8-7F63-4392-8E61-8D493FF69B79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF42B4C8-7F63-4392-8E61-8D493FF69B79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF42B4C8-7F63-4392-8E61-8D493FF69B79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BF0DA4A-1E92-4348-9786-6162CE8DF167}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BF0DA4A-1E92-4348-9786-6162CE8DF167}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BF0DA4A-1E92-4348-9786-6162CE8DF167}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BF0DA4A-1E92-4348-9786-6162CE8DF167}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{420BEE28-ECDA-4556-90A8-4226099AC14F} = {DACE61A2-5A67-4169-946A-67FC99579AEB}
+		{24E8D898-9660-4C7D-8823-6F04C846E3EE} = {E6F79643-8A7F-4BC0-9B3E-9C31BE12891A}
+		{EF42B4C8-7F63-4392-8E61-8D493FF69B79} = {DACE61A2-5A67-4169-946A-67FC99579AEB}
+		{7BF0DA4A-1E92-4348-9786-6162CE8DF167} = {E6F79643-8A7F-4BC0-9B3E-9C31BE12891A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {704E6595-FCD2-4B64-A2E0-EEB78C260656}
+	EndGlobalSection
+EndGlobal
