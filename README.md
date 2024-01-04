@@ -6,6 +6,16 @@ Being an extension to YARP, it follows much of the conventions in the YARP proje
 
 This project is currently in an early stage (⚠️ not production ready ⚠️), so I would love and greatly appreciate any contributions, reviews, and suggestions. Please see the [TODO](#todo) section below for an informal roadmap or list of things to be done.
 
+- [Custom Rules](#custom-rules)
+  - [Route Firewall](#route-firewall)
+    - [Firewall Rules](#firewall-rules)
+      - [Rule Conditions](#rule-conditions)
+        - [IP Address Evaluators](#ip-address-evaluators)
+        - [Size Evaluators](#size-evaluators)
+        - [String Evaluators](#string-evaluators)
+        - [Transforms](#transforms)
+  - [Example Configuration](#example-configuration)
+
 ## Custom Rules
 
 At present, YARP.Extensions.Firewall contains just a custom rule engine. The custom rule engine is heavily influenced by Azure WAF (found as part of Application Gateway and Front Door).
@@ -109,7 +119,7 @@ Tranformations can be applied to the request values for `Size` and `String` eval
 
 (Case transformations don't affect `Size` evaluations, and are automatically ignored in that case.)
 
-### Example
+### Example Configuration
 
 Below is an example of what this configuration looks like ([as used in `ConfigurationConfigProviderTests`](/test/Yarp.Extensions.Firewall.Tests/Configuration/ConfigProvider/ConfigurationConfigProviderTests.cs))
 
