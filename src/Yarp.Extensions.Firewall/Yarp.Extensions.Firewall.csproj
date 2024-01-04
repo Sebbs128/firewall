@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Description>A firewall extension to the YARP library for ASP.NET Core</Description>
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <OutputType>Library</OutputType>
     <RootNamespace>Yarp.Extensions.Firewall</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <NoWarn>IDE0290</NoWarn>
 
@@ -17,7 +19,12 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Yarp.Extensions.Firewall.Tests" />
+    <InternalsVisibleTo Include="Yarp.Extensions.Firewall.FunctionalTests"/>
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" Key="$(NSubstitutePublicKey)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

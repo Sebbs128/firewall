@@ -2,7 +2,7 @@
 
 [YARP ("Yet Another Reverse Proxy")](https://github.com/microsoft/reverse-proxy) is a reverse proxy toolkit for ASP.NET Core. This project extends YARP's functionality by adding firewall capabilities.
 
-Being an extension to YARP, it follows much of the conventions in the YARP project, both in terms of solution and class structure. This also means that it can be configured in the same way as YARP; it supports configuration files, as well as a configuration API for programmatic, in-process configuration.
+Being an extension to YARP, this project follows much of the conventions in the YARP project, both in terms of solution and class structure. This also means that it can be configured in the same way as YARP; it supports configuration files, as well as a configuration API for programmatic, in-process configuration.
 
 This project is currently in an early stage (⚠️ not production ready ⚠️), so I would love and greatly appreciate any contributions, reviews, and suggestions. Please see the [TODO](#todo) section below for an informal roadmap or list of things to be done.
 
@@ -18,7 +18,7 @@ This project is currently in an early stage (⚠️ not production ready ⚠️)
 
 ## Custom Rules
 
-At present, YARP.Extensions.Firewall contains just a custom rule engine. The custom rule engine is heavily influenced by Azure WAF (found as part of Application Gateway and Front Door).
+At present, Yarp.Extensions.Firewall contains just a custom rule engine. The custom rule engine is heavily influenced by Azure WAF (found as part of Application Gateway and Front Door).
 
 ### Route Firewall
 
