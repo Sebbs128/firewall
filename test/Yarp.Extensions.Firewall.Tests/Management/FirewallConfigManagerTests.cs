@@ -1,9 +1,11 @@
+using System.Net;
 using System.Reflection;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Primitives;
 
 using NSubstitute;
 
@@ -12,10 +14,8 @@ using Yarp.Extensions.Firewall.Management;
 using Yarp.ReverseProxy;
 using Yarp.ReverseProxy.Configuration;
 
-using YarpInMemoryConfigProvider = Yarp.ReverseProxy.Configuration.InMemoryConfigProvider;
 using InMemoryConfigProvider = Yarp.Extensions.Firewall.Configuration.InMemoryConfigProvider;
-using System.Net;
-using Microsoft.Extensions.Primitives;
+using YarpInMemoryConfigProvider = Yarp.ReverseProxy.Configuration.InMemoryConfigProvider;
 
 namespace Yarp.Extensions.Firewall.Tests.Management;
 public class FirewallConfigManagerTests
@@ -29,7 +29,7 @@ public class FirewallConfigManagerTests
         serviceCollection.AddLogging();
         serviceCollection.AddRouting();
         var proxyBuilder = serviceCollection.AddReverseProxy().LoadFromMemory(routes, clusters);
-        proxyBuilder.AddFirewall().LoadFromMemory(firewalls);
+        proxyBuilder.AddFirewall().LoadFromMemory(firewalls, string.Empty);
 
         serviceCollection.TryAddSingleton(Substitute.For<IServer>());
         serviceCollection.TryAddSingleton(Substitute.For<IWebHostEnvironment>());
@@ -40,7 +40,7 @@ public class FirewallConfigManagerTests
     private static IServiceProvider CreateServices(
         IEnumerable<IFirewallConfigProvider> firewallConfigProviders,
         IEnumerable<IProxyConfigProvider> proxyConfigProviders,
-        IEnumerable<IFirewallConfigChangeListener> configListeners = null)
+        IEnumerable<IFirewallConfigChangeListener>? configListeners = null)
     {
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddLogging();
@@ -258,8 +258,8 @@ public class FirewallConfigManagerTests
             Match = new RouteMatch { Path = "/" }
         };
 
-        var config1 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall1 });
-        var config2 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall2 });
+        var config1 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall1 }, string.Empty);
+        var config2 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall2 }, string.Empty);
         var proxyConfig1 = new YarpInMemoryConfigProvider(new List<RouteConfig> { route1 }, new List<ClusterConfig> { cluster1 });
         var proxyConfig2 = new YarpInMemoryConfigProvider(new List<RouteConfig> { route2 }, new List<ClusterConfig> { cluster2 });
 
@@ -583,7 +583,10 @@ public class FirewallConfigManagerTests
 
         public IReadOnlyList<RouteFirewallConfig> RouteFirewalls { get; }
 
+        public string GeoIPDatabasePath { get; } = string.Empty;
+
         public IChangeToken ChangeToken { get; }
+
 
         internal void SignalChange()
         {

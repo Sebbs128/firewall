@@ -14,5 +14,7 @@ public interface IFirewallConfig
     // - this is how the session affinity and load balancing works in Yarp
     IReadOnlyList<RouteFirewallConfig> RouteFirewalls { get; }
 
+    string GeoIPDatabasePath { get; }
+
     IChangeToken ChangeToken { get; }
 }

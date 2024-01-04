@@ -52,6 +52,8 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
             {
                 newSnapshot = new ConfigurationSnapshot();
 
+                newSnapshot.GeoIPDatabasePath = _configuration[nameof(IFirewallConfig.GeoIPDatabasePath)] ?? string.Empty;
+
                 foreach (var section in _configuration.GetSection(nameof(IFirewallConfig.RouteFirewalls)).GetChildren())
                 {
                     newSnapshot.RouteFirewalls.Add(CreateRouteFirewall(section));
@@ -192,7 +194,7 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
 
     private static Transform? CreateTransform(IConfigurationSection section)
     {
-        return Enum.Parse<Transform>(section.Value); // throws if value isn't a correct value. is this acceptable?
+        return Enum.Parse<Transform>(section.Value); // throws if value isn't a correct value
     }
 
     public void Dispose()
