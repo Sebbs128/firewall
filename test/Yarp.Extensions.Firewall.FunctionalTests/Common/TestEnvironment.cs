@@ -31,6 +31,7 @@ public class TestEnvironment
     public string RedirectUri { get; set; } = "http://localhost/blocked";
 
     public ITestOutputHelper TestOutput { get; set; }
+    public string GeoIPDatabasePath { get; set; } = string.Empty;
 
     public TestEnvironment() { }
 
@@ -94,7 +95,7 @@ public class TestEnvironment
             var proxyBuilder = services.AddReverseProxy()
                 .LoadFromMemory(new[] { route }, new[] {cluster })
                 .AddFirewall()
-                .LoadFromMemory(new[] { firewall });
+                .LoadFromMemory(new[] { firewall }, GeoIPDatabasePath);
         },
         app =>
         {
