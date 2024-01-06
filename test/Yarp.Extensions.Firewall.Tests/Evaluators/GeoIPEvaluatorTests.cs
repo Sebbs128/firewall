@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 using MaxMind.GeoIP2;
 
@@ -111,7 +107,7 @@ public class GeoIPEvaluatorTests : ConditionExtensionsTestsBase
         httpContext.Request.Scheme = "http";
         httpContext.Request.Host = new HostString("example.com:3456");
         httpContext.Request.Path = "/";
-        httpContext.Request.Headers.Add("X-Forwarded-For", xForwardedForValues);
+        httpContext.Request.Headers.Append("X-Forwarded-For", xForwardedForValues);
 
         var evalContext = new EvaluationContext(httpContext);
 

@@ -25,6 +25,7 @@ public class MatchConditionDiscriminator : JsonConverter<MatchCondition>
                     return readerClone.GetString() switch
                     {
                         nameof(ConditionMatchType.IPAddress) => JsonSerializer.Deserialize<IPAddressMatchCondition>(ref reader)!,
+                        nameof(ConditionMatchType.GeoIP) => JsonSerializer.Deserialize<GeoIPMatchCondition>(ref reader)!,
                         nameof(ConditionMatchType.Size) => JsonSerializer.Deserialize<SizeMatchCondition>(ref reader)!,
                         nameof(ConditionMatchType.String) => JsonSerializer.Deserialize<StringMatchCondition>(ref reader)!,
                         _ => throw new JsonException("MatchType is not recognised")
@@ -90,6 +91,21 @@ public class MatchConditionDiscriminator : JsonConverter<MatchCondition>
         {
             writer.WriteString(nameof(IPAddressMatchCondition.MatchVariable), ipMatchCondition.MatchVariable.ToString());
             writer.WriteString(nameof(IPAddressMatchCondition.IPAddressOrRanges), ipMatchCondition.IPAddressOrRanges);
+        }
+        else if (value is GeoIPMatchCondition geoIpMatchCondition)
+        {
+            writer.WriteString(nameof(GeoIPMatchCondition.MatchVariable), geoIpMatchCondition.MatchVariable.ToString());
+
+            if (geoIpMatchCondition.MatchCountryValues.Count > 0)
+            {
+                writer.WritePropertyName(nameof(GeoIPMatchCondition.MatchCountryValues));
+                writer.WriteStartArray();
+                foreach (var item in geoIpMatchCondition.MatchCountryValues)
+                {
+                    writer.WriteStringValue(item);
+                }
+                writer.WriteEndArray();
+            }
         }
         else
         {

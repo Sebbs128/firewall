@@ -139,6 +139,7 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
             ConditionMatchType.String => CreateStringMatchCondition(section),
             ConditionMatchType.Size => CreateSizeMatchCondition(section),
             ConditionMatchType.IPAddress => CreateIPAddressMatchCondition(section),
+            ConditionMatchType.GeoIP => CreateGeoIPMatchCondition(section),
             _ => throw new NotSupportedException()
         };
         matchCondition.Negate = section.ReadBool(nameof(MatchCondition.Negate)) ?? false;
@@ -175,6 +176,15 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
         {
             MatchVariable = section.ReadEnum<IPMatchVariable>(nameof(IPAddressMatchCondition.MatchVariable)),
             IPAddressOrRanges = section[nameof(IPAddressMatchCondition.IPAddressOrRanges)] ?? string.Empty,
+        };
+    }
+
+    private static GeoIPMatchCondition CreateGeoIPMatchCondition(IConfigurationSection section)
+    {
+        return new GeoIPMatchCondition
+        {
+            MatchVariable = section.ReadEnum<IPMatchVariable>(nameof(GeoIPMatchCondition.MatchVariable)),
+            MatchCountryValues = section.GetSection(nameof(GeoIPMatchCondition.MatchCountryValues)).ReadStringArray() ?? Array.Empty<string>(),
         };
     }
 
