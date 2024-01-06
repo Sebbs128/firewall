@@ -8,7 +8,7 @@ public sealed record GeoIPMatchCondition : MatchCondition
 
     public IReadOnlyList<string> MatchCountryValues { get; init; } = Array.Empty<string>();
 
-    public bool Eqals(GeoIPMatchCondition? other)
+    public bool Equals(GeoIPMatchCondition? other)
     {
         if (other is null)
         {
