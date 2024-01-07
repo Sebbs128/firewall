@@ -7,6 +7,16 @@ namespace Yarp.Extensions.Firewall.Tests.GeoIP;
 public class GeoIPDatabaseProviderTests
 {
     [Fact]
+    public void Get_Works()
+    {
+        var dbReader = new DatabaseReader(TestResources.GetGeoIPDatabasePath("GeoLite2-Country.mmdb"));
+        var tokenSource = new CancellationTokenSource();
+        var provider = new GeoIPDatabaseProvider(dbReader, tokenSource.Token);
+
+        Assert.NotNull(provider.Get());
+    }
+
+    [Fact]
     public void Disposes_OnlyOnceTokenSourceCancelled()
     {
         var dbReader = new DatabaseReader(TestResources.GetGeoIPDatabasePath("GeoLite2-Country.mmdb"));

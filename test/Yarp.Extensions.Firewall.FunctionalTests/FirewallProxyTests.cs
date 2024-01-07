@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Headers;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.FunctionalTests.Common;

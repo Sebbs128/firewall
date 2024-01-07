@@ -8,35 +8,39 @@ using Microsoft.Extensions.Logging;
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Configuration.ConfigProvider;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
-using Yarp.Extensions.Firewall.GeoIP;
-using Yarp.ReverseProxy.Configuration;
+using Yarp.Extensions.Firewall.Management;
 
-namespace Yarp.Extensions.Firewall.Management;
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class IReverseProxyBuilderExtensions
 {
-    public static IReverseProxyBuilder AddFirewall(this IReverseProxyBuilder builder)
+    /// <summary>
+    /// Adds Firewall's services to Dependency Injection
+    /// </summary>
+    /// <param name="proxyBuilder"></param>
+    /// <returns></returns>
+    public static IFirewallBuilder AddFirewall(this IReverseProxyBuilder proxyBuilder)
     {
+        var builder = new FirewallBuilder(proxyBuilder.Services);
         // Condition Factories
-        builder.AddConditionFactory<IPAddressConditionFactory>();
-        builder.AddConditionFactory<SizeConditionFactory>();
-        builder.AddConditionFactory<StringConditionFactory>();
-        builder.AddConditionFactory<GeoIPConditionFactory>();
-
-        // Evaluator Builder
-        builder.Services.AddSingleton<IEvaluatorBuilder, EvaluatorBuilder>();
+        builder
+            .AddConditionFactory<IPAddressConditionFactory>()
+            .AddConditionFactory<SizeConditionFactory>()
+            .AddConditionFactory<StringConditionFactory>()
+            .AddConditionFactory<GeoIPConditionFactory>();
 
         // Config Manager
-        builder.Services.TryAddSingleton<IFirewallConfigValidator, ConfigValidator>();
-        builder.Services.TryAddSingleton<FirewallConfigManager>();
-        builder.Services.TryAddSingleton<IFirewallStateLookup>(sp => sp.GetRequiredService<FirewallConfigManager>());
-        builder.Services.TryAddSingleton<IConfigChangeListener, FirewallConfigManagerProxyChangeListener>();
-        builder.Services.TryAddSingleton<IGeoIPDatabaseProviderFactory, GeoIPDatabaseProviderFactory>();
+        builder
+            .AddConfigBuilder()
+            .AddConfigManager();
 
         return builder;
     }
 
-    public static IReverseProxyBuilder LoadFirewallFromConfig(this IReverseProxyBuilder builder, IConfiguration config)
+    /// <summary>
+    /// Loads route firewalls from config.
+    /// </summary>
+    public static IFirewallBuilder LoadFromConfig(this IFirewallBuilder builder, IConfiguration config)
     {
         ArgumentNullException.ThrowIfNull(config);
 
@@ -48,9 +52,14 @@ public static class IReverseProxyBuilderExtensions
         return builder;
     }
 
-    public static IReverseProxyBuilder AddConditionFactory<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(this IReverseProxyBuilder builder) where T : class, IConditionFactory
+    /// <summary>
+    /// Registers a singleton IConditionFactory service. Multiple factories are allowed and they will be run in registration order
+    /// </summary>
+    /// <typeparam name="TFactory">A class that implements IConditionFactory.</typeparam>
+    /// <returns></returns>
+    public static IFirewallBuilder AddConditionFactory<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TFactory>(this IFirewallBuilder builder) where TFactory : class, IConditionFactory
     {
-        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IConditionFactory, T>());
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IConditionFactory, TFactory>());
         return builder;
     }
 }
