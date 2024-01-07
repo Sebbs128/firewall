@@ -52,6 +52,8 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
             {
                 newSnapshot = new ConfigurationSnapshot();
 
+                newSnapshot.GeoIPDatabasePath = _configuration[nameof(IFirewallConfig.GeoIPDatabasePath)] ?? string.Empty;
+
                 foreach (var section in _configuration.GetSection(nameof(IFirewallConfig.RouteFirewalls)).GetChildren())
                 {
                     newSnapshot.RouteFirewalls.Add(CreateRouteFirewall(section));
@@ -137,6 +139,7 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
             ConditionMatchType.String => CreateStringMatchCondition(section),
             ConditionMatchType.Size => CreateSizeMatchCondition(section),
             ConditionMatchType.IPAddress => CreateIPAddressMatchCondition(section),
+            ConditionMatchType.GeoIP => CreateGeoIPMatchCondition(section),
             _ => throw new NotSupportedException()
         };
         matchCondition.Negate = section.ReadBool(nameof(MatchCondition.Negate)) ?? false;
@@ -176,6 +179,15 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
         };
     }
 
+    private static GeoIPMatchCondition CreateGeoIPMatchCondition(IConfigurationSection section)
+    {
+        return new GeoIPMatchCondition
+        {
+            MatchVariable = section.ReadEnum<IPMatchVariable>(nameof(GeoIPMatchCondition.MatchVariable)),
+            MatchCountryValues = section.GetSection(nameof(GeoIPMatchCondition.MatchCountryValues)).ReadStringArray() ?? Array.Empty<string>(),
+        };
+    }
+
     private static IReadOnlyList<Transform> CreateTransforms(IConfigurationSection section)
     {
         if (section.GetChildren() is var children && !children.Any())
@@ -192,7 +204,7 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
 
     private static Transform? CreateTransform(IConfigurationSection section)
     {
-        return Enum.Parse<Transform>(section.Value); // throws if value isn't a correct value. is this acceptable?
+        return Enum.Parse<Transform>(section.Value); // throws if value isn't a correct value
     }
 
     public void Dispose()

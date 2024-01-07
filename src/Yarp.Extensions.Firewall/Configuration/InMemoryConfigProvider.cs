@@ -10,26 +10,26 @@ public sealed class InMemoryConfigProvider : IFirewallConfigProvider
     // Marked as volatile so that updates are atomic
     private volatile InMemoryConfig _config;
 
-    public InMemoryConfigProvider(IReadOnlyList<RouteFirewallConfig> rules) : this(rules, Guid.NewGuid().ToString())
+    public InMemoryConfigProvider(IReadOnlyList<RouteFirewallConfig> rules, string geoIPDatabasePath) : this(rules, geoIPDatabasePath, Guid.NewGuid().ToString())
     {
     }
 
-    public InMemoryConfigProvider(IReadOnlyList<RouteFirewallConfig> rules, string revisionId)
+    public InMemoryConfigProvider(IReadOnlyList<RouteFirewallConfig> rules, string geoIPDatabasePath, string revisionId)
     {
-        _config = new InMemoryConfig(rules, revisionId);
+        _config = new InMemoryConfig(rules, geoIPDatabasePath, revisionId);
     }
 
     public IFirewallConfig GetConfig() => _config;
 
-    public void Update(IReadOnlyList<RouteFirewallConfig> routeFirewalls)
+    public void Update(IReadOnlyList<RouteFirewallConfig> routeFirewalls, string geoIPDatabasePath)
     {
-        var newConfig = new InMemoryConfig(routeFirewalls);
+        var newConfig = new InMemoryConfig(routeFirewalls, geoIPDatabasePath);
         UpdateInternal(newConfig);
     }
 
-    public void Update(IReadOnlyList<RouteFirewallConfig> routeFirewalls, string revisionId)
+    public void Update(IReadOnlyList<RouteFirewallConfig> routeFirewalls, string geoIPDatabasePath, string revisionId)
     {
-        var newConfig = new InMemoryConfig(routeFirewalls, revisionId);
+        var newConfig = new InMemoryConfig(routeFirewalls, geoIPDatabasePath, revisionId);
         UpdateInternal(newConfig);
     }
 
@@ -46,13 +46,14 @@ public sealed class InMemoryConfigProvider : IFirewallConfigProvider
     {
         private readonly CancellationTokenSource _cts = new();
 
-        public InMemoryConfig(IReadOnlyList<RouteFirewallConfig> routeFirewalls) : this(routeFirewalls, Guid.NewGuid().ToString())
+        public InMemoryConfig(IReadOnlyList<RouteFirewallConfig> routeFirewalls, string geoIPDatabasePath) : this(routeFirewalls, geoIPDatabasePath, Guid.NewGuid().ToString())
         {
         }
 
-        public InMemoryConfig(IReadOnlyList<RouteFirewallConfig> routeFirewalls, string revisionId)
+        public InMemoryConfig(IReadOnlyList<RouteFirewallConfig> routeFirewalls, string geoIPDatabasePath, string revisionId)
         {
             RouteFirewalls = routeFirewalls;
+            GeoIPDatabasePath = geoIPDatabasePath;
             RevisionId = revisionId;
             ChangeToken = new CancellationChangeToken(_cts.Token);
         }
@@ -61,7 +62,10 @@ public sealed class InMemoryConfigProvider : IFirewallConfigProvider
 
         public IReadOnlyList<RouteFirewallConfig> RouteFirewalls { get; }
 
+        public string GeoIPDatabasePath { get; }
+
         public IChangeToken ChangeToken { get; }
+
 
         internal void SignalChange()
         {

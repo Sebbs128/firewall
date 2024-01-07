@@ -208,4 +208,76 @@ public class MatchConditionTests
         var c = JsonSerializer.Deserialize<MatchCondition>(json);
         Assert.Equal(a, c);
     }
+
+    [Fact]
+    public void GeoIPMatchCondition_IsEqual_WhenSameValue()
+    {
+        var a = new GeoIPMatchCondition
+        {
+            MatchVariable = IPMatchVariable.SocketAddress,
+            MatchCountryValues = new[]
+            {
+                "United Kingdom"
+            }
+        };
+        var b = new GeoIPMatchCondition
+        {
+            MatchVariable = IPMatchVariable.SocketAddress,
+            MatchCountryValues = new[]
+            {
+                "United Kingdom"
+            }
+        };
+        var c = b with { };
+
+        Assert.True(a.Equals(b));
+        Assert.True(a.Equals(c));
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+        Assert.Equal(a.GetHashCode(), c.GetHashCode());
+    }
+
+    [Fact]
+    public void GeoIPMatchCondition_IsNotEqual_WhenDifferentValue()
+    {
+        var a = new GeoIPMatchCondition
+        {
+            MatchVariable = IPMatchVariable.SocketAddress,
+            MatchCountryValues = new[]
+            {
+                "United Kingdom"
+            }
+        };
+        var b = a with { MatchVariable = IPMatchVariable.RemoteAddress };
+        var c = b with { MatchCountryValues = new[] { "United States" } };
+
+        Assert.False(a.Equals(b));
+        Assert.False(a.Equals(c));
+    }
+
+    [Fact]
+    public void GeoIPMatchCondition_IsNotEqual_WhenComparedToNull()
+    {
+        Assert.False(new GeoIPMatchCondition().Equals(null));
+    }
+
+    [Fact]
+    public void GeoIPMatchCondition_CanBeJsonSerialized()
+    {
+        var a = new GeoIPMatchCondition
+        {
+            MatchVariable = IPMatchVariable.SocketAddress,
+            MatchCountryValues = new[]
+            {
+                "United Kingdom"
+            }
+        };
+
+        var json = JsonSerializer.Serialize(a);
+        var b= JsonSerializer.Deserialize<GeoIPMatchCondition>(json);
+
+        Assert.Equal(a, b);
+
+        var c = JsonSerializer.Deserialize<MatchCondition>(json);
+        Assert.Equal(a, c);
+    }
 }

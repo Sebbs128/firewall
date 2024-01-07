@@ -13,6 +13,7 @@ This project is currently in an early stage (⚠️ not production ready ⚠️)
         - [IP Address Evaluators](#ip-address-evaluators)
         - [Size Evaluators](#size-evaluators)
         - [String Evaluators](#string-evaluators)
+        - [GeoIP Evaluators](#geoip-evaluators)
         - [Transforms](#transforms)
   - [Example Configuration](#example-configuration)
 
@@ -106,6 +107,19 @@ A `MatchType` of `String` will evaluate request properties against a list of val
 - `Selector` - a key indicating which `Cookie`, `RequestHeader`, `PostArgs`, or `QueryParam` value to use, if it existed in the request
 - `MatchValues` - a list of string values to be compared against
 - `Transforms` - a list of transformations to be applied, in order
+
+###### GeoIP Evaluators
+
+The `GeoIP` value for `MatchType` will use a [MaxMind GeoIP2](https://dev.maxmind.com/geoip/updating-databases) Country database to look up the client's country based on the IP address from either the socket address or remote address, and evaluate this against a list of supplied country names.
+
+- `MatchVariable` - the property to retrieve the request's IP address from
+  - `SocketAddress` - use the IP address from the actual connection; if the request was previously proxied, this might not be the actual client's address but rather the address of the proxy
+  - `RemoteAddress` - the perceived client's address; at present, this will be the first valid value from the `X-Forwarded-For` header, falling back to the socket address if none was found
+- `MatchCountryValues` - a list of country names (not case sensitive) to be evaluated against
+
+The path to a GeoIP2 or GeoLite2 Country database must be provided to use this evaluator, and is configured at the top level (adjacent to `RouteFirewalls`) with the `GeoIPDatabasePath` configuration property. As with all other configuration values, the database path can be updated without requiring a restart, and as MaxMind frequently updates the databases (at time of writing, twice weekly) frequent updating is encouraged.
+
+No database files are provided in this project, however one to suit your purpose (commercial, enterprise, or free) can be obtained from MaxMind. Note you will need the _Country_ database, and supplying any other type will fail to load the database and any configured GeoIP evaluators.
 
 ###### Transforms
 
@@ -205,8 +219,6 @@ This is just the start of what I want to accomplish with this project. There are
 - more tests!
 - expand, implement, and test telemetry
 - New evaluators
-  - Add a `GeoIP` `ConditionMatchType`
-    - [ModSecurity Core Rule Set](https://coreruleset.org/) uses [MaxMind's GeoIP](https://dev.maxmind.com/geoip/geolocate-an-ip), which also happens to have a Nuget package ([MaxMind.GeoIP2](https://www.nuget.org/packages/MaxMind.GeoIP2/)). Integration should use the binary database, and support the user using either the paid (GeoIP2) or free (GeoLite2) license (which from what I can tell with a cursory look, doesn't differ in terms of code)
   - JSON-specific evaluators
     - this might look like using System.Text.Json with the `PipeReader`, or passing the body stream to `Utf8JsonReader` after enabling request buffering. Care needs to be taken with that second option to ensure YARP can still correctly forward the request contents
   - Size-count evaluators (eg. number of cookies/headers etc, by specific name or all)?

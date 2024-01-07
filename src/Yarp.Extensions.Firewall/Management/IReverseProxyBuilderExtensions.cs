@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Configuration.ConfigProvider;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
+using Yarp.Extensions.Firewall.GeoIP;
 using Yarp.ReverseProxy.Configuration;
 
 namespace Yarp.Extensions.Firewall.Management;
@@ -20,6 +21,7 @@ public static class IReverseProxyBuilderExtensions
         builder.AddConditionFactory<IPAddressConditionFactory>();
         builder.AddConditionFactory<SizeConditionFactory>();
         builder.AddConditionFactory<StringConditionFactory>();
+        builder.AddConditionFactory<GeoIPConditionFactory>();
 
         // Evaluator Builder
         builder.Services.AddSingleton<IEvaluatorBuilder, EvaluatorBuilder>();
@@ -29,6 +31,7 @@ public static class IReverseProxyBuilderExtensions
         builder.Services.TryAddSingleton<FirewallConfigManager>();
         builder.Services.TryAddSingleton<IFirewallStateLookup>(sp => sp.GetRequiredService<FirewallConfigManager>());
         builder.Services.TryAddSingleton<IConfigChangeListener, FirewallConfigManagerProxyChangeListener>();
+        builder.Services.TryAddSingleton<IGeoIPDatabaseProviderFactory, GeoIPDatabaseProviderFactory>();
 
         return builder;
     }

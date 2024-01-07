@@ -8,5 +8,5 @@ public enum ConditionMatchType
     Size,
     String,
     IPAddress,
-    //GeoIP
+    GeoIP
 }
