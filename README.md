@@ -4,7 +4,7 @@
 
 Being an extension to YARP, this project follows much of the conventions in the YARP project, both in terms of solution and class structure. This also means that it can be configured in the same way as YARP; it supports configuration files, as well as a configuration API for programmatic, in-process configuration.
 
-This project is currently in an early stage (⚠️ not production ready ⚠️), so I would love and greatly appreciate any contributions, reviews, and suggestions. Please see the [TODO](#todo) section below for an informal roadmap or list of things to be done.
+This project is currently in an early stage (⚠️ not production ready ⚠️), so I would love and greatly appreciate any contributions, reviews, and suggestions.
 
 - [Custom Rules](#custom-rules)
   - [Route Firewall](#route-firewall)
@@ -206,33 +206,6 @@ Below is an example of what this configuration looks like ([as used in `Configur
     }
 }
 ```
-
-# TODO
-
-This is just the start of what I want to accomplish with this project. There are many more features I would like to add, and things to clean up. I'm keen to have discussions on any and all of these. In no particular order
-
-- Publish the library to Nuget via CI/CD
-  - preferably via Azure Pipelines, and possibly making use of [dotnet-arcade](https://github.com/dotnet/arcade)
-- Publish a docs site
-- clean up `// TODO`s
-  - there's some pieces that either require a little more thought into how the firewall should behave, or values that should be logged
-- more tests!
-- expand, implement, and test telemetry
-- New evaluators
-  - JSON-specific evaluators
-    - this might look like using System.Text.Json with the `PipeReader`, or passing the body stream to `Utf8JsonReader` after enabling request buffering. Care needs to be taken with that second option to ensure YARP can still correctly forward the request contents
-  - Size-count evaluators (eg. number of cookies/headers etc, by specific name or all)?
-  - anything more applicable to web sockets? Azure WAF has nothing here as Front Door can't proxy web socket connections, but YARP can
-- Consider adding firewall features that are more fundamental, if appropriate
-  - There should be a balance here between what's appropriate to handle in a/this library, what ASP.NET Core or Kestrel can actually do (and if there's anything it's already doing or making irrelevant), and what can/could be handled elsewhere
-    - protocol and similar enforcement (eg. request body matching content-length, duplicate headers)?
-    - should anything that can be/is addressed by CRS should be left to CRS? (see below)
-  - ASP.NET Core includes rate-limiting middleware (and rate limiting stuff should be left to it), but is it enough for DDoS protection, or should this library provide something for that? Either something at the connection (Kestral) level, or default configurations of the rate-limiting middleware?
-- Integrate or port ModSec CRS
-  - unsure what integrating looks like at the moment, given the distributables are intended for existing web servers.
-    - there is also the [Coraza](https://github.com/corazawaf/coraza) library, which runs CRSv4
-  - I envision a port looking like a combination of reading files from the CRS repo (regex files, and/or full .conf files), and source generators using those as input.
-    - Porting has licensing implications due to ASLv2 ("if you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license to this one"). Need to answer questions around what constitutes a "similar" license to ASLv2, if entire project needs to be licensed that way, or if just the specific code+library needs to be
 
 # Contributing
 
