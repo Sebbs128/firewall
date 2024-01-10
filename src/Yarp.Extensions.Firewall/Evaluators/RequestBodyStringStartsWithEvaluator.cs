@@ -98,10 +98,12 @@ public class RequestBodyStringStartsWithEvaluator : RequestBodyConditionEvaluato
 
                         if (matchFoud)
                         {
+                            // TODO: consider reading a little more from the body so MatchVariableValue has a little more context
+                            // i.e. get as close to the 100 characters as possible
                             context.MatchedValues.Add(new EvaluatorMatchValue(
                                 MatchVariableName: $"{MatchVariable.RequestBody}{ConditionMatchType.String}",
                                 OperatorName: nameof(StringOperator.StartsWith),
-                                MatchVariableValue: transformedBody[..Math.Min(transformedBody.Length, 100)]));
+                                MatchVariableValue: StringUtilities.FromStart(transformedBody, 100)));
 
                             return true;
                         }

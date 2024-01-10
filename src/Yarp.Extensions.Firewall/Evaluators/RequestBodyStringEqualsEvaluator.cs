@@ -106,7 +106,7 @@ public class RequestBodyStringEqualsEvaluator : RequestBodyConditionEvaluator<St
                             context.MatchedValues.Add(new EvaluatorMatchValue(
                                 MatchVariableName: $"{MatchVariable.RequestBody}{ConditionMatchType.String}",
                                 OperatorName: nameof(StringOperator.Equals),
-                                MatchVariableValue: transformedBody[..Math.Min(transformedBody.Length, 100)]));
+                                MatchVariableValue: StringUtilities.FromStart(transformedBody, 100)));
 
                             return true;
                         }

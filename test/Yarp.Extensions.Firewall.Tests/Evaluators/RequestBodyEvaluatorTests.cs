@@ -200,7 +200,7 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.RequestBody,
                 Operator = StringOperator.Contains,
                 MatchValues = new List<string> { "quest" }
-            }, StringToStream("request content"), "quest co"
+            }, StringToStream("request content"), "request content"
         },
         {
             new StringMatchCondition
@@ -242,7 +242,7 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.RequestBody,
                 Operator = StringOperator.EndsWith,
                 MatchValues = new List<string> { "content" }
-            }, StringToStream("request content"), "content"
+            }, StringToStream("request content"), "request content"
         },
         {
             new StringMatchCondition

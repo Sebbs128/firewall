@@ -64,4 +64,24 @@ internal static class StringUtilities
         lengthFromEnd = n;
         return result;
     }
+
+    public static string FromStart(string s, int atMost)
+    {
+        return s[..Math.Min(s.Length, atMost)];
+    }
+
+    public static string FromEnd(string s, int atMost)
+    {
+        return s[^Math.Min(s.Length, atMost)..];
+    }
+
+    public static string FromMiddle(string s, int index, int substringLength, int atMost)
+    {
+        var start = Math.Max(0, index - (int)Math.Ceiling((atMost - substringLength) / 2d));
+
+        if (s.Length - start < atMost && atMost < s.Length)
+            start = s.Length - atMost;
+
+        return FromStart(s[start..], atMost);
+    }
 }

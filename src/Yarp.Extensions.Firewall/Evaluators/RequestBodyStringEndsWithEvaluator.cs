@@ -9,7 +9,7 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 
 public class RequestBodyStringEndsWithEvaluator : RequestBodyConditionEvaluator<StringOperator>
 {
-    private readonly int _maxMatchLength;
+    private readonly int _maxReadLength;
     private readonly int _minWindowSize;
 
     public RequestBodyStringEndsWithEvaluator(IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms)
@@ -17,8 +17,8 @@ public class RequestBodyStringEndsWithEvaluator : RequestBodyConditionEvaluator<
     {
         MatchValues = matchValues;
 
-        _maxMatchLength = MatchValues.Max(v => v.Length);
-        _minWindowSize = (transforms.Contains(Transform.UrlDecode) ? 6 : 2) * _maxMatchLength;
+        _maxReadLength = Math.Max(100, MatchValues.Max(v => v.Length));
+        _minWindowSize = (transforms.Contains(Transform.UrlDecode) ? 6 : 2) * _maxReadLength;
     }
 
     public IReadOnlyList<string> MatchValues { get; }
@@ -39,47 +39,46 @@ public class RequestBodyStringEndsWithEvaluator : RequestBodyConditionEvaluator<
             {
                 var window = new Memory<byte>(arr);
 
-            var readResult = await bodyReader.ReadAsync(cancellationToken);
-            do
-            {
-                // slide window contents down to make room for new data
-                int bytesToCopy;
-
-                for (int i = 0; i < readResult.Buffer.Length; i += bytesToCopy)
+                var readResult = await bodyReader.ReadAsync(cancellationToken);
+                do
                 {
-                    bytesToCopy = (int)Math.Min(readResult.Buffer.Length - i, window.Length);
-                    var buffer = readResult.Buffer.Slice(i, bytesToCopy);
+                    // slide window contents down to make room for new data
+                    int bytesToCopy;
 
-                    window[bytesToCopy..].CopyTo(window);
+                    for (int i = 0; i < readResult.Buffer.Length; i += bytesToCopy)
+                    {
+                        bytesToCopy = (int)Math.Min(readResult.Buffer.Length - i, window.Length);
+                        var buffer = readResult.Buffer.Slice(i, bytesToCopy);
 
-                    buffer.CopyTo(window.Span[(window.Length - bytesToCopy)..]);
+                        window[bytesToCopy..].CopyTo(window);
+
+                        buffer.CopyTo(window.Span[(window.Length - bytesToCopy)..]);
+                    }
+
+                    bodyReader.AdvanceTo(readResult.Buffer.Start, readResult.Buffer.End);
+                    readResult = await bodyReader.ReadAsync(cancellationToken);
+                }
+                while (!(readResult.IsCompleted || readResult.Buffer.IsSingleSegment));
+
+                var transformedChunk = Encoding.UTF8.GetString(window.Span.TrimStart((byte)0));
+
+                foreach (var transform in Transforms)
+                {
+                    transformedChunk = StringUtilities.ApplyTransform(transformedChunk, transform);
                 }
 
-                bodyReader.AdvanceTo(readResult.Buffer.Start, readResult.Buffer.End);
-                readResult = await bodyReader.ReadAsync(cancellationToken);
-            }
-            while (!(readResult.IsCompleted || readResult.Buffer.IsSingleSegment));
-
-            var transformedChunk = Encoding.UTF8.GetString(window.Span.TrimStart((byte)0));
-
-            foreach (var transform in Transforms)
-            {
-                transformedChunk = StringUtilities.ApplyTransform(transformedChunk, transform);
-            }
-
-            foreach (var matchValue in MatchValues)
-            {
-                var foundIndex = transformedChunk.LastIndexOf(matchValue, StringComparison.Ordinal);
-                if (foundIndex == transformedChunk.Length - matchValue.Length)
+                foreach (var matchValue in MatchValues)
                 {
-                    // TODO: because this is an EndsWith check, the MatchVariableValue gives very little context - effectively just contains matchValue
-                    context.MatchedValues.Add(new EvaluatorMatchValue(
-                        MatchVariableName: $"{MatchVariable.RequestBody}{ConditionMatchType.String}",
-                        OperatorName: nameof(StringOperator.EndsWith),
-                        MatchVariableValue: transformedChunk[foundIndex..(foundIndex + Math.Min(transformedChunk.Length - foundIndex, 100))]));
+                    var foundIndex = transformedChunk.LastIndexOf(matchValue, StringComparison.Ordinal);
+                    if (foundIndex == transformedChunk.Length - matchValue.Length)
+                    {
+                        context.MatchedValues.Add(new EvaluatorMatchValue(
+                            MatchVariableName: $"{MatchVariable.RequestBody}{ConditionMatchType.String}",
+                            OperatorName: nameof(StringOperator.EndsWith),
+                            MatchVariableValue: StringUtilities.FromEnd(transformedChunk, 100)));
 
-                    return true;
-                }
+                        return true;
+                    }
                 }
             }
             finally
