@@ -33,9 +33,11 @@ public class RequestBodyStringEndsWithEvaluator : RequestBodyConditionEvaluator<
             // (the worst case if just checking buffer is being short of the match by one character,
             //   but sliding one byte at a time would be too inefficient)
             // Needs to be larger if UrlDecode transform is used - the window size should be another x3 larger just to hold its worst case
-            // the x3 is handled in the constructor
-            using var windowOwner = MemoryPool<byte>.Shared.Rent(_minWindowSize);
-            var window = windowOwner.Memory;
+            // all sizing is being handled in the constructor
+            var arr = ArrayPool<byte>.Shared.Rent(_minWindowSize);
+            try
+            {
+                var window = new Memory<byte>(arr);
 
             var readResult = await bodyReader.ReadAsync(cancellationToken);
             do
@@ -78,6 +80,11 @@ public class RequestBodyStringEndsWithEvaluator : RequestBodyConditionEvaluator<
 
                     return true;
                 }
+                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(arr, clearArray: true);
             }
         }
         return false;
