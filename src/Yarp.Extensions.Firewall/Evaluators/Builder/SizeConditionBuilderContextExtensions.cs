@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 using Yarp.Extensions.Firewall.Configuration;
 
 namespace Yarp.Extensions.Firewall.Evaluators.Builder;
@@ -40,13 +42,14 @@ public static class SizeConditionBuilderContextExtensions
         return context;
     }
 
-    public static ConditionBuilderContext AddRequestBodySizeEvaluator(this ConditionBuilderContext context, SizeMatchCondition matchCondition)
+    public static ConditionBuilderContext AddRequestBodySizeEvaluator(this ConditionBuilderContext context, SizeMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodySizeEvaluator evaluator = new(
             matchCondition.Operator,
             matchCondition.MatchValue,
             matchCondition.Negate,
-            matchCondition.Transforms);
+            matchCondition.Transforms,
+            loggerFactory.CreateLogger<RequestBodySizeEvaluator>());
         context.RuleConditions.Add(evaluator);
         return context;
     }

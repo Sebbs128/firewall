@@ -1,10 +1,19 @@
 using System.Linq;
+using Microsoft.Extensions.Logging;
+
 using Yarp.Extensions.Firewall.Configuration;
 
 namespace Yarp.Extensions.Firewall.Evaluators.Builder;
 
 internal sealed class SizeConditionFactory : IConditionFactory
 {
+    private readonly ILoggerFactory _loggerFactory;
+
+    public SizeConditionFactory(ILoggerFactory loggerFactory)
+    {
+        _loggerFactory = loggerFactory;
+    }
+
     public bool Validate(EvaluatorValidationContext context, MatchCondition condition)
     {
         if (condition is SizeMatchCondition sizeCondition)
@@ -44,7 +53,7 @@ internal sealed class SizeConditionFactory : IConditionFactory
                 MatchVariable.Cookie => context.AddRequestCookieSizeEvaluator(sizeCondition),
                 MatchVariable.PostArgs => context.AddRequestPostArgsSizeEvaluator(sizeCondition),
                 MatchVariable.QueryParam => context.AddRequestQueryStringSizeEvaluator(sizeCondition),
-                MatchVariable.RequestBody => context.AddRequestBodySizeEvaluator(sizeCondition),
+                MatchVariable.RequestBody => context.AddRequestBodySizeEvaluator(sizeCondition, _loggerFactory),
                 MatchVariable.RequestHeader => context.AddRequestHeaderSizeEvaluator(sizeCondition),
                 MatchVariable.RequestMethod => context.AddRequestMethodSizeEvaluator(sizeCondition),
                 MatchVariable.RequestPath => context.AddRequestPathSizeEvaluator(sizeCondition),
