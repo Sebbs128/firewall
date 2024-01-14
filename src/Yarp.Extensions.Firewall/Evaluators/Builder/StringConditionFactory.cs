@@ -1,9 +1,18 @@
+using Microsoft.Extensions.Logging;
+
 using Yarp.Extensions.Firewall.Configuration;
 
 namespace Yarp.Extensions.Firewall.Evaluators.Builder;
 
 internal sealed class StringConditionFactory : IConditionFactory
 {
+    private readonly ILoggerFactory _loggerFactory;
+
+    public StringConditionFactory(ILoggerFactory loggerFactory)
+    {
+        _loggerFactory = loggerFactory;
+    }
+
     public bool Validate(EvaluatorValidationContext context, MatchCondition condition)
     {
         if (condition is StringMatchCondition stringCondition)
@@ -56,12 +65,12 @@ internal sealed class StringConditionFactory : IConditionFactory
                 { MatchVariable: MatchVariable.RequestPath } th => context.AddRequestPathStringEvaluator(stringCondition),
 
                 // Request Body evaluators
-                { MatchVariable: MatchVariable.RequestBody, Operator: StringOperator.Regex } => context.AddRequestBodyRegexEvaluator(stringCondition),
-                { MatchVariable: MatchVariable.RequestBody, Operator: StringOperator.Any } y => context.AddRequestBodyStringAnyEvaluator(stringCondition),
-                { MatchVariable: MatchVariable.RequestBody, Operator: StringOperator.Equals } => context.AddRequestBodyStringEqualsEvaluator(stringCondition),
-                { MatchVariable: MatchVariable.RequestBody, Operator: StringOperator.Contains } => context.AddRequestBodyStringContainsEvaluator(stringCondition),
-                { MatchVariable: MatchVariable.RequestBody, Operator: StringOperator.StartsWith } => context.AddRequestBodyStringStartsWithEvaluator(stringCondition),
-                { MatchVariable: MatchVariable.RequestBody, Operator: StringOperator.EndsWith } => context.AddRequestBodyStringEndsWithEvaluator(stringCondition),
+                { MatchVariable: MatchVariable.RequestBody, Operator: StringOperator.Regex } => context.AddRequestBodyRegexEvaluator(stringCondition, _loggerFactory),
+                { MatchVariable: MatchVariable.RequestBody, Operator: StringOperator.Any } y => context.AddRequestBodyStringAnyEvaluator(stringCondition, _loggerFactory),
+                { MatchVariable: MatchVariable.RequestBody, Operator: StringOperator.Equals } => context.AddRequestBodyStringEqualsEvaluator(stringCondition, _loggerFactory),
+                { MatchVariable: MatchVariable.RequestBody, Operator: StringOperator.Contains } => context.AddRequestBodyStringContainsEvaluator(stringCondition, _loggerFactory),
+                { MatchVariable: MatchVariable.RequestBody, Operator: StringOperator.StartsWith } => context.AddRequestBodyStringStartsWithEvaluator(stringCondition, _loggerFactory),
+                { MatchVariable: MatchVariable.RequestBody, Operator: StringOperator.EndsWith } => context.AddRequestBodyStringEndsWithEvaluator(stringCondition, _loggerFactory),
 
                 _ => throw new ArgumentException($"Unexpected match variable for {nameof(StringMatchCondition)}: {stringCondition.MatchVariable}.")
             };

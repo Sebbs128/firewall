@@ -1,6 +1,7 @@
 using System.Text;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Model;
@@ -14,8 +15,8 @@ public class RequestBodyStringStartsWithEvaluator : RequestBodyConditionEvaluato
     private readonly int _maxMatchLength;
     private readonly bool _hasUrlDecodeTransform;
 
-    public RequestBodyStringStartsWithEvaluator(IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms)
-        : base(StringOperator.StartsWith, negate, transforms)
+    public RequestBodyStringStartsWithEvaluator(IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyStringStartsWithEvaluator> logger)
+        : base(StringOperator.StartsWith, negate, transforms, logger)
     {
         MatchValues = matchValues;
 

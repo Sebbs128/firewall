@@ -1,6 +1,8 @@
 using System.Buffers;
 using System.Text;
 
+using Microsoft.Extensions.Logging;
+
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Model;
 using Yarp.Extensions.Firewall.Utilities;
@@ -12,8 +14,8 @@ public class RequestBodyStringEndsWithEvaluator : RequestBodyConditionEvaluator<
     private readonly int _maxReadLength;
     private readonly int _minWindowSize;
 
-    public RequestBodyStringEndsWithEvaluator(IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms)
-        : base(StringOperator.EndsWith, negate, transforms)
+    public RequestBodyStringEndsWithEvaluator(IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyStringEndsWithEvaluator> logger)
+        : base(StringOperator.EndsWith, negate, transforms, logger)
     {
         MatchValues = matchValues;
 

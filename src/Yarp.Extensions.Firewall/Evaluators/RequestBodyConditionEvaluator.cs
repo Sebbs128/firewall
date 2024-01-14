@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Logging;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Model;
@@ -8,10 +10,13 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 
 public abstract class RequestBodyConditionEvaluator<TOperator> : ConditionEvaluator<TOperator> where TOperator : Enum
 {
-    protected RequestBodyConditionEvaluator(TOperator @operator, bool negate, IReadOnlyList<Transform> transforms)
+    private readonly ILogger<RequestBodyConditionEvaluator<TOperator>> _logger;
+
+    protected RequestBodyConditionEvaluator(TOperator @operator, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyConditionEvaluator<TOperator>> logger)
         : base(@operator, negate)
     {
         Transforms = transforms;
+        _logger = logger;
     }
 
     public IReadOnlyList<Transform> Transforms { get; }
@@ -28,7 +33,7 @@ public abstract class RequestBodyConditionEvaluator<TOperator> : ConditionEvalua
         //   one thing revealed by that page is (in detection mode only) Content-Length header is used and compared to max request size limit
         if (context.HttpContext.Request.HasFileContent())
         {
-            // TODO: log that evaluation was skipped for a file upload
+            Log.FileContentSkipped(_logger, $"RequestBody{Operator}", context.HttpContext.Request.GetDisplayUrl());
             return false;
         }
 
@@ -48,4 +53,17 @@ public abstract class RequestBodyConditionEvaluator<TOperator> : ConditionEvalua
     }
 
     internal abstract Task<bool> EvaluateInternal(EvaluationContext context, CancellationToken cancellationToken);
+
+    private static class Log
+    {
+        private static readonly Action<ILogger, string, string, Exception?> _fileContentSkipped = LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            EventIds.FileContentSkipped,
+            "{name} skipped evaluation of file content for {requestUri}.");
+
+        public static void FileContentSkipped(ILogger<RequestBodyConditionEvaluator<TOperator>> logger, string evaluatorName, string requestUri)
+        {
+            _fileContentSkipped(logger, evaluatorName, requestUri, null);
+        }
+    }
 }

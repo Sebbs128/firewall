@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 using Yarp.Extensions.Firewall.Configuration;
 
 namespace Yarp.Extensions.Firewall.Evaluators.Builder;
@@ -72,61 +74,67 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
-    public static ConditionBuilderContext AddRequestBodyStringAnyEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
+    public static ConditionBuilderContext AddRequestBodyStringAnyEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodyStringAnyEvaluator evaluator = new(
             matchCondition.Negate,
-            matchCondition.Transforms);
+            matchCondition.Transforms,
+            loggerFactory.CreateLogger<RequestBodyStringAnyEvaluator>());
         context.RuleConditions.Add(evaluator);
         return context;
     }
 
-    public static ConditionBuilderContext AddRequestBodyStringEqualsEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
+    public static ConditionBuilderContext AddRequestBodyStringEqualsEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodyStringEqualsEvaluator evaluator = new(
             matchCondition.MatchValues,
             matchCondition.Negate,
-            matchCondition.Transforms);
+            matchCondition.Transforms,
+            loggerFactory.CreateLogger<RequestBodyStringEqualsEvaluator>());
         context.RuleConditions.Add(evaluator);
         return context;
     }
 
-    public static ConditionBuilderContext AddRequestBodyStringContainsEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
+    public static ConditionBuilderContext AddRequestBodyStringContainsEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodyStringContainsEvaluator evaluator = new(
             matchCondition.MatchValues,
             matchCondition.Negate,
-            matchCondition.Transforms);
+            matchCondition.Transforms,
+            loggerFactory.CreateLogger<RequestBodyStringContainsEvaluator>());
         context.RuleConditions.Add(evaluator);
         return context;
     }
 
-    public static ConditionBuilderContext AddRequestBodyStringStartsWithEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
+    public static ConditionBuilderContext AddRequestBodyStringStartsWithEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodyStringStartsWithEvaluator evaluator = new(
             matchCondition.MatchValues,
             matchCondition.Negate,
-            matchCondition.Transforms);
+            matchCondition.Transforms,
+            loggerFactory.CreateLogger<RequestBodyStringStartsWithEvaluator>());
         context.RuleConditions.Add(evaluator);
         return context;
     }
 
-    public static ConditionBuilderContext AddRequestBodyStringEndsWithEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
+    public static ConditionBuilderContext AddRequestBodyStringEndsWithEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodyStringEndsWithEvaluator evaluator = new(
             matchCondition.MatchValues,
             matchCondition.Negate,
-            matchCondition.Transforms);
+            matchCondition.Transforms,
+            loggerFactory.CreateLogger<RequestBodyStringEndsWithEvaluator>());
         context.RuleConditions.Add(evaluator);
         return context;
     }
 
-    public static ConditionBuilderContext AddRequestBodyRegexEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
+    public static ConditionBuilderContext AddRequestBodyRegexEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodyRegexEvaluator evaluator = new(
             matchCondition.MatchValues,
             matchCondition.Negate,
-            matchCondition.Transforms);
+            matchCondition.Transforms,
+            loggerFactory.CreateLogger<RequestBodyRegexEvaluator>());
         context.RuleConditions.Add(evaluator);
         return context;
     }

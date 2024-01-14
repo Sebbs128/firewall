@@ -1,6 +1,7 @@
 using System.Buffers;
-using System.Security.Cryptography;
 using System.Text;
+
+using Microsoft.Extensions.Logging;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Model;
@@ -13,8 +14,8 @@ public class RequestBodyStringContainsEvaluator : RequestBodyConditionEvaluator<
     private readonly int _maxReadLength;
     private readonly int _minWindowSize;
 
-    public RequestBodyStringContainsEvaluator(IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms)
-        : base(StringOperator.Contains, negate, transforms)
+    public RequestBodyStringContainsEvaluator(IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyStringContainsEvaluator> logger)
+        : base(StringOperator.Contains, negate, transforms, logger)
     {
         MatchValues = matchValues;
 

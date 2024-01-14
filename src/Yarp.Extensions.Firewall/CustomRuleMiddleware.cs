@@ -77,8 +77,6 @@ internal sealed class CustomRuleMiddleware
                     case MatchAction.Redirect:
                         if (routeEvaluator.Mode == FirewallMode.Prevention)
                         {
-                            // TODO: is redirecting the client the correct behaviour, or should we change where YARP forwards the request?
-                            // see https://learn.microsoft.com/en-us/azure/web-application-firewall/afds/waf-front-door-policy-settings#uri-for-redirect-action
                             context.Response.StatusCode = (int)HttpStatusCode.Redirect;
                             context.Response.Headers.Location = routeEvaluator.RedirectUri;
                             responseStatusSet = true;

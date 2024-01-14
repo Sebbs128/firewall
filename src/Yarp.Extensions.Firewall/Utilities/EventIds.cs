@@ -16,6 +16,8 @@ internal static class EventIds
     public static readonly EventId ErrorApplyingConfig = new EventId(8, "ErrorApplyingConfig");
     public static readonly EventId ActionTaken = new EventId(9, "ActionTaken");
 
+    public static readonly EventId FileContentSkipped = new EventId(10, "FileContentSkipped");
+
     public static readonly EventId GeoIPDatabaseOpened = new EventId(20, "GeoIPDatabaseOpened");
 }
 

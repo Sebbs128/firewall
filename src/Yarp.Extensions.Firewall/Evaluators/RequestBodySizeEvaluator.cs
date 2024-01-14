@@ -1,6 +1,7 @@
 using System.Text;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Model;
@@ -10,8 +11,8 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 
 public class RequestBodySizeEvaluator : RequestBodyConditionEvaluator<NumberOperator>
 {
-    public RequestBodySizeEvaluator(NumberOperator @operator, uint matchValue, bool negate, IReadOnlyList<Transform> transforms)
-        : base(@operator, negate, RemoveCaseTransforms(transforms))
+    public RequestBodySizeEvaluator(NumberOperator @operator, uint matchValue, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodySizeEvaluator> logger)
+        : base(@operator, negate, RemoveCaseTransforms(transforms), logger)
     {
         MatchValue = matchValue;
 

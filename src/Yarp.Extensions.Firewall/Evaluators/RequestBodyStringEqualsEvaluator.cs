@@ -1,6 +1,7 @@
 using System.Text;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Model;
@@ -14,8 +15,8 @@ public class RequestBodyStringEqualsEvaluator : RequestBodyConditionEvaluator<St
     private readonly int _maxMatchLength;
     private readonly bool _hasUrlDecodeTransform;
 
-    public RequestBodyStringEqualsEvaluator(IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms)
-        : base(StringOperator.Equals, negate, transforms)
+    public RequestBodyStringEqualsEvaluator(IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyStringEqualsEvaluator> logger)
+        : base(StringOperator.Equals, negate, transforms, logger)
     {
         MatchValues = matchValues;
 

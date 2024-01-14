@@ -1,6 +1,8 @@
 using System.Text;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Logging;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Model;
@@ -10,10 +12,13 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 
 public class RequestBodyRegexEvaluator : RegexConditionEvaluator
 {
-    public RequestBodyRegexEvaluator(IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms)
+    private readonly ILogger<RequestBodyRegexEvaluator> _logger;
+
+    public RequestBodyRegexEvaluator(IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyRegexEvaluator> logger)
         : base(matchPatterns, negate)
     {
         Transforms = transforms;
+        _logger = logger;
     }
 
     protected override TimeSpan RegexMatchTimeout { get; } = TimeSpan.FromSeconds(10);
@@ -31,7 +36,7 @@ public class RequestBodyRegexEvaluator : RegexConditionEvaluator
         //   https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/application-gateway-waf-request-size-limits#limits
         if (context.HttpContext.Request.HasFileContent())
         {
-            // TODO: log that evaluation was skipped for a file upload
+            Log.FileContentSkipped(_logger, "RequestBodyRegex", context.HttpContext.Request.GetDisplayUrl());
             return false;
         }
 
@@ -100,5 +105,18 @@ public class RequestBodyRegexEvaluator : RegexConditionEvaluator
             }
         }
         return false;
+    }
+
+    private static class Log
+    {
+        private static readonly Action<ILogger, string, string, Exception?> _fileContentSkipped = LoggerMessage.Define<string, string>(
+            LogLevel.Information,
+            EventIds.FileContentSkipped,
+            "{name} skipped evaluation of file content for {requestUri}.");
+
+        public static void FileContentSkipped(ILogger<RequestBodyRegexEvaluator> logger, string evaluatorName, string requestUri)
+        {
+            _fileContentSkipped(logger, evaluatorName, requestUri, null);
+        }
     }
 }
