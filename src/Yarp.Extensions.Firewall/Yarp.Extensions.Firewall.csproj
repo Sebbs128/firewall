@@ -15,12 +15,12 @@
 
   <ItemGroup>
     <PackageReference Include="MaxMind.GeoIP2" Version="5.2.0" />
-    <PackageReference Include="Yarp.ReverseProxy" Version="2.0.1" />
+    <PackageReference Include="Yarp.ReverseProxy" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Yarp.Extensions.Firewall.Tests" />
-    <InternalsVisibleTo Include="Yarp.Extensions.Firewall.FunctionalTests"/>
+    <InternalsVisibleTo Include="Yarp.Extensions.Firewall.FunctionalTests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" Key="$(NSubstitutePublicKey)" />
   </ItemGroup>
 
