@@ -1,6 +1,7 @@
 using System.Text;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Evaluators;
@@ -11,8 +12,8 @@ namespace Yarp.Extensions.Firewall.Tests.Evaluators;
 
 public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
 {
-    private readonly SizeConditionFactory _sizeFactory = new();
-    private readonly StringConditionFactory _stringFactory = new();
+    private readonly SizeConditionFactory _sizeFactory = new(new LoggerFactory());
+    private readonly StringConditionFactory _stringFactory = new(new LoggerFactory());
 
     [Theory]
     [InlineData(NumberOperator.GreaterThan, 0u)]

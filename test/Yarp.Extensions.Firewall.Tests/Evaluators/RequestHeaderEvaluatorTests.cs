@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
 using Yarp.Extensions.Firewall.Configuration;
@@ -10,7 +11,7 @@ namespace Yarp.Extensions.Firewall.Tests.Evaluators;
 
 public class RequestHeaderEvaluatorTestss : ConditionExtensionsTestsBase
 {
-    private readonly StringConditionFactory _stringFactory = new();
+    private readonly StringConditionFactory _stringFactory = new(new LoggerFactory());
 
     [Theory]
     [MemberData(nameof(StringSingleMatchData))]
