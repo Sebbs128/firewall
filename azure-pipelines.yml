@@ -49,7 +49,7 @@ stages:
       displayName: 'dotnet pack $(_BuildConfig)'
       inputs:
         command: 'pack'
-        arguments: '--configuration $(_BuildConfig) --include-symbols -p:BuildId=$(Build.BuildNumber) --output $(Build.ArtifactStagingDirectory)'
+        arguments: '--configuration $(_BuildConfig) --include-symbols -p:BuildId=$(Build.BuildNumber) --output $(Build.ArtifactStagingDirectory)/artifacts/packages'
         zipAfterPublish: true
     - task: PublishBuildArtifacts@1
       displayName: Upload package artifacts
