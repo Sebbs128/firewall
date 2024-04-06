@@ -31,6 +31,7 @@ stages:
         version: 8.x
         performMultiLevelLookup: true
     - task: DotNetCoreCLI@2
+      displayName: 'dotnet restore $(_BuildConfig)'
       inputs:
         command: 'restore'
     - task: DotNetCoreCLI@2
@@ -71,6 +72,7 @@ stages:
         version: 8.x
         performMultiLevelLookup: true
     - task: DotNetCoreCLI@2
+      displayName: 'dotnet restore $(_BuildConfig)'
       inputs:
         command: 'restore'
     - task: DotNetCoreCLI@2
@@ -96,6 +98,7 @@ stages:
         version: 8.x
         performMultiLevelLookup: true
     - task: DotNetCoreCLI@2
+      displayName: 'dotnet restore $(_BuildConfig)'
       inputs:
         command: 'restore'
     - task: DotNetCoreCLI@2
