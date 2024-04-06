@@ -1,0 +1,110 @@
+variables:
+  - name: _BuildConfig
+    values: Release
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+
+pr:
+  autoCancel: false
+  branches:
+    include:
+    - '*'
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - job: Windows
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - checkout: self
+      clean: true
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        version: 8.x
+        performMultiLevelLookup: true
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'restore'
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet build $(_BuildConfig)'
+      inputs:
+        command: 'build'
+        arguments: --configuration $(_BuildConfig)
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet test $(_BuildConfig)'
+      inputs:
+        command: 'test'
+        projects: '**/test/*.csproj'
+        arguments: '--configuration $(_BuildConfig)'
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet pack $(_BuildConfig)'
+      inputs:
+        command: 'pack'
+        arguments: '--configuration $(_BuildConfig) --include-symbols -p:BuildId=$(Build.BuildNumber) --output $(Build.ArtifactStagingDirectory)'
+        zipAfterPublish: true
+    - task: PublishBuildArtifacts@1
+      displayName: Upload package artifacts
+      condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
+      inputs:
+        pathtoPublish: artifacts/packages/
+        artifactName: artifacts
+        artifactType: Container
+        parallel: true
+        
+  - job: Linux
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - checkout: self
+      clean: true
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        version: 8.x
+        performMultiLevelLookup: true
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'restore'
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet build $(_BuildConfig)'
+      inputs:
+        command: 'build'
+        arguments: --configuration $(_BuildConfig)
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'test'
+        projects: '**/test/*.csproj'
+        arguments: '--configuration $(_BuildConfig)'
+
+  - job: macOS
+    pool:
+      vmImage: 'macOS-latest'
+    steps:
+    - checkout: self
+      clean: true
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        version: 8.x
+        performMultiLevelLookup: true
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'restore'
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet build $(_BuildConfig)'
+      inputs:
+        command: 'build'
+        arguments: --configuration $(_BuildConfig)
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'test'
+        projects: '**/test/*.csproj'
+        arguments: '--configuration $(_BuildConfig)'

@@ -53,6 +53,7 @@ A number of conditions are supported, with different configuration options depen
   - `Size` - the length of a request property will be evaluated
   - `String` - evaluation depends on a particular value in one of the request's properties
   - `IPAddress` - match on a given list or range of IP addresses
+  - `GeoIP` - match on a given country as determined by MaxMind GeoIP2 from the IP address
 - `Negate` - the evaluation result will be inverted; ie. if a match was not found, the condition will return `true` (and vice versa)
 
 ###### IP Address Evaluators
