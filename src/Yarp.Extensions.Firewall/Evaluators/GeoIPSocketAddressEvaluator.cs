@@ -2,18 +2,27 @@ using Yarp.Extensions.Firewall.GeoIP;
 using Yarp.Extensions.Firewall.Model;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
+
+/// <summary>
+/// Evaluates the Country determined from the socket address of the HTTP request against a list of countries.
+/// </summary>
 public class GeoIPSocketAddressEvaluator : ConditionEvaluator
 {
     private readonly IGeoIPDatabaseProviderFactory _geoIpDbReader;
 
+    /// <inheritdoc/>
     public GeoIPSocketAddressEvaluator(IReadOnlyList<string> countries, bool negate, IGeoIPDatabaseProviderFactory geoIpDbFactory) : base(negate)
     {
         Countries = countries;
         _geoIpDbReader = geoIpDbFactory;
     }
 
+    /// <summary>
+    /// Countries to match against.
+    /// </summary>
     public IReadOnlyList<string> Countries { get; }
 
+    /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -24,21 +33,19 @@ public class GeoIPSocketAddressEvaluator : ConditionEvaluator
 
         if (clientAddress is not null)
         {
-            using (var dbProvider = _geoIpDbReader.GetCurrent())
+            using var dbProvider = _geoIpDbReader.GetCurrent();
+            dbProvider.Get().TryCountry(clientAddress, out var countryResponse);
+            foreach (var country in Countries)
             {
-                dbProvider.Get().TryCountry(clientAddress, out var countryResponse);
-                foreach (var country in Countries)
+                if (country.Equals(countryResponse!.Country.Name, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (country.Equals(countryResponse!.Country.Name, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        isMatch = true;
-                        context.MatchedValues.Add(new EvaluatorMatchValue(
-                            MatchVariableName: "GeoIPSocketAddress",
-                            OperatorName: "Equals",
-                            MatchVariableValue: countryResponse!.Country.Name));
-                        break;
-                    }
-                } 
+                    isMatch = true;
+                    context.MatchedValues.Add(new EvaluatorMatchValue(
+                        MatchVariableName: "GeoIPSocketAddress",
+                        OperatorName: "Equals",
+                        MatchVariableValue: countryResponse!.Country.Name));
+                    break;
+                }
             }
         }
 

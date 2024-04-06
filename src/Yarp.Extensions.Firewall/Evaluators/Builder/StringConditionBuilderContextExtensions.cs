@@ -4,8 +4,17 @@ using Yarp.Extensions.Firewall.Configuration;
 
 namespace Yarp.Extensions.Firewall.Evaluators.Builder;
 
+/// <summary>
+/// Extensions for adding string evaluators
+/// </summary>
 public static class StringConditionBuilderContextExtensions
 {
+    /// <summary>
+    /// Adds an evaluator for cookie values.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestCookieStringEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
     {
         RequestCookieStringEvaluator evaluator = new(
@@ -17,6 +26,13 @@ public static class StringConditionBuilderContextExtensions
         context.RuleConditions.Add(evaluator);
         return context;
     }
+
+    /// <summary>
+    /// Adds an evaluator for cookie regular expression patterns.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestCookieRegexEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
     {
         RequestCookieRegexEvaluator evaluator = new(
@@ -28,6 +44,12 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for POST parameter values.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestPostArgsStringEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
     {
         RequestPostArgsStringEvaluator evaluator = new(
@@ -40,6 +62,12 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for POST parameter regular expression patterns.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestPostArgsRegexEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
     {
         RequestPostArgsRegexEvaluator evaluator = new(
@@ -51,6 +79,12 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for query parameter values.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestQueryParamStringEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
     {
         RequestQueryParamStringEvaluator evaluator = new(
@@ -63,6 +97,12 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for query parameter regular expression patterns.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestQueryParamRegexEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
     {
         RequestQueryParamRegexEvaluator evaluator = new(
@@ -74,6 +114,13 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for request body having any content.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <param name="loggerFactory"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestBodyStringAnyEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodyStringAnyEvaluator evaluator = new(
@@ -84,6 +131,13 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for request body equalling values.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <param name="loggerFactory"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestBodyStringEqualsEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodyStringEqualsEvaluator evaluator = new(
@@ -95,6 +149,13 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for request body containing values.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <param name="loggerFactory"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestBodyStringContainsEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodyStringContainsEvaluator evaluator = new(
@@ -106,6 +167,13 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for request body starting with values.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <param name="loggerFactory"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestBodyStringStartsWithEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodyStringStartsWithEvaluator evaluator = new(
@@ -117,6 +185,13 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for request body ending with values.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <param name="loggerFactory"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestBodyStringEndsWithEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodyStringEndsWithEvaluator evaluator = new(
@@ -128,6 +203,13 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for request body regular expression patterns.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <param name="loggerFactory"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestBodyRegexEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition, ILoggerFactory loggerFactory)
     {
         RequestBodyRegexEvaluator evaluator = new(
@@ -139,6 +221,12 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for request header values.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestHeaderStringEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
     {
         RequestHeaderStringEvaluator evaluator = new(
@@ -151,6 +239,12 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for request header regular expression patterns.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestHeaderRegexEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
     {
         RequestHeaderRegexEvaluator evaluator = new(
@@ -162,6 +256,12 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for request method values.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestMethodStringEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
     {
         RequestMethodStringEvaluator evaluator = new(
@@ -173,6 +273,12 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for request method regular expression patterns.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestMethodRegexEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
     {
         RequestMethodRegexEvaluator evaluator = new(
@@ -183,6 +289,12 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for URL path values.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestPathStringEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
     {
         RequestPathStringEvaluator evaluator = new(
@@ -194,6 +306,12 @@ public static class StringConditionBuilderContextExtensions
         return context;
     }
 
+    /// <summary>
+    /// Adds an evaluator for URL path regular expression patterns.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="matchCondition"></param>
+    /// <returns></returns>
     public static ConditionBuilderContext AddRequestPathRegexEvaluator(this ConditionBuilderContext context, StringMatchCondition matchCondition)
     {
         RequestPathRegexEvaluator evaluator = new(

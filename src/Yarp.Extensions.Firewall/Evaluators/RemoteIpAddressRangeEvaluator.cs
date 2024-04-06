@@ -3,16 +3,24 @@ using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates the remote client address from the HTTP request against IP address ranges.
+/// </summary>
 public class RemoteIpAddressRangeEvaluator : ConditionEvaluator
 {
+    /// <inheritdoc/>
     public RemoteIpAddressRangeEvaluator(IReadOnlyList<IPNetwork> ipAddressRanges, bool negate)
         : base(negate)
     {
         IpAddressRanges = ipAddressRanges;
     }
 
+    /// <summary>
+    /// IP address ranges to match against.
+    /// </summary>
     public IReadOnlyList<IPNetwork> IpAddressRanges { get; }
 
+    /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);

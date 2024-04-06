@@ -2,13 +2,16 @@ using MaxMind.GeoIP2;
 
 namespace Yarp.Extensions.Firewall.GeoIP;
 
+/// <summary>
+/// Manages lifetime of a given MaxMind GeoIP2 database reader.
+/// </summary>
 /// <remarks>
 /// The underlying GeoIP2.DatabaseReader should be reused, as creation of it is expensive.
 /// However, we need to ensure that it isn't disposed should the database path be changed while an Evaluator is using it.
 /// To this end, IDisposable is implemented on this class as a means of tracking possible references.
 /// Get() increments the reference counter, and Dispose() decrements it.
 /// Only the actual owner (currently, the GeoIPDatabaseProviderFactory) can actually cause the DatabaseReader to be disposed,
-/// which is done by trigging a cancellation of the provided CancellationToken
+/// which is done by trigging a cancellation of the provided CancellationToken.
 /// </remarks>
 public sealed class GeoIPDatabaseProvider : IDisposable
 {
@@ -25,6 +28,11 @@ public sealed class GeoIPDatabaseProvider : IDisposable
         _disposeTokenRegistration = _disposeToken.Register(DisposeIfCancllationRequested);
     }
 
+    /// <summary>
+    /// Returns the current GeoIP2 database reader.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ObjectDisposedException"></exception>
     public IGeoIP2DatabaseReader Get()
     {
         if (_dbReaderDisposed)
@@ -53,12 +61,13 @@ public sealed class GeoIPDatabaseProvider : IDisposable
         }
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
         if (!_dbReaderDisposed)
         {
             Interlocked.Decrement(ref _references);
-            DisposeIfCancllationRequested(); 
+            DisposeIfCancllationRequested();
         }
     }
 }

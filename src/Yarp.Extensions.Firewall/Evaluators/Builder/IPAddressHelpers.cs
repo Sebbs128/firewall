@@ -3,10 +3,18 @@ using System.Net.Sockets;
 
 namespace Yarp.Extensions.Firewall.Evaluators.Builder;
 
+/// <summary>
+/// Helper methods for validation and building IP address conditions.
+/// </summary>
 public static class IPAddressHelpers
 {
     private const StringSplitOptions SplitOptions = StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries;
 
+    /// <summary>
+    /// Checks if the given <see cref="string"/> is a comma-separated list of CIDR ranges.
+    /// </summary>
+    /// <param name="context">The context to add any generated errors to.</param>
+    /// <param name="rawIpAddressRanges"></param>
     public static void TryParseCidrRanges(EvaluatorValidationContext context, string rawIpAddressRanges)
     {
         var cidrStrings = rawIpAddressRanges.Split(',', SplitOptions);
@@ -45,6 +53,18 @@ public static class IPAddressHelpers
         }
     }
 
+    /// <summary>
+    /// Converts a comma-separated list of CIDR <see cref="string"/>s to a collection of <see cref="IPNetwork"/>s.
+    /// </summary>
+    /// <remarks>
+    /// The exact type of IPNetwork differs depending on the version of .NET:
+    /// On .NET 8 and above, IPNetwork is a System.Net.IPNetwork (which was introduced in .NET 8).
+    /// On .NET 6 and 7, IPNetwork is a Microsoft.AspNetCore.HttpOverrides.IPNetwork.
+    /// System.Net.IPNetwork has a Parse() method lacking in MS.AspNetCore..IPNetwork, and also has additional validity checks on the given mask and base address.
+    /// </remarks>
+    /// <param name="rawIpAddressRanges">A comma-separated list of CIDR <see cref="string"/>s</param>
+    /// <returns>A collection of <see cref="IPNetwork"/>s.</returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public static IReadOnlyList<IPNetwork> ParseCidrRanges(string rawIpAddressRanges)
     {
         var ipAddressRanges = new List<IPNetwork>();
@@ -95,6 +115,11 @@ public static class IPAddressHelpers
         return ipAddressRanges;
     }
 
+    /// <summary>
+    /// Checks if the given <see cref="string"/> is a comma-separated list of IP addresses.
+    /// </summary>
+    /// <param name="context">The context to add any generated errors to.</param>
+    /// <param name="rawIpAddresses"></param>
     public static void TryParseIpAddresses(EvaluatorValidationContext context, string rawIpAddresses)
     {
         var ipAddressStrings = rawIpAddresses.Split(',', SplitOptions);
@@ -110,13 +135,17 @@ public static class IPAddressHelpers
             {
                 context.Errors.Add(new InvalidOperationException($"The value does not contain a valid IP address: {ipAddressString}"));
             }
-            else if (ipAddress.AddressFamily != AddressFamily.InterNetwork && ipAddress.AddressFamily != AddressFamily.InterNetworkV6)
+            else if (ipAddress.AddressFamily is not AddressFamily.InterNetwork and not AddressFamily.InterNetworkV6)
             {
                 context.Errors.Add(new InvalidOperationException($"The value does not contain a valid IPv4 or IPv6 address: {ipAddressString}"));
             }
         }
     }
 
+    /// <summary>
+    /// Converts a comma-separated list of IP address <see cref="string"/>s to a collection of System.Net.<see cref="IPAddress"/>es.
+    /// </summary>
+    /// <exception cref="InvalidOperationException"></exception>
     public static IReadOnlyList<IPAddress> ParseIpAddresses(string rawIpAddresses)
     {
         var ipAddresses = new List<IPAddress>();
@@ -134,7 +163,7 @@ public static class IPAddressHelpers
             {
                 throw new InvalidOperationException($"The value does not contain a valid IP address: {ipAddressString}");
             }
-            if (ipAddress.AddressFamily != AddressFamily.InterNetwork && ipAddress.AddressFamily != AddressFamily.InterNetworkV6)
+            if (ipAddress.AddressFamily is not AddressFamily.InterNetwork and not AddressFamily.InterNetworkV6)
             {
                 throw new InvalidOperationException($"The value does not contain a valid IPv4 or IPv6 address: {ipAddressString}");
             }

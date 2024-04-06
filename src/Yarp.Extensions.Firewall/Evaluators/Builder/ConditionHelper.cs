@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Yarp.Extensions.Firewall.Configuration;
 
 namespace Yarp.Extensions.Firewall.Evaluators.Builder;
 
-public static class ConditionHelper
+internal static class ConditionHelper
 {
     public static void TryCheckTransforms(EvaluatorValidationContext context, IReadOnlyList<Transform> transforms)
     {

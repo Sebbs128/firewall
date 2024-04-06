@@ -10,10 +10,14 @@ using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates the request body against a regular expression.
+/// </summary>
 public class RequestBodyRegexEvaluator : RegexConditionEvaluator
 {
     private readonly ILogger<RequestBodyRegexEvaluator> _logger;
 
+    /// <inheritdoc/>
     public RequestBodyRegexEvaluator(IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyRegexEvaluator> logger)
         : base(matchPatterns, negate)
     {
@@ -21,10 +25,17 @@ public class RequestBodyRegexEvaluator : RegexConditionEvaluator
         _logger = logger;
     }
 
+    /// <summary>
+    /// Limits time taken to evaluate a regular expression.
+    /// </summary>
     protected override TimeSpan RegexMatchTimeout { get; } = TimeSpan.FromSeconds(10);
 
+    /// <summary>
+    /// Transformations to apply before evaluating.
+    /// </summary>
     public IReadOnlyList<Transform> Transforms { get; }
 
+    /// <inheritdoc/>
     public override async ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);

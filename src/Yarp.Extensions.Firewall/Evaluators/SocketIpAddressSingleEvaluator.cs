@@ -1,19 +1,27 @@
-﻿using System.Net;
+using System.Net;
 
 using Yarp.Extensions.Firewall.Model;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates the socket address from the HTTP request against individual IP addresses.
+/// </summary>
 public sealed class SocketIpAddressSingleEvaluator : ConditionEvaluator
 {
+    /// <inheritdoc/>
     public SocketIpAddressSingleEvaluator(IReadOnlyList<IPAddress> ipAddresses, bool negate)
         : base(negate)
     {
         IpAddresses = ipAddresses;
     }
 
+    /// <summary>
+    /// IP addresses to match against.
+    /// </summary>
     public IReadOnlyList<IPAddress> IpAddresses { get; }
 
+    /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);

@@ -9,11 +9,15 @@ using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates if the request body contains any given strings.
+/// </summary>
 public class RequestBodyStringContainsEvaluator : RequestBodyConditionEvaluator<StringOperator>
 {
     private readonly int _maxReadLength;
     private readonly int _minWindowSize;
 
+    /// <inheritdoc/>
     public RequestBodyStringContainsEvaluator(IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyStringContainsEvaluator> logger)
         : base(StringOperator.Contains, negate, transforms, logger)
     {
@@ -23,6 +27,9 @@ public class RequestBodyStringContainsEvaluator : RequestBodyConditionEvaluator<
         _minWindowSize = (transforms.Contains(Transform.UrlDecode) ? 6 : 2) * _maxReadLength;
     }
 
+    /// <summary>
+    /// Values to match against.
+    /// </summary>
     public IReadOnlyList<string> MatchValues { get; }
 
     internal override async Task<bool> EvaluateInternal(EvaluationContext context, CancellationToken cancellationToken)

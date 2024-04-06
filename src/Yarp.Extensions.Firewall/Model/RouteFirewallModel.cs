@@ -28,9 +28,13 @@ public sealed class RouteFirewallModel
     }
 
     /// <summary>
-    /// The <see cref="RouteModel"/> instance associated with this route.
+    /// The <see cref="RouteState"/> instance associated with this route.
     /// </summary>
     public RouteState? Route { get; }
+
+    /// <summary>
+    /// The <see cref="RouteEvaluator"/> instance associated with this route.
+    /// </summary>
     public RouteEvaluator Evaluator { get; }
 
     /// <summary>
@@ -40,11 +44,6 @@ public sealed class RouteFirewallModel
 
     internal bool HasConfigChanged(RouteFirewallConfig newConfig, RouteState? route, int? firewallRevision)
     {
-        if (Route == route && firewallRevision == route?.Revision)
-        {
-            return !Config.Equals(newConfig);
-        }
-
-        return true;
+        return Route != route || firewallRevision != (route?.Revision) || !Config.Equals(newConfig);
     }
 }

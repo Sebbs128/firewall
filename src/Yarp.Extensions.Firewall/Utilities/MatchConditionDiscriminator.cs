@@ -4,8 +4,21 @@ using System.Text.Json.Serialization;
 using Yarp.Extensions.Firewall.Configuration;
 
 namespace Yarp.Extensions.Firewall.Utilities;
+
+/// <summary>
+/// <see cref="JsonConverter"/> for serializing and deserializing implementations of <see cref="MatchCondition"/>
+/// based on the <see cref="MatchCondition.MatchType"/> value.
+/// </summary>
 public class MatchConditionDiscriminator : JsonConverter<MatchCondition>
 {
+    /// <summary>
+    /// Reads and converts the JSON to the <see cref="MatchCondition"/> implementation.
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <param name="typeToConvert"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    /// <exception cref="JsonException"></exception>
     public override MatchCondition? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var readerClone = reader;
@@ -38,6 +51,13 @@ public class MatchConditionDiscriminator : JsonConverter<MatchCondition>
 
     private static readonly MatchVariable[] _matchVariablesWithSelector = new[] { MatchVariable.Cookie, MatchVariable.RequestHeader, MatchVariable.PostArgs, MatchVariable.QueryParam };
 
+    /// <summary>
+    /// Writes a specified <see cref="MatchCondition"/> as JSON.
+    /// </summary>
+    /// <param name="writer"></param>
+    /// <param name="value"></param>
+    /// <param name="options"></param>
+    /// <exception cref="JsonException"></exception>
     public override void Write(Utf8JsonWriter writer, MatchCondition value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
