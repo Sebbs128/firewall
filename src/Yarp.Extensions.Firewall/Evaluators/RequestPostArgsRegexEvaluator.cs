@@ -42,7 +42,7 @@ public class RequestPostArgsRegexEvaluator : RegexConditionEvaluator
         if (HttpMethods.IsPost(context.HttpContext.Request.Method) &&
             string.Equals(contentType, "application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase))
         {
-            var formCollection = await context.HttpContext.Request.ReadFormAsync();
+            var formCollection = await context.HttpContext.Request.ReadFormAsync(cancellationToken);
             if (formCollection is not null)
             {
                 if (formCollection.TryGetValue(Selector, out var formValues))

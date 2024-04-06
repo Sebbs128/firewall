@@ -6,7 +6,7 @@ namespace Yarp.Extensions.Firewall.Management;
 internal class FirewallConfigManagerProxyChangeListener : IConfigChangeListener
 {
     private readonly IServiceProvider _serviceProvider;
-    private FirewallConfigManager _firewallConfigManager;
+    private FirewallConfigManager? _firewallConfigManager;
     private bool _firewallConfigInitialised;
 
     public FirewallConfigManagerProxyChangeListener(IServiceProvider serviceProvider)
