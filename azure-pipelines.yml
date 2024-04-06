@@ -1,6 +1,6 @@
 variables:
   - name: _BuildConfig
-    values: Release
+    value: Release
 
 trigger:
   batch: true
