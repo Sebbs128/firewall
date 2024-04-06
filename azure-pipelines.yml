@@ -43,8 +43,8 @@ stages:
       displayName: 'dotnet test $(_BuildConfig)'
       inputs:
         command: 'test'
-        projects: '**/test/*.csproj'
-        arguments: '--configuration $(_BuildConfig)'
+        projects: '**/test/**/*.csproj'
+        configuration: '$(_BuildConfig)'
     - task: DotNetCoreCLI@2
       displayName: 'dotnet pack $(_BuildConfig)'
       inputs:
@@ -84,9 +84,10 @@ stages:
         command: 'build'
         arguments: --configuration $(_BuildConfig)
     - task: DotNetCoreCLI@2
+      displayName: 'dotnet test $(_BuildConfig)'
       inputs:
         command: 'test'
-        projects: '**/test/*.csproj'
+        projects: '**/test/**/*.csproj'
         arguments: '--configuration $(_BuildConfig)'
 
   - job: macOS
@@ -111,7 +112,8 @@ stages:
         command: 'build'
         arguments: --configuration $(_BuildConfig)
     - task: DotNetCoreCLI@2
+      displayName: 'dotnet test $(_BuildConfig)'
       inputs:
         command: 'test'
-        projects: '**/test/*.csproj'
+        projects: '**/test/**/*.csproj'
         arguments: '--configuration $(_BuildConfig)'
