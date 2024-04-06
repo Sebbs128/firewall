@@ -54,6 +54,12 @@ stages:
         includesymbols: true
         packDirectory: '$(Build.ArtifactStagingDirectory)/artifacts/packages'
         zipAfterPublish: true
+    - task: CopyFiles@2
+      displayName: Gather packages for publish to artifacts
+      inputs:
+        SourceFolder: '$(Build.ArtifactStagingDirectory)/artifacts/packages'
+        Contents: '**'
+        TargetFolder: 
     - task: PublishBuildArtifacts@1
       displayName: Upload package artifacts
       condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
