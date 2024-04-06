@@ -87,6 +87,7 @@ stages:
         arguments: '--configuration $(_BuildConfig)'
 
   - job: macOS
+    condition: eq(false, true) # disable macOS tests. See https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#notes-on-choosing-hosted-macos
     pool:
       vmImage: 'macOS-latest'
     steps:
