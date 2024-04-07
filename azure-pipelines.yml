@@ -34,7 +34,7 @@ stages:
       path: firewall
     - checkout: TestAssets
       clean: true
-      path: firewall/testassets
+      path: testassetsRepo
 
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
@@ -50,6 +50,12 @@ stages:
       inputs:
         command: 'build'
         arguments: --configuration $(_BuildConfig)
+    - task: CopyFiles@2
+      displayName: 'copy testassets'
+      inputs:
+        SourceFolder: testassetsRepo/testassets
+        Contents: '**'
+        TargetFolder: firewall/testassets
     - task: DotNetCoreCLI@2
       displayName: 'dotnet test $(_BuildConfig)'
       inputs:
@@ -83,7 +89,7 @@ stages:
       path: firewall
     - checkout: TestAssets
       clean: true
-      path: firewall/testassets
+      path: testassetsRepo
 
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
@@ -99,6 +105,12 @@ stages:
       inputs:
         command: 'build'
         arguments: --configuration $(_BuildConfig)
+    - task: CopyFiles@2
+      displayName: 'copy testassets'
+      inputs:
+        SourceFolder: testassetsRepo/testassets
+        Contents: '**'
+        TargetFolder: firewall/testassets
     - task: DotNetCoreCLI@2
       displayName: 'dotnet test $(_BuildConfig)'
       inputs:
@@ -116,7 +128,7 @@ stages:
       path: firewall
     - checkout: TestAssets
       clean: true
-      path: firewall/testassets
+      path: testassetsRepo
 
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
@@ -132,6 +144,12 @@ stages:
       inputs:
         command: 'build'
         arguments: --configuration $(_BuildConfig)
+    - task: CopyFiles@2
+      displayName: 'copy testassets'
+      inputs:
+        SourceFolder: testassetsRepo/testassets
+        Contents: '**'
+        TargetFolder: firewall/testassets
     - task: DotNetCoreCLI@2
       displayName: 'dotnet test $(_BuildConfig)'
       inputs:
