@@ -39,6 +39,7 @@ stages:
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
       inputs:
+        packageType: 'sdk'
         useGlobalJson: true
         performMultiLevelLookup: true
     - task: DotNetCoreCLI@2
@@ -94,6 +95,7 @@ stages:
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
       inputs:
+        packageType: 'sdk'
         useGlobalJson: true
         performMultiLevelLookup: true
     - task: DotNetCoreCLI@2
@@ -133,6 +135,7 @@ stages:
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
       inputs:
+        packageType: 'sdk'
         useGlobalJson: true
         performMultiLevelLookup: true
     - task: DotNetCoreCLI@2

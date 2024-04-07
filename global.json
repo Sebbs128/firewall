@@ -1,6 +1,6 @@
 {
   "sdk": {
-    "version": "8.0.100",
+    "version": "8.0.203",
     "rollForward": "latestFeature"
   },
   "tools": {
@@ -9,17 +9,13 @@
       "dotnet": [
         "6.0.25",
         "7.0.14",
-        "8.0.0"
+        "8.0.3"
       ],
       "aspnetcore": [
         "6.0.25",
         "7.0.14",
-        "8.0.0"
+        "8.0.3"
       ]
     }
-  },
-  "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "8.0.0",
-    "Microsoft.DotNet.Helix.Sdk": "8.0.0"
   }
 }
