@@ -25,6 +25,11 @@ stages:
     steps:
     - checkout: self
       clean: true
+      path: firewall
+    - checkout: git://sebbs/Yarp.Extensions.Firewall.TestAssets
+      clean: true
+      path: firewall/testassets
+
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
       inputs:
@@ -69,6 +74,11 @@ stages:
     steps:
     - checkout: self
       clean: true
+      path: firewall
+    - checkout: git://sebbs/Yarp.Extensions.Firewall.TestAssets
+      clean: true
+      path: firewall/testassets
+
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
       inputs:
@@ -97,6 +107,11 @@ stages:
     steps:
     - checkout: self
       clean: true
+      path: firewall
+    - checkout: git://sebbs/Yarp.Extensions.Firewall.TestAssets
+      clean: true
+      path: firewall/testassets
+
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
       inputs:
