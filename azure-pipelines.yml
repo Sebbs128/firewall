@@ -3,6 +3,7 @@ resources:
   - repository: TestAssets
     type: git
     name: Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
+    endpoint: YarpFirewallTestAssetsServiceConnection
 
 variables:
   - name: _BuildConfig
