@@ -25,16 +25,16 @@ stages:
     steps:
     - checkout: self
       clean: true
-      path: firewall
+      path: s
     - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
       clean: true
       path: testassetsRepo
     - task: CopyFiles@2
       displayName: 'copy testassets'
       inputs:
-        SourceFolder: testassetsRepo/testassets
+        SourceFolder: '$(Agent.BuildDirectory)/testassetsRepo/testassets'
         Contents: '**'
-        TargetFolder: '$(Build.Repository.LocalPath)/testassets'
+        TargetFolder: 'testassets'
 
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
@@ -45,18 +45,16 @@ stages:
       displayName: 'dotnet restore $(_BuildConfig)'
       inputs:
         command: 'restore'
-        projects: '$(Build.Repository.LocalPath)/**/*.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'dotnet build $(_BuildConfig)'
       inputs:
         command: 'build'
-        projects: '$(Build.Repository.LocalPath)/**/*.csproj'
         arguments: --configuration $(_BuildConfig)
     - task: DotNetCoreCLI@2
       displayName: 'dotnet test $(_BuildConfig)'
       inputs:
         command: 'test'
-        projects: '$(Build.Repository.LocalPath)/test/**/*.csproj'
+        projects: test/**/*.csproj
         configuration: '$(_BuildConfig)'
     - task: DotNetCoreCLI@2
       displayName: 'dotnet pack $(_BuildConfig)'
@@ -82,16 +80,16 @@ stages:
     steps:
     - checkout: self
       clean: true
-      path: firewall
+      path: s/
     - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
       clean: true
       path: testassetsRepo
     - task: CopyFiles@2
       displayName: 'copy testassets'
       inputs:
-        SourceFolder: testassetsRepo/testassets
+        SourceFolder: '$(Agent.BuildDirectory)/testassetsRepo/testassets'
         Contents: '**'
-        TargetFolder: '$(Build.Repository.LocalPath)/testassets'
+        TargetFolder: 'testassets'
 
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
@@ -102,18 +100,16 @@ stages:
       displayName: 'dotnet restore $(_BuildConfig)'
       inputs:
         command: 'restore'
-        projects: '$(Build.Repository.LocalPath)/**/*.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'dotnet build $(_BuildConfig)'
       inputs:
         command: 'build'
-        projects: '$(Build.Repository.LocalPath)/**/*.csproj'
         arguments: --configuration $(_BuildConfig)
     - task: DotNetCoreCLI@2
       displayName: 'dotnet test $(_BuildConfig)'
       inputs:
         command: 'test'
-        projects: '$(Build.Repository.LocalPath)/test/**/*.csproj'
+        projects: test/**/*.csproj
         arguments: '--configuration $(_BuildConfig)'
 
   - job: macOS
@@ -123,16 +119,16 @@ stages:
     steps:
     - checkout: self
       clean: true
-      path: firewall
+      path: s/
     - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
       clean: true
       path: testassetsRepo
     - task: CopyFiles@2
       displayName: 'copy testassets'
       inputs:
-        SourceFolder: testassetsRepo/testassets
+        SourceFolder: '$(Agent.BuildDirectory)/testassetsRepo/testassets'
         Contents: '**'
-        TargetFolder: '$(Build.Repository.LocalPath)/testassets'
+        TargetFolder: 'testassets'
 
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
@@ -143,16 +139,14 @@ stages:
       displayName: 'dotnet restore $(_BuildConfig)'
       inputs:
         command: 'restore'
-        projects: '$(Build.Repository.LocalPath)/**/*.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'dotnet build $(_BuildConfig)'
       inputs:
         command: 'build'
-        projects: '$(Build.Repository.LocalPath)/**/*.csproj'
         arguments: --configuration $(_BuildConfig)
     - task: DotNetCoreCLI@2
       displayName: 'dotnet test $(_BuildConfig)'
       inputs:
         command: 'test'
-        projects: 'firewall/test/**/*.csproj'
+        projects: test/**/*.csproj
         arguments: '--configuration $(_BuildConfig)'
