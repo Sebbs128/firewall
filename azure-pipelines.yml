@@ -39,7 +39,7 @@ stages:
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
       inputs:
-        version: 8.x
+        useGlobalJson: true
         performMultiLevelLookup: true
     - task: DotNetCoreCLI@2
       displayName: 'dotnet restore $(_BuildConfig)'
@@ -94,7 +94,7 @@ stages:
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
       inputs:
-        version: 8.x
+        useGlobalJson: true
         performMultiLevelLookup: true
     - task: DotNetCoreCLI@2
       displayName: 'dotnet restore $(_BuildConfig)'
@@ -133,7 +133,7 @@ stages:
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
       inputs:
-        version: 8.x
+        useGlobalJson: true
         performMultiLevelLookup: true
     - task: DotNetCoreCLI@2
       displayName: 'dotnet restore $(_BuildConfig)'
