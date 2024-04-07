@@ -1,3 +1,9 @@
+resources:
+  repositories:
+  - repository: TestAssets
+    type: git
+    name: Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
+
 variables:
   - name: _BuildConfig
     value: Release
@@ -26,7 +32,7 @@ stages:
     - checkout: self
       clean: true
       path: firewall
-    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
+    - checkout: TestAssets
       clean: true
       path: firewall/testassets
 
@@ -75,7 +81,7 @@ stages:
     - checkout: self
       clean: true
       path: firewall
-    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
+    - checkout: TestAssets
       clean: true
       path: firewall/testassets
 
@@ -108,7 +114,7 @@ stages:
     - checkout: self
       clean: true
       path: firewall
-    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
+    - checkout: TestAssets
       clean: true
       path: firewall/testassets
 
