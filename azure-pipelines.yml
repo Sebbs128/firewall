@@ -26,6 +26,15 @@ stages:
     - checkout: self
       clean: true
       path: firewall
+    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
+      clean: true
+      path: testassetsRepo
+    - task: CopyFiles@2
+      displayName: 'copy testassets'
+      inputs:
+        SourceFolder: testassetsRepo/testassets
+        Contents: '**'
+        TargetFolder: '$(Build.Repository.LocalPath)/testassets'
 
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
@@ -36,28 +45,18 @@ stages:
       displayName: 'dotnet restore $(_BuildConfig)'
       inputs:
         command: 'restore'
-        projects: firewall/**/*.csproj
+        projects: '$(Build.Repository.LocalPath)/**/*.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'dotnet build $(_BuildConfig)'
       inputs:
         command: 'build'
-        projects: firewall/**/*.csproj
+        projects: '$(Build.Repository.LocalPath)/**/*.csproj'
         arguments: --configuration $(_BuildConfig)
-        
-    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
-      clean: true
-      path: testassetsRepo
-    - task: CopyFiles@2
-      displayName: 'copy testassets'
-      inputs:
-        SourceFolder: testassetsRepo/testassets
-        Contents: '**'
-        TargetFolder: firewall/testassets
     - task: DotNetCoreCLI@2
       displayName: 'dotnet test $(_BuildConfig)'
       inputs:
         command: 'test'
-        projects: 'firewall/test/**/*.csproj'
+        projects: '$(Build.Repository.LocalPath)/test/**/*.csproj'
         configuration: '$(_BuildConfig)'
     - task: DotNetCoreCLI@2
       displayName: 'dotnet pack $(_BuildConfig)'
@@ -84,6 +83,15 @@ stages:
     - checkout: self
       clean: true
       path: firewall
+    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
+      clean: true
+      path: testassetsRepo
+    - task: CopyFiles@2
+      displayName: 'copy testassets'
+      inputs:
+        SourceFolder: testassetsRepo/testassets
+        Contents: '**'
+        TargetFolder: '$(Build.Repository.LocalPath)/testassets'
 
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
@@ -94,27 +102,18 @@ stages:
       displayName: 'dotnet restore $(_BuildConfig)'
       inputs:
         command: 'restore'
-        projects: firewall/**/*.csproj
+        projects: '$(Build.Repository.LocalPath)/**/*.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'dotnet build $(_BuildConfig)'
       inputs:
         command: 'build'
-        projects: firewall/**/*.csproj
+        projects: '$(Build.Repository.LocalPath)/**/*.csproj'
         arguments: --configuration $(_BuildConfig)
-    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
-      clean: true
-      path: testassetsRepo
-    - task: CopyFiles@2
-      displayName: 'copy testassets'
-      inputs:
-        SourceFolder: testassetsRepo/testassets
-        Contents: '**'
-        TargetFolder: firewall/testassets
     - task: DotNetCoreCLI@2
       displayName: 'dotnet test $(_BuildConfig)'
       inputs:
         command: 'test'
-        projects: 'firewall/test/**/*.csproj'
+        projects: '$(Build.Repository.LocalPath)/test/**/*.csproj'
         arguments: '--configuration $(_BuildConfig)'
 
   - job: macOS
@@ -125,6 +124,15 @@ stages:
     - checkout: self
       clean: true
       path: firewall
+    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
+      clean: true
+      path: testassetsRepo
+    - task: CopyFiles@2
+      displayName: 'copy testassets'
+      inputs:
+        SourceFolder: testassetsRepo/testassets
+        Contents: '**'
+        TargetFolder: '$(Build.Repository.LocalPath)/testassets'
 
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
@@ -135,22 +143,13 @@ stages:
       displayName: 'dotnet restore $(_BuildConfig)'
       inputs:
         command: 'restore'
-        projects: firewall/**/*.csproj
+        projects: '$(Build.Repository.LocalPath)/**/*.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'dotnet build $(_BuildConfig)'
       inputs:
         command: 'build'
-        projects: firewall/**/*.csproj
+        projects: '$(Build.Repository.LocalPath)/**/*.csproj'
         arguments: --configuration $(_BuildConfig)
-    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
-      clean: true
-      path: testassetsRepo
-    - task: CopyFiles@2
-      displayName: 'copy testassets'
-      inputs:
-        SourceFolder: testassetsRepo/testassets
-        Contents: '**'
-        TargetFolder: firewall/testassets
     - task: DotNetCoreCLI@2
       displayName: 'dotnet test $(_BuildConfig)'
       inputs:
