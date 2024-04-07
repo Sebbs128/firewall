@@ -35,7 +35,17 @@ stages:
         SourceFolder: '$(Agent.BuildDirectory)/testassetsRepo/testassets'
         Contents: '**'
         TargetFolder: 'testassets'
-
+        
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        version: 6.x
+        performMultiLevelLookup: true
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        version: 7.x
+        performMultiLevelLookup: true
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
       inputs:
@@ -91,7 +101,17 @@ stages:
         SourceFolder: '$(Agent.BuildDirectory)/testassetsRepo/testassets'
         Contents: '**'
         TargetFolder: 'testassets'
-
+        
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        version: 6.x
+        performMultiLevelLookup: true
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        version: 7.x
+        performMultiLevelLookup: true
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
       inputs:
@@ -131,7 +151,17 @@ stages:
         SourceFolder: '$(Agent.BuildDirectory)/testassetsRepo/testassets'
         Contents: '**'
         TargetFolder: 'testassets'
-
+        
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        version: 6.x
+        performMultiLevelLookup: true
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        version: 7.x
+        performMultiLevelLookup: true
     - task: UseDotNet@2
       displayName: 'Install .NET SDK'
       inputs:
