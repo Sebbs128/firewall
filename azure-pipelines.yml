@@ -75,7 +75,7 @@ stages:
     - checkout: self
       clean: true
       path: firewall
-    - checkout: git://sebbs/Yarp.Extensions.Firewall.TestAssets
+    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
       clean: true
       path: firewall/testassets
 
@@ -108,7 +108,7 @@ stages:
     - checkout: self
       clean: true
       path: firewall
-    - checkout: git://sebbs/Yarp.Extensions.Firewall.TestAssets
+    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
       clean: true
       path: firewall/testassets
 
