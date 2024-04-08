@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
+		NuGet.config = NuGet.config
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yarp.Extensions.Firewall.Telemetry.Consumption", "src\Yarp.Extensions.Firewall.Telemetry.Consumption\Yarp.Extensions.Firewall.Telemetry.Consumption.csproj", "{EF42B4C8-7F63-4392-8E61-8D493FF69B79}"
@@ -28,6 +29,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GeoIP2 Databases", "GeoIP2 
 		testassets\GeoIP2 Databases\GeoLite2-City.mmdb = testassets\GeoIP2 Databases\GeoLite2-City.mmdb
 		testassets\GeoIP2 Databases\GeoLite2-Country.mmdb = testassets\GeoIP2 Databases\GeoLite2-Country.mmdb
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{79AAA909-9BC0-438B-BFC8-61CCAA13451B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicFirewallSample", "samples\BasicFirewallSample\BasicFirewallSample.csproj", "{29D30885-BBF5-4611-865D-A72F1CA554C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +56,10 @@ Global
 		{7BF0DA4A-1E92-4348-9786-6162CE8DF167}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BF0DA4A-1E92-4348-9786-6162CE8DF167}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BF0DA4A-1E92-4348-9786-6162CE8DF167}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29D30885-BBF5-4611-865D-A72F1CA554C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29D30885-BBF5-4611-865D-A72F1CA554C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29D30885-BBF5-4611-865D-A72F1CA554C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29D30885-BBF5-4611-865D-A72F1CA554C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,6 +70,7 @@ Global
 		{EF42B4C8-7F63-4392-8E61-8D493FF69B79} = {DACE61A2-5A67-4169-946A-67FC99579AEB}
 		{7BF0DA4A-1E92-4348-9786-6162CE8DF167} = {E6F79643-8A7F-4BC0-9B3E-9C31BE12891A}
 		{4312EBA2-B409-4E15-B783-9A622185A70E} = {8BC4CF27-9B38-4E81-9E33-6C4FC3295727}
+		{29D30885-BBF5-4611-865D-A72F1CA554C5} = {79AAA909-9BC0-438B-BFC8-61CCAA13451B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {704E6595-FCD2-4B64-A2E0-EEB78C260656}
