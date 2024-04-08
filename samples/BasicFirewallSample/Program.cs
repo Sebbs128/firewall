@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -18,11 +16,6 @@ var app = builder.Build();
 // Register the reverse proxy routes
 app.MapReverseProxy(config =>
 {
-    config.Use(async (context, next) =>
-    {
-        Debug.WriteLine("Reached anonymous middleware");
-        await next();
-    });
     // Register the firewall middleware
     config.UseFirewall();
 });
