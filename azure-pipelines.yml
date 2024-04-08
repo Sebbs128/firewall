@@ -76,10 +76,16 @@ stages:
         includesymbols: true
         packDirectory: '$(Build.ArtifactStagingDirectory)/artifacts/packages/'
         zipAfterPublish: true
+    - task: CopyFiles@2
+      displayName: Copy test results
+      inputs:
+        SourceFolder: $(Agent.TempDirectory)
+        Contents: '*.trx'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
     - task: PublishBuildArtifacts@1
       displayName: Upload test results
       inputs:
-        PathtoPublish: $(Agent.TempDirectory)
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
         artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
         ArtifactType: Container
         parallel: true
@@ -140,10 +146,16 @@ stages:
         command: 'test'
         projects: test/**/*.csproj
         arguments: '--configuration $(_BuildConfig)'
+    - task: CopyFiles@2
+      displayName: Copy test results
+      inputs:
+        SourceFolder: $(Agent.TempDirectory)
+        Contents: '*.trx'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
     - task: PublishBuildArtifacts@1
       displayName: Upload test results
       inputs:
-        PathtoPublish: $(Agent.TempDirectory)
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
         artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
         ArtifactType: Container
         parallel: true
@@ -197,10 +209,16 @@ stages:
         command: 'test'
         projects: test/**/*.csproj
         arguments: '--configuration $(_BuildConfig)'
+    - task: CopyFiles@2
+      displayName: Copy test results
+      inputs:
+        SourceFolder: $(Agent.TempDirectory)
+        Contents: '*.trx'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
     - task: PublishBuildArtifacts@1
       displayName: Upload test results
       inputs:
-        PathtoPublish: $(Agent.TempDirectory)
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
         artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
         ArtifactType: Container
         parallel: true
