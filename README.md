@@ -136,71 +136,82 @@ Tranformations can be applied to the request values for `Size` and `String` eval
 
 ### Example Configuration
 
-Below is an example of what this configuration looks like ([as used in `ConfigurationConfigProviderTests`](/test/Yarp.Extensions.Firewall.Tests/Configuration/ConfigProvider/ConfigurationConfigProviderTests.cs))
+Below is an example of what this configuration looks like ([as used in `ConfigurationConfigProviderTests`](/test/Yarp.Extensions.Firewall.Tests/Configuration/ConfigProvider/ConfigurationConfigProviderTests.cs)).
+The parent section to `"RouteFirewalls"` must be passed to the `.LoadFromConfig()` extension method.
+For example, place `"RouteFirewalls"` inside the section used for YARP (eg. `"ReverseProxy"`), alongside the `"Routes"` and `"Clusters"`.
 
 ```json
 {
-    "RouteFirewalls": {
-        "routeA": {
-            "Enabled": true,
-            "Mode": "Prevention",
-            "RedirectUri": "https://localhost:10000/blocked",
-            "BlockedStatusCode": "Forbidden",
-            "Rules": {
-                "stringAndSize": {
-                    "Priority": 10,
-                    "Action": "Block",
-                    "Conditions": [
-                        {
-                            "MatchType": "String",
-                            "Operator": "Contains",
-                            "MatchVariable": "QueryParam",
-                            "Selector": "a",
-                            "MatchValues": [ "1" ],
-                            "Transforms": [
-                                "Trim",
-                                "UrlDecode",
-                                "Uppercase"
-                            ]
-                        },
-                        {
-                            "MatchType": "Size",
-                            "Operator": "GreaterThanOrEqual",
-                            "MatchVariable": "Cookie",
-                            "Selector": "b",
-                            "MatchValue": 100
-                        }
-                    ]
-                },
-                "ipAddress1": {
-                    "Priority": 11,
-                    "Action": "Allow",
-                    "Conditions": [
-                        {
-                            "MatchType": "IPAddress",
-                            "IPAddressOrRanges": "2001::abcd",
-                            "MatchVariable": "SocketAddress"
-                        }
-                    ]
-                }
-            }
+    // ...
+    "ReverseProxy": {
+        "Routes": {
+            "routeA": { ... },
+            "routeB": { ... }
         },
-        "routeB": {
-            "Enabled": true,
-            "Mode": "Detection",
-            "RedirectUri": "https://localhost:20000/blocked.html",
-            "BlockedStatusCode": "NotFound",
-            "Rules": {
-                "ipAddress2": {
-                    "Priority": 5,
-                    "Action": "Allow",
+        "Clusters": { ... }
+
+        "RouteFirewalls": {
+            "routeA": {
+                "Enabled": true,
+                "Mode": "Prevention",
+                "RedirectUri": "https://localhost:10000/blocked",
+                "BlockedStatusCode": "Forbidden",
+                "Rules": {
+                    "stringAndSize": {
+                        "Priority": 10,
+                        "Action": "Block",
                         "Conditions": [
-                        {
-                            "MatchType": "IPAddress",
-                            "IPAddressOrRanges": "192.168.0.0/16",
-                            "MatchVariable": "RemoteAddress"
-                        }
-                    ]
+                            {
+                                "MatchType": "String",
+                                "Operator": "Contains",
+                                "MatchVariable": "QueryParam",
+                                "Selector": "a",
+                                "MatchValues": [ "1" ],
+                                "Transforms": [
+                                    "Trim",
+                                    "UrlDecode",
+                                    "Uppercase"
+                                ]
+                            },
+                            {
+                                "MatchType": "Size",
+                                "Operator": "GreaterThanOrEqual",
+                                "MatchVariable": "Cookie",
+                                "Selector": "b",
+                                "MatchValue": 100
+                            }
+                        ]
+                    },
+                    "ipAddress1": {
+                        "Priority": 11,
+                        "Action": "Allow",
+                        "Conditions": [
+                            {
+                                "MatchType": "IPAddress",
+                                "IPAddressOrRanges": "2001::abcd",
+                                "MatchVariable": "SocketAddress"
+                            }
+                        ]
+                    }
+                }
+            },
+            "routeB": {
+                "Enabled": true,
+                "Mode": "Detection",
+                "RedirectUri": "https://localhost:20000/blocked.html",
+                "BlockedStatusCode": "NotFound",
+                "Rules": {
+                    "ipAddress2": {
+                        "Priority": 5,
+                        "Action": "Allow",
+                            "Conditions": [
+                            {
+                                "MatchType": "IPAddress",
+                                "IPAddressOrRanges": "192.168.0.0/16",
+                                "MatchVariable": "RemoteAddress"
+                            }
+                        ]
+                    }
                 }
             }
         }
