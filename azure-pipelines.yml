@@ -78,12 +78,14 @@ stages:
         zipAfterPublish: true
     - task: CopyFiles@2
       displayName: Copy test results
+      condition: succeededOrFailed()
       inputs:
         SourceFolder: $(Agent.TempDirectory)
         Contents: '*.trx'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
     - task: PublishBuildArtifacts@1
       displayName: Upload test results
+      condition: succeededOrFailed()
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
         artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
@@ -148,12 +150,14 @@ stages:
         arguments: '--configuration $(_BuildConfig)'
     - task: CopyFiles@2
       displayName: Copy test results
+      condition: succeededOrFailed()
       inputs:
         SourceFolder: $(Agent.TempDirectory)
         Contents: '*.trx'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
     - task: PublishBuildArtifacts@1
       displayName: Upload test results
+      condition: succeededOrFailed()
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
         artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
@@ -211,12 +215,14 @@ stages:
         arguments: '--configuration $(_BuildConfig)'
     - task: CopyFiles@2
       displayName: Copy test results
+      condition: succeededOrFailed()
       inputs:
         SourceFolder: $(Agent.TempDirectory)
         Contents: '*.trx'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
     - task: PublishBuildArtifacts@1
       displayName: Upload test results
+      condition: succeededOrFailed()
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
         artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
