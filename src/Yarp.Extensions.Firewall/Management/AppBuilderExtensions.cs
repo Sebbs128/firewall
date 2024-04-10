@@ -1,12 +1,16 @@
-using Microsoft.Extensions.DependencyInjection;
-
 using Yarp.Extensions.Firewall;
-using Yarp.Extensions.Firewall.Management;
 
 namespace Microsoft.AspNetCore.Builder;
 
+/// <summary>
+/// Extensions for <see cref="IReverseProxyApplicationBuilder"/>
+/// used to add the Firewall to the ASP.NET Core request pipeline.
+/// </summary>
 public static class AppBuilderExtensions
 {
+    /// <summary>
+    /// Adds Firewall middleware to the Reverse Proxy
+    /// </summary>
     public static IReverseProxyApplicationBuilder UseFirewall(this IReverseProxyApplicationBuilder builder)
     {
         builder.UseMiddleware<CustomRuleMiddleware>();

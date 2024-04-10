@@ -10,23 +10,42 @@ public sealed class InMemoryConfigProvider : IFirewallConfigProvider
     // Marked as volatile so that updates are atomic
     private volatile InMemoryConfig _config;
 
+    /// <summary>
+    /// Creates a new instance.
+    /// </summary>
     public InMemoryConfigProvider(IReadOnlyList<RouteFirewallConfig> rules, string geoIPDatabasePath) : this(rules, geoIPDatabasePath, Guid.NewGuid().ToString())
     {
     }
 
+    /// <summary>
+    /// Creates a new instance, specifying a revision id of the configuration.
+    /// </summary>
+    /// <param name="rules"></param>
+    /// <param name="geoIPDatabasePath"></param>
+    /// <param name="revisionId"></param>
     public InMemoryConfigProvider(IReadOnlyList<RouteFirewallConfig> rules, string geoIPDatabasePath, string revisionId)
     {
         _config = new InMemoryConfig(rules, geoIPDatabasePath, revisionId);
     }
 
+    /// <summary>
+    /// Implementation of the IFirewallConfigProvider.GetConfig method to supply the current snapshot of configuration.
+    /// </summary>
+    /// <returns></returns>
     public IFirewallConfig GetConfig() => _config;
 
+    /// <summary>
+    /// Swaps the config state with a new snapshot of the configuration, then signales that the old one is outdated.
+    /// </summary>
     public void Update(IReadOnlyList<RouteFirewallConfig> routeFirewalls, string geoIPDatabasePath)
     {
         var newConfig = new InMemoryConfig(routeFirewalls, geoIPDatabasePath);
         UpdateInternal(newConfig);
     }
 
+    /// <summary>
+    /// Swaps the config state with a new snapshot of the configuration, then signales that the old one is outdated.
+    /// </summary>
     public void Update(IReadOnlyList<RouteFirewallConfig> routeFirewalls, string geoIPDatabasePath, string revisionId)
     {
         var newConfig = new InMemoryConfig(routeFirewalls, geoIPDatabasePath, revisionId);
@@ -40,7 +59,7 @@ public sealed class InMemoryConfigProvider : IFirewallConfigProvider
     }
 
     /// <summary>
-    /// Implementation of IFirewall config, and is a snapshot of the current config state. Should be immutable
+    /// Implementation of IFirewall config which is a snapshot of the current config state. The data for this class should be immutable.
     /// </summary>
     private class InMemoryConfig : IFirewallConfig
     {

@@ -4,8 +4,12 @@ using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates the length of a given query parameter.
+/// </summary>
 public class RequestQueryParamSizeEvaluator : ConditionEvaluator<NumberOperator>
 {
+    /// <inheritdoc/>
     public RequestQueryParamSizeEvaluator(string selector, NumberOperator @operator, uint matchValue, bool negate, IReadOnlyList<Transform> transforms)
         : base(@operator, negate)
     {
@@ -18,11 +22,22 @@ public class RequestQueryParamSizeEvaluator : ConditionEvaluator<NumberOperator>
             .ToList();
     }
 
+    /// <summary>
+    /// Query parameter name to evaluate.
+    /// </summary>
     public string Selector { get; }
 
+    /// <summary>
+    /// Value to compare against.
+    /// </summary>
     public uint MatchValue { get; }
+
+    /// <summary>
+    /// Transformations to apply before evaluating.
+    /// </summary>
     public IReadOnlyList<Transform> Transforms { get; }
 
+    /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -48,7 +63,8 @@ public class RequestQueryParamSizeEvaluator : ConditionEvaluator<NumberOperator>
                         MatchVariableValue: query!));
                 }
 
-            }        }
+            }
+        }
 
         //return Negate ? !isMatch : isMatch; // this is equivalent to a XOR, which is the ^ bool operator
         return ValueTask.FromResult(Negate ^ isMatch);

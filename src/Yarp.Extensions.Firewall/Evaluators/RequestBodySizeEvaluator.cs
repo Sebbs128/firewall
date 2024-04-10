@@ -9,8 +9,12 @@ using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates the length of the request body.
+/// </summary>
 public class RequestBodySizeEvaluator : RequestBodyConditionEvaluator<NumberOperator>
 {
+    /// <inheritdoc/>
     public RequestBodySizeEvaluator(NumberOperator @operator, uint matchValue, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodySizeEvaluator> logger)
         : base(@operator, negate, RemoveCaseTransforms(transforms), logger)
     {
@@ -38,6 +42,9 @@ public class RequestBodySizeEvaluator : RequestBodyConditionEvaluator<NumberOper
     private readonly bool _resultWhenLimitExceeded;
     private readonly bool _hasUrlDecodeTransform;
 
+    /// <summary>
+    /// Value to compare against.
+    /// </summary>
     public uint MatchValue { get; }
 
     internal override async Task<bool> EvaluateInternal(EvaluationContext context, CancellationToken cancellationToken)

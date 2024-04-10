@@ -5,6 +5,9 @@
     <OutputType>Library</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageId>Sebbs.Yarp.Extensions.Firewall.Telemetry.Consumption</PackageId>
+    <!-- disabled until I'm certain how the Telemetry Consumption is supposed to work -->
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

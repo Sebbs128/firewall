@@ -4,8 +4,12 @@ using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates a given request cookie against string values.
+/// </summary>
 public class RequestCookieStringEvaluator : ConditionEvaluator<StringOperator>
 {
+    /// <inheritdoc/>
     public RequestCookieStringEvaluator(string selector, StringOperator @operator, IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms)
         : base(@operator, negate)
     {
@@ -14,10 +18,22 @@ public class RequestCookieStringEvaluator : ConditionEvaluator<StringOperator>
         Transforms = transforms;
     }
 
+    /// <summary>
+    /// Cookie name to evaluate.
+    /// </summary>
     public string Selector { get; }
+
+    /// <summary>
+    /// Values to match against.
+    /// </summary>
     public IReadOnlyList<string> MatchValues { get; }
+
+    /// <summary>
+    /// Transformations to apply before evaluating.
+    /// </summary>
     public IReadOnlyList<Transform> Transforms { get; }
 
+    /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);

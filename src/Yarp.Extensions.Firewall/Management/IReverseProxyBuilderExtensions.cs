@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
@@ -12,6 +11,9 @@ using Yarp.Extensions.Firewall.Management;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
+/// <summary>
+/// Extension methods for adding firewall services.
+/// </summary>
 public static class IReverseProxyBuilderExtensions
 {
     /// <summary>
@@ -53,7 +55,7 @@ public static class IReverseProxyBuilderExtensions
     }
 
     /// <summary>
-    /// Registers a singleton IConditionFactory service. Multiple factories are allowed and they will be run in registration order
+    /// Registers a singleton IConditionFactory service. Multiple factories are allowed and they will be run in registration order.
     /// </summary>
     /// <typeparam name="TFactory">A class that implements IConditionFactory.</typeparam>
     /// <returns></returns>

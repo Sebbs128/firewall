@@ -1,13 +1,15 @@
-using Microsoft.AspNetCore.Http;
-
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Model;
 using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates a HTTP cookie against a regular expression.
+/// </summary>
 public class RequestCookieRegexEvaluator : RegexConditionEvaluator
 {
+    /// <inheritdoc/>
     public RequestCookieRegexEvaluator(string selector, IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms)
         : base(matchPatterns, negate)
     {
@@ -15,9 +17,17 @@ public class RequestCookieRegexEvaluator : RegexConditionEvaluator
         Transforms = transforms;
     }
 
+    /// <summary>
+    /// Cookie name to evaluate.
+    /// </summary>
     public string Selector { get; }
+
+    /// <summary>
+    /// Transformations to apply before evaluating.
+    /// </summary>
     public IReadOnlyList<Transform> Transforms { get; }
 
+    /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);

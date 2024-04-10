@@ -6,8 +6,12 @@ using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates a POST parameter against a regular expression.
+/// </summary>
 public class RequestPostArgsRegexEvaluator : RegexConditionEvaluator
 {
+    /// <inheritdoc/>
     public RequestPostArgsRegexEvaluator(string selector, IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms)
         : base(matchPatterns, negate)
     {
@@ -15,9 +19,17 @@ public class RequestPostArgsRegexEvaluator : RegexConditionEvaluator
         Transforms = transforms;
     }
 
+    /// <summary>
+    /// POST parameter name to evaluate.
+    /// </summary>
     public string Selector { get; }
+
+    /// <summary>
+    /// Transformations to apply before evaluating.
+    /// </summary>
     public IReadOnlyList<Transform> Transforms { get; }
 
+    /// <inheritdoc/>
     public override async ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -30,7 +42,7 @@ public class RequestPostArgsRegexEvaluator : RegexConditionEvaluator
         if (HttpMethods.IsPost(context.HttpContext.Request.Method) &&
             string.Equals(contentType, "application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase))
         {
-            var formCollection = await context.HttpContext.Request.ReadFormAsync();
+            var formCollection = await context.HttpContext.Request.ReadFormAsync(cancellationToken);
             if (formCollection is not null)
             {
                 if (formCollection.TryGetValue(Selector, out var formValues))

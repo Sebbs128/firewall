@@ -8,10 +8,15 @@ using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// The base class for request body evaluators.
+/// </summary>
+/// <typeparam name="TOperator"></typeparam>
 public abstract class RequestBodyConditionEvaluator<TOperator> : ConditionEvaluator<TOperator> where TOperator : Enum
 {
     private readonly ILogger<RequestBodyConditionEvaluator<TOperator>> _logger;
 
+    /// <inheritdoc/>
     protected RequestBodyConditionEvaluator(TOperator @operator, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyConditionEvaluator<TOperator>> logger)
         : base(@operator, negate)
     {
@@ -19,8 +24,12 @@ public abstract class RequestBodyConditionEvaluator<TOperator> : ConditionEvalua
         _logger = logger;
     }
 
+    /// <summary>
+    /// Transformations to apply before evaluating.
+    /// </summary>
     public IReadOnlyList<Transform> Transforms { get; }
 
+    /// <inheritdoc/>
     public override async ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);

@@ -9,12 +9,16 @@ using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates if the request body starts with any given strings.
+/// </summary>
 public class RequestBodyStringStartsWithEvaluator : RequestBodyConditionEvaluator<StringOperator>
 {
     private readonly int _minMatchLength;
     private readonly int _maxMatchLength;
     private readonly bool _hasUrlDecodeTransform;
 
+    /// <inheritdoc/>
     public RequestBodyStringStartsWithEvaluator(IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyStringStartsWithEvaluator> logger)
         : base(StringOperator.StartsWith, negate, transforms, logger)
     {
@@ -25,6 +29,9 @@ public class RequestBodyStringStartsWithEvaluator : RequestBodyConditionEvaluato
         _hasUrlDecodeTransform = transforms.Contains(Transform.UrlDecode);
     }
 
+    /// <summary>
+    /// Values to match against.
+    /// </summary>
     public IReadOnlyList<string> MatchValues { get; }
 
     internal override async Task<bool> EvaluateInternal(EvaluationContext context, CancellationToken cancellationToken)

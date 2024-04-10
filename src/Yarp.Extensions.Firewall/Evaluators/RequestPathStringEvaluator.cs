@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 
 using Yarp.Extensions.Firewall.Configuration;
@@ -7,8 +6,12 @@ using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates the URL path against string values.
+/// </summary>
 public class RequestPathStringEvaluator : ConditionEvaluator<StringOperator>
 {
+    /// <inheritdoc/>
     public RequestPathStringEvaluator(StringOperator @operator, IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms)
         : base(@operator, negate)
     {
@@ -16,9 +19,17 @@ public class RequestPathStringEvaluator : ConditionEvaluator<StringOperator>
         Transforms = transforms;
     }
 
+    /// <summary>
+    /// Values to match against.
+    /// </summary>
     public IReadOnlyList<string> MatchValues { get; }
+
+    /// <summary>
+    /// Transformations to apply before evaluating.
+    /// </summary>
     public IReadOnlyList<Transform> Transforms { get; }
 
+    /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);

@@ -1,20 +1,28 @@
-﻿using System.Net;
+using System.Net;
 
 using Yarp.Extensions.Firewall.Model;
 using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates the remote client address from the HTTP request against individual IP addresses.
+/// </summary>
 public class RemoteIpAddressSingleEvaluator : ConditionEvaluator
 {
+    /// <inheritdoc/>
     public RemoteIpAddressSingleEvaluator(IReadOnlyList<IPAddress> ipAddresses, bool negate)
         : base(negate)
     {
         IpAddresses = ipAddresses;
     }
 
+    /// <summary>
+    /// IP addresses to match against.
+    /// </summary>
     public IReadOnlyList<IPAddress> IpAddresses { get; }
 
+    /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);

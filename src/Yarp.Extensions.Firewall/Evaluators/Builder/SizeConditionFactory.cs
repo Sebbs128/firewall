@@ -52,7 +52,7 @@ internal sealed class SizeConditionFactory : IConditionFactory
             {
                 MatchVariable.Cookie => context.AddRequestCookieSizeEvaluator(sizeCondition),
                 MatchVariable.PostArgs => context.AddRequestPostArgsSizeEvaluator(sizeCondition),
-                MatchVariable.QueryParam => context.AddRequestQueryStringSizeEvaluator(sizeCondition),
+                MatchVariable.QueryParam => context.AddRequestQueryParamSizeEvaluator(sizeCondition),
                 MatchVariable.RequestBody => context.AddRequestBodySizeEvaluator(sizeCondition, _loggerFactory),
                 MatchVariable.RequestHeader => context.AddRequestHeaderSizeEvaluator(sizeCondition),
                 MatchVariable.RequestMethod => context.AddRequestMethodSizeEvaluator(sizeCondition),

@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 using Yarp.Extensions.Firewall.Configuration;
@@ -6,8 +5,12 @@ using Yarp.Extensions.Firewall.Model;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates the request body for any content.
+/// </summary>
 public class RequestBodyStringAnyEvaluator : RequestBodyConditionEvaluator<StringOperator>
 {
+    /// <inheritdoc/>
     public RequestBodyStringAnyEvaluator(bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyStringAnyEvaluator> logger)
         : base(StringOperator.Any, negate, transforms, logger)
     {

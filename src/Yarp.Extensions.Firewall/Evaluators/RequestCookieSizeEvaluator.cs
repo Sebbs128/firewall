@@ -4,8 +4,12 @@ using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates the length of a given request cookie.
+/// </summary>
 public class RequestCookieSizeEvaluator : ConditionEvaluator<NumberOperator>
 {
+    /// <inheritdoc/>
     public RequestCookieSizeEvaluator(string selector, NumberOperator @operator, uint matchValue, bool negate, IReadOnlyList<Transform> transforms)
         : base(@operator, negate)
     {
@@ -18,10 +22,22 @@ public class RequestCookieSizeEvaluator : ConditionEvaluator<NumberOperator>
             .ToList();
     }
 
+    /// <summary>
+    /// Cookie name to evaluate.
+    /// </summary>
     public string Selector { get; }
+
+    /// <summary>
+    /// Value to compare against.
+    /// </summary>
     public uint MatchValue { get; }
+
+    /// <summary>
+    /// Transformations to apply before evaluating.
+    /// </summary>
     public IReadOnlyList<Transform> Transforms { get; }
 
+    /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -34,8 +50,8 @@ public class RequestCookieSizeEvaluator : ConditionEvaluator<NumberOperator>
             requestCookie = StringUtilities.ApplyTransform(requestCookie, transform);
         }
 
-        if(ConditionUtilities.EvaluateSizeCondition(requestCookie?.Length, Operator, MatchValue))
-        { 
+        if (ConditionUtilities.EvaluateSizeCondition(requestCookie?.Length, Operator, MatchValue))
+        {
             isMatch = true;
             context.MatchedValues.Add(new EvaluatorMatchValue(
                 MatchVariableName: $"{MatchVariable.Cookie}{ConditionMatchType.Size}",

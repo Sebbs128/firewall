@@ -4,8 +4,15 @@ using Microsoft.AspNetCore.Http;
 
 namespace Yarp.Extensions.Firewall.Utilities;
 
+/// <summary>
+/// Extension methods for fetching information from the current HttpRequest.
+/// </summary>
+
 public static class HttpRequestExtensions
 {
+    /// <summary>
+    /// Checks if the current request contains a file upload.
+    /// </summary>
     public static bool HasFileContent(this HttpRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);

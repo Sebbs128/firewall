@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
-
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Model;
 using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates the length of the request method.
+/// </summary>
 public class RequestMethodSizeEvaluator : ConditionEvaluator<NumberOperator>
 {
+    /// <inheritdoc/>
     public RequestMethodSizeEvaluator(NumberOperator @operator, uint matchValue, bool negate, IReadOnlyList<Transform> transforms)
         : base(@operator, negate)
     {
@@ -20,9 +22,17 @@ public class RequestMethodSizeEvaluator : ConditionEvaluator<NumberOperator>
             .ToList();
     }
 
+    /// <summary>
+    /// Value to compare against.
+    /// </summary>
     public uint MatchValue { get; }
+
+    /// <summary>
+    /// Transformations to apply before evaluating.
+    /// </summary>
     public IReadOnlyList<Transform> Transforms { get; }
 
+    /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);

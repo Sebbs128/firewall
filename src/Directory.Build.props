@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <!-- Recurse up. -->
+  <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
+  <Import Project="$(MSBuildThisFileDirectory)..\eng\Versions.props" />
+
+  <PropertyGroup>
+    <IsShipping>true</IsShipping>
+    <IsPackable>true</IsPackable>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(DotNetFinalVersionKind)' != 'release' and '$(BuildId)' != ''">
+    <PreReleaseVersionLabel>$(PreReleaseVersionLabel).$(BuildId)</PreReleaseVersionLabel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DotNetFinalVersionKind)' != 'release'">
+    <VersionSuffix>$(PreReleaseVersionLabel)</VersionSuffix>
+  </PropertyGroup>
+  
+</Project>

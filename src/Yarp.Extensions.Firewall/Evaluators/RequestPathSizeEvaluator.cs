@@ -1,4 +1,3 @@
-﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 
 using Yarp.Extensions.Firewall.Configuration;
@@ -7,8 +6,12 @@ using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
+/// <summary>
+/// Evaluates the length of the URL path.
+/// </summary>
 public class RequestPathSizeEvaluator : ConditionEvaluator<NumberOperator>
 {
+    /// <inheritdoc/>
     public RequestPathSizeEvaluator(NumberOperator @operator, uint matchValue, bool negate, IReadOnlyList<Transform> transforms)
         : base(@operator, negate)
     {
@@ -20,9 +23,17 @@ public class RequestPathSizeEvaluator : ConditionEvaluator<NumberOperator>
             .ToList();
     }
 
+    /// <summary>
+    /// Value to compare against.
+    /// </summary>
     public uint MatchValue { get; }
+
+    /// <summary>
+    /// Transformations to apply before evaluating.
+    /// </summary>
     public IReadOnlyList<Transform> Transforms { get; }
 
+    /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
