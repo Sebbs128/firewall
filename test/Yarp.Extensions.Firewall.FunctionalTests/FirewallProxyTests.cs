@@ -10,9 +10,10 @@ public class FirewallProxyTests : FunctionalTestBase
     [Fact]
     public async Task RequestMatchingBlockRule_RespondsWithForbiddenStatusCode()
     {
-        var test = new TestEnvironment(async context =>
+        var test = new TestEnvironment(context =>
         {
             Assert.Fail();
+            return Task.CompletedTask;
         })
         {
             BlockedStatusCode = HttpStatusCode.Forbidden,

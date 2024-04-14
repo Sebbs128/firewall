@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 using Yarp.Extensions.Firewall.Configuration;
-using Yarp.Extensions.Firewall.Management;
 using Yarp.ReverseProxy.Configuration;
 
 namespace Yarp.Extensions.Firewall.FunctionalTests.Common;
@@ -93,7 +92,7 @@ public class TestEnvironment
             };
 
             var proxyBuilder = services.AddReverseProxy()
-                .LoadFromMemory(new[] { route }, new[] {cluster })
+                .LoadFromMemory(new[] { route }, new[] { cluster })
                 .AddFirewall()
                 .LoadFromMemory(new[] { firewall }, GeoIPDatabasePath);
         },
@@ -115,7 +114,7 @@ public class TestEnvironment
         return new HostBuilder()
             .ConfigureAppConfiguration(config =>
             {
-                config.AddInMemoryCollection(new Dictionary<string, string?>()
+                config.AddInMemoryCollection(new Dictionary<string, string>()
                 {
                     { "Logging:LogLevel:Microsoft", "Trace" },
                     { "Logging:LogLevel:Microsoft.AspNetCore.Hosting.Diagnostics", "Information" }

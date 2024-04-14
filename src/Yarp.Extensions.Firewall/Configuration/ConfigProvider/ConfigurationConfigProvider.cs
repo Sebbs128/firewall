@@ -1,9 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
-
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
 
 using Yarp.Extensions.Firewall.Utilities;
 
@@ -50,9 +50,10 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
             ConfigurationSnapshot newSnapshot;
             try
             {
-                newSnapshot = new ConfigurationSnapshot();
-
-                newSnapshot.GeoIPDatabasePath = _configuration[nameof(IFirewallConfig.GeoIPDatabasePath)] ?? string.Empty;
+                newSnapshot = new ConfigurationSnapshot
+                {
+                    GeoIPDatabasePath = _configuration[nameof(IFirewallConfig.GeoIPDatabasePath)] ?? string.Empty
+                };
 
                 foreach (var section in _configuration.GetSection(nameof(IFirewallConfig.RouteFirewalls)).GetChildren())
                 {
@@ -107,7 +108,7 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
             return new List<RuleConfig>();
         }
 
-        return children.Select(data => CreateRule(data)).ToList();
+        return children.Select(CreateRule).ToList();
     }
 
     private static RuleConfig CreateRule(IConfigurationSection section)
@@ -128,7 +129,7 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
             return new List<MatchCondition>();
         }
 
-        return children.Select(data => CreateCondition(data)).ToList();
+        return children.Select(CreateCondition).ToList();
     }
 
     private static MatchCondition CreateCondition(IConfigurationSection section)
@@ -196,7 +197,7 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
         }
 
         return children
-            .Select(data => CreateTransform(data))
+            .Select(CreateTransform)
             .Where(v => v is not null)
             .Cast<Transform>()
             .ToList();
@@ -204,7 +205,7 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
 
     private static Transform? CreateTransform(IConfigurationSection section)
     {
-        return Enum.Parse<Transform>(section.Value); // throws if value isn't a correct value
+        return Enum.Parse<Transform>(section.Value!, ignoreCase: true); // throws if value isn't a correct value
     }
 
     public void Dispose()

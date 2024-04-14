@@ -17,7 +17,7 @@ public class ConfigurationConfigProviderTests
 
     private readonly ConfigurationSnapshot _validConfigurationData = new ConfigurationSnapshot()
     {
-        RouteFirewalls = new List<RouteFirewallConfig>
+        RouteFirewalls =
         {
             new RouteFirewallConfig
             {
