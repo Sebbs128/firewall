@@ -1,9 +1,9 @@
-using Microsoft.Extensions.Logging;
-
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+
+using Microsoft.Extensions.Logging;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
@@ -318,7 +318,7 @@ internal sealed class FirewallConfigManager : IFirewallStateLookup, IDisposable
                 if (currentRouteModel.HasConfigChanged(incomingRoute.Config))
                 {
                     currentRoute.Revision++;
-                    // TODO: log route changed?
+                    Log.RouteChanged(_logger, currentRoute.RouteId);
                 }
             }
             else
@@ -328,10 +328,10 @@ internal sealed class FirewallConfigManager : IFirewallStateLookup, IDisposable
                     Model = incomingRoute
                 };
                 newRouteState.Revision++;
-                // TODO: log route added?
 
                 added = _routes.TryAdd(newRouteState.RouteId, newRouteState);
                 Debug.Assert(added);
+                Log.RouteAdded(_logger, newRouteState.RouteId);
             }
         }
 
@@ -341,7 +341,7 @@ internal sealed class FirewallConfigManager : IFirewallStateLookup, IDisposable
             var existingRoute = existingRoutePair.Value;
             if (!desiredRoutes.Contains(existingRoute.RouteId))
             {
-                // TODO: log route removed?
+                Log.RouteRemoved(_logger, existingRoute.RouteId);
                 var removed = _routes.TryRemove(existingRoute.RouteId, out var _);
                 Debug.Assert(removed);
             }
@@ -471,6 +471,21 @@ internal sealed class FirewallConfigManager : IFirewallStateLookup, IDisposable
             EventIds.RouteFirewallRemoved,
             "Route Firewall '{routeId}' has been removed.");
 
+        private static readonly Action<ILogger, string, Exception?> _routeAdded = LoggerMessage.Define<string>(
+            LogLevel.Debug,
+            EventIds.RouteAdded,
+            "Route '{routeId}' has been added.");
+
+        private static readonly Action<ILogger, string, Exception?> _routeChanged = LoggerMessage.Define<string>(
+            LogLevel.Debug,
+            EventIds.RouteChanged,
+            "Route '{routeId}' has changed.");
+
+        private static readonly Action<ILogger, string, Exception?> _routeRemoved = LoggerMessage.Define<string>(
+            LogLevel.Debug,
+            EventIds.RouteRemoved,
+            "Route '{routeId}' has been removed.");
+
         private static readonly Action<ILogger, Exception> _errorReloadingConfig = LoggerMessage.Define(
             LogLevel.Error,
             EventIds.ErrorReloadingConfig,
@@ -494,6 +509,21 @@ internal sealed class FirewallConfigManager : IFirewallStateLookup, IDisposable
         public static void RouteFirewallRemoved(ILogger<FirewallConfigManager> logger, string routeId)
         {
             _firewallRemoved(logger, routeId, null);
+        }
+
+        public static void RouteAdded(ILogger<FirewallConfigManager> logger, string routeId)
+        {
+            _routeAdded(logger, routeId, null);
+        }
+
+        public static void RouteChanged(ILogger<FirewallConfigManager> logger, string routeId)
+        {
+            _routeChanged(logger, routeId, null);
+        }
+
+        public static void RouteRemoved(ILogger<FirewallConfigManager> logger, string routeId)
+        {
+            _routeRemoved(logger, routeId, null);
         }
 
         public static void ErrorReloadingConfig(ILogger<FirewallConfigManager> logger, Exception ex)

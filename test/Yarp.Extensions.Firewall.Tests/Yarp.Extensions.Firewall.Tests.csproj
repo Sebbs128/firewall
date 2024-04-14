@@ -4,7 +4,6 @@
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <OutputType>Library</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
@@ -25,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\testassets\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\testassets\**\*" CopyToOutputDirectory="PreserveNewest" Exclude="README.md" />
   </ItemGroup>
 
   <ItemGroup>
