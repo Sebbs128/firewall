@@ -61,7 +61,7 @@ public class RequestPostArgsRegexEvaluator : RegexConditionEvaluator
                             context.MatchedValues.Add(new EvaluatorMatchValue(
                                 MatchVariableName: $"{MatchVariable.PostArgs}{ConditionMatchType.String}",
                                 OperatorName: nameof(StringOperator.Regex),
-                                MatchVariableValue: matchValue[..Math.Min(100, matchValue.Length)]));
+                                MatchVariableValue: StringUtilities.FromStart(matchValue, 100)));
                         }
                     }
                 }

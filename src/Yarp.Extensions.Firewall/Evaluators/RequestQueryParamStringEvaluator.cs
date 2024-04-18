@@ -56,7 +56,7 @@ public class RequestQueryParamStringEvaluator : ConditionEvaluator<StringOperato
                     context.MatchedValues.Add(new EvaluatorMatchValue(
                         MatchVariableName: $"{MatchVariable.QueryParam}{ConditionMatchType.String}",
                         OperatorName: Operator.ToString(),
-                        MatchVariableValue: matchValue[..Math.Min(100, matchValue.Length)]));
+                        MatchVariableValue: StringUtilities.FromStart(matchValue, 100)));
                 }
             }
         }
