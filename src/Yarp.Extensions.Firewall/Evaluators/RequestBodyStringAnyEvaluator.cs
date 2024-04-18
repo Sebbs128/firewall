@@ -27,7 +27,7 @@ public class RequestBodyStringAnyEvaluator : RequestBodyConditionEvaluator<Strin
                 context.MatchedValues.Add(new EvaluatorMatchValue(
                     MatchVariableName: $"{MatchVariable.RequestBody}{ConditionMatchType.String}",
                     OperatorName: nameof(StringOperator.Any),
-                    MatchVariableValue: "")); // TODO?
+                    MatchVariableValue: "")); // TODO: should any content be added here?
                 return true;
             }
         }

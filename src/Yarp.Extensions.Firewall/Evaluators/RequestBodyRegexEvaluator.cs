@@ -110,7 +110,7 @@ public class RequestBodyRegexEvaluator : RegexConditionEvaluator
                 context.MatchedValues.Add(new EvaluatorMatchValue(
                     MatchVariableName: "RequestBody",
                     OperatorName: nameof(StringOperator.Regex),
-                    MatchVariableValue: matchValue[..Math.Min(100, matchValue.Length)]));
+                    MatchVariableValue: StringUtilities.FromStart(matchValue, 100)));
 
                 return true;
             }
