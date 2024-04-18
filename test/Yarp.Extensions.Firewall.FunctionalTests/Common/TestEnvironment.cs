@@ -125,11 +125,6 @@ public class TestEnvironment
                 loggingBuilder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                 loggingBuilder.AddEventSourceLogger();
                 loggingBuilder.AddDebug();
-                // TODO: adds an Xunit logging provider, from Yarp.Tests.Common
-                if (TestOutput != null)
-                {
-                    //loggingBuilder.AddXunit(TestOutput);
-                }
             })
             .ConfigureWebHost(webHostBuilder =>
             {
@@ -137,11 +132,7 @@ public class TestEnvironment
                     .ConfigureServices(configureServices)
                     .UseKestrel(kestrel =>
                     {
-                        kestrel.Listen(IPAddress.Loopback, 0, listenOptions =>
-                        {
-                            // TODO: may not need connection logging
-                            listenOptions.UseConnectionLogging();
-                        });
+                        kestrel.Listen(IPAddress.Loopback, 0);
                     })
                     .Configure(configureApp);
             })
