@@ -86,6 +86,9 @@ When `MatchType` is `Size`, evaluation is performed by comparing the configured 
 - `MatchValue` - the value to be compared against
 - `Transforms` - a list of transformations to be applied, in order
 
+ASP.NET Core and Kestrel have [their own limits on request sizes](https://learn.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads#server-and-app-configuration), and in general these should be preferred over general/global `RequestBody` size rules.
+Keep in mind that those limits will apply even if the firewall is in `Detection` mode, as they are inherent to the underlying server itself.
+
 ###### String Evaluators
 
 A `MatchType` of `String` will evaluate request properties against a list of values to determine a match. Like the `Size` evaluators, an additional key specified by `Selector` is required for some request properties, and [transformations](#transforms) can be applied before the value is evaluated.
