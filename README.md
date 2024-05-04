@@ -1,5 +1,10 @@
 # Firewall Middleware for YARP
 
+[![Build Status](https://dev.azure.com/sebbs/Yarp.Extensions.Firewall/_apis/build/status%2FSebbs128.firewall?repoName=Sebbs128%2Ffirewall&branchName=main)](https://dev.azure.com/sebbs/Yarp.Extensions.Firewall/_build/latest?definitionId=16&repoName=Sebbs128%2Ffirewall&branchName=main)
+[![CodeQL](https://github.com/Sebbs128/firewall/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/Sebbs128/firewall/actions/workflows/github-code-scanning/codeql)
+[![Nuget](https://img.shields.io/nuget/vpre/Sebbs.Yarp.Extensions.Firewall.svg?label=NuGet)](https://www.nuget.org/packages/Sebbs.Yarp.Extensions.Firewall)
+
+
 [YARP ("Yet Another Reverse Proxy")](https://github.com/microsoft/reverse-proxy) is a reverse proxy toolkit for ASP.NET Core. This project extends YARP's functionality by adding firewall capabilities.
 
 Being an extension to YARP, this project follows much of the conventions in the YARP project, both in terms of solution and class structure. This also means that it can be configured in the same way as YARP; it supports configuration files, as well as a configuration API for programmatic, in-process configuration.
