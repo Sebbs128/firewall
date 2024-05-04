@@ -1,0 +1,27 @@
+# install the required dotnet SDKs
+# while build and pack can be done with just the required .NET 8 SDK,
+#  running test projects require the other target SDKs
+
+steps:
+
+- task: UseDotNet@2
+  displayName: 'Install .NET 6 SDK'
+  inputs:
+    packageType: sdk
+    version: 6.x
+    performMultiLevelLookup: true
+
+- task: UseDotNet@2
+  displayName: 'Install .NET 7 SDK'
+  inputs:
+    packageType: sdk
+    version: 7.x
+    performMultiLevelLookup: true
+
+- task: UseDotNet@2
+  displayName: 'Install .NET 8 SDK'
+  inputs:
+    packageType: sdk
+    version: 8.x
+    useGlobalJson: true
+    performMultiLevelLookup: true

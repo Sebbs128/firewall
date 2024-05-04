@@ -25,144 +25,33 @@ stages:
     steps:
     - checkout: self
       clean: true
-      path: s
-    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
-      clean: true
-      path: testassetsRepo
-    - task: CopyFiles@2
-      displayName: 'copy testassets'
-      inputs:
-        SourceFolder: '$(Agent.BuildDirectory)/testassetsRepo/testassets'
-        Contents: '**'
-        TargetFolder: 'testassets'
-        
-    - task: UseDotNet@2
-      displayName: 'Install .NET SDK'
-      inputs:
-        version: 6.x
-        performMultiLevelLookup: true
-    - task: UseDotNet@2
-      displayName: 'Install .NET SDK'
-      inputs:
-        version: 7.x
-        performMultiLevelLookup: true
-    - task: UseDotNet@2
-      displayName: 'Install .NET SDK'
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
-        performMultiLevelLookup: true
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet restore $(_BuildConfig)'
-      inputs:
-        command: 'restore'
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet build $(_BuildConfig)'
-      inputs:
-        command: 'build'
-        arguments: --configuration $(_BuildConfig)
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet test $(_BuildConfig)'
-      inputs:
-        command: 'test'
-        projects: test/**/*.csproj
-        configuration: '$(_BuildConfig)'
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet pack $(_BuildConfig)'
-      inputs:
-        command: 'pack'
-        configuration: '$(_BuildConfig)'
-        buildProperties: 'BuildId=$(Build.BuildNumber)'
-        includesymbols: true
-        packDirectory: '$(Build.ArtifactStagingDirectory)/artifacts/packages/'
-        zipAfterPublish: true
-    - task: CopyFiles@2
-      displayName: Copy test results
-      condition: succeededOrFailed()
-      inputs:
-        SourceFolder: $(Agent.TempDirectory)
-        Contents: '*.trx'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload test results
-      condition: succeededOrFailed()
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
-        artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
-        ArtifactType: Container
-        parallel: true
-    - task: PublishBuildArtifacts@1
-      displayName: Upload package artifacts
-      condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
-      inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/packages/'
-        artifactName: artifacts
-        artifactType: Container
-        parallel: true
-        
+      path: s/ # "s" is the default when only one repo is checked out
+
+    - template: /eng/common/templates/steps/prepare-testassets.yml
+
+    - template: /eng/common/templates/steps/install-dotnet-sdks.yml
+
+    - template: /eng/common/templates/steps/restore-and-build.yml
+
+    - template: /eng/common/templates/steps/test-and-upload-results.yml
+
+    - template: /eng/common/templates/steps/pack-and-upload.yml
+
   - job: Linux
     pool:
       vmImage: 'ubuntu-latest'
     steps:
     - checkout: self
       clean: true
-      path: s/
-    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
-      clean: true
-      path: testassetsRepo
-    - task: CopyFiles@2
-      displayName: 'copy testassets'
-      inputs:
-        SourceFolder: '$(Agent.BuildDirectory)/testassetsRepo/testassets'
-        Contents: '**'
-        TargetFolder: 'testassets'
-        
-    - task: UseDotNet@2
-      displayName: 'Install .NET SDK'
-      inputs:
-        version: 6.x
-        performMultiLevelLookup: true
-    - task: UseDotNet@2
-      displayName: 'Install .NET SDK'
-      inputs:
-        version: 7.x
-        performMultiLevelLookup: true
-    - task: UseDotNet@2
-      displayName: 'Install .NET SDK'
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
-        performMultiLevelLookup: true
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet restore $(_BuildConfig)'
-      inputs:
-        command: 'restore'
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet build $(_BuildConfig)'
-      inputs:
-        command: 'build'
-        arguments: --configuration $(_BuildConfig)
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet test $(_BuildConfig)'
-      inputs:
-        command: 'test'
-        projects: test/**/*.csproj
-        arguments: '--configuration $(_BuildConfig)'
-    - task: CopyFiles@2
-      displayName: Copy test results
-      condition: succeededOrFailed()
-      inputs:
-        SourceFolder: $(Agent.TempDirectory)
-        Contents: '*.trx'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload test results
-      condition: succeededOrFailed()
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
-        artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
-        ArtifactType: Container
-        parallel: true
+      path: s/ # "s" is the default when only one repo is checked out
+
+    - template: /eng/common/templates/steps/prepare-testassets.yml
+
+    - template: /eng/common/templates/steps/install-dotnet-sdks.yml
+
+    - template: /eng/common/templates/steps/restore-and-build.yml
+
+    - template: /eng/common/templates/steps/test-and-upload-results.yml
 
   - job: macOS
     condition: eq(false, true) # disable macOS tests. See https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#notes-on-choosing-hosted-macos
@@ -171,60 +60,12 @@ stages:
     steps:
     - checkout: self
       clean: true
-      path: s/
-    - checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
-      clean: true
-      path: testassetsRepo
-    - task: CopyFiles@2
-      displayName: 'copy testassets'
-      inputs:
-        SourceFolder: '$(Agent.BuildDirectory)/testassetsRepo/testassets'
-        Contents: '**'
-        TargetFolder: 'testassets'
-        
-    - task: UseDotNet@2
-      displayName: 'Install .NET SDK'
-      inputs:
-        version: 6.x
-        performMultiLevelLookup: true
-    - task: UseDotNet@2
-      displayName: 'Install .NET SDK'
-      inputs:
-        version: 7.x
-        performMultiLevelLookup: true
-    - task: UseDotNet@2
-      displayName: 'Install .NET SDK'
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
-        performMultiLevelLookup: true
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet restore $(_BuildConfig)'
-      inputs:
-        command: 'restore'
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet build $(_BuildConfig)'
-      inputs:
-        command: 'build'
-        arguments: --configuration $(_BuildConfig)
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet test $(_BuildConfig)'
-      inputs:
-        command: 'test'
-        projects: test/**/*.csproj
-        arguments: '--configuration $(_BuildConfig)'
-    - task: CopyFiles@2
-      displayName: Copy test results
-      condition: succeededOrFailed()
-      inputs:
-        SourceFolder: $(Agent.TempDirectory)
-        Contents: '*.trx'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload test results
-      condition: succeededOrFailed()
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
-        artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
-        ArtifactType: Container
-        parallel: true
+      path: s/ # "s" is the default when only one repo is checked out
+
+    - template: /eng/common/templates/steps/prepare-testassets.yml
+
+    - template: /eng/common/templates/steps/install-dotnet-sdks.yml
+
+    - template: /eng/common/templates/steps/restore-and-build.yml
+
+    - template: /eng/common/templates/steps/test-and-upload-results.yml
