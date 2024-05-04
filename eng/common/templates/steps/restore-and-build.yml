@@ -1,0 +1,13 @@
+# runs dotnet restore command, followed by dotnet build command
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore $(_BuildConfig)'
+  inputs:
+    command: 'restore'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build $(_BuildConfig)'
+  inputs:
+    command: 'build'
+    arguments: --configuration $(_BuildConfig)

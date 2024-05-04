@@ -1,0 +1,23 @@
+# runs dotnet pack to produce the nuget packages, then uploads to artifacts
+# dotnet pack always runs, but uploading the package won't run for PR builds
+
+steps:
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet pack $(_BuildConfig)'
+  inputs:
+    command: 'pack'
+    configuration: '$(_BuildConfig)'
+    buildProperties: 'BuildId=$(Build.BuildNumber)'
+    includesymbols: true
+    packDirectory: '$(Build.ArtifactStagingDirectory)/artifacts/packages/'
+    zipAfterPublish: true
+
+- task: PublishBuildArtifacts@1
+  displayName: Upload package artifacts
+  condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/packages/'
+    artifactName: artifacts
+    artifactType: Container
+    parallel: true

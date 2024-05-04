@@ -1,0 +1,13 @@
+# checks out private test assets from the Yarp.Extensions.Firewall.TestAssets project+repo in the Azure DevOps org
+# then copies them into the expected source folder
+
+steps:
+- checkout: git://Yarp.Extensions.Firewall.TestAssets/Yarp.Extensions.Firewall.TestAssets
+  clean: true
+  path: testassetsRepo
+- task: CopyFiles@2
+  displayName: 'copy testassets'
+  inputs:
+    SourceFolder: '$(Agent.BuildDirectory)/testassetsRepo/testassets'
+    Contents: '**'
+    TargetFolder: 'testassets'
