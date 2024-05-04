@@ -10,18 +10,12 @@ steps:
     arguments: '--configuration $(_BuildConfig) --collect "XPlat Code coverage"'
 
 - task: CopyFiles@2
-  displayName: Copy test results
+  displayName: Copy xunit test results
   condition: succeededOrFailed()
   inputs:
     SourceFolder: $(Agent.TempDirectory)
     Contents: '*.trx'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
-
-- task: CopyFiles@2
-  displayName: succeededOrFailed()
-  inputs:
-    Contents: '**/TestResults/**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts'
 
 - task: PublishBuildArtifacts@1
   displayName: Upload test results
@@ -30,4 +24,11 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
     artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
     ArtifactType: Container
+    parallel: true
+
+- task: PublishCodeCoverageResults@2
+  displayName: Upload code coverage results
+  condition: succeededOrFailed()
+  inputs:
+    summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
     parallel: true
