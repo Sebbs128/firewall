@@ -7,7 +7,7 @@ public class RequestCookieCollection : Dictionary<string, string>, IRequestCooki
     {
     }
 
-    string? IRequestCookieCollection.this[string key] => base[key];
+    string IRequestCookieCollection.this[string key] => base[key];
 
     ICollection<string> IRequestCookieCollection.Keys => base.Keys;
 }

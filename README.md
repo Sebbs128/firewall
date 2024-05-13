@@ -1,5 +1,10 @@
 # Firewall Middleware for YARP
 
+[![Build Status](https://dev.azure.com/sebbs/Yarp.Extensions.Firewall/_apis/build/status%2FSebbs128.firewall?repoName=Sebbs128%2Ffirewall&branchName=main)](https://dev.azure.com/sebbs/Yarp.Extensions.Firewall/_build/latest?definitionId=16&repoName=Sebbs128%2Ffirewall&branchName=main)
+[![CodeQL](https://github.com/Sebbs128/firewall/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/Sebbs128/firewall/actions/workflows/github-code-scanning/codeql)
+[![Nuget](https://img.shields.io/nuget/vpre/Sebbs.Yarp.Extensions.Firewall.svg?label=NuGet)](https://www.nuget.org/packages/Sebbs.Yarp.Extensions.Firewall)
+
+
 [YARP ("Yet Another Reverse Proxy")](https://github.com/microsoft/reverse-proxy) is a reverse proxy toolkit for ASP.NET Core. This project extends YARP's functionality by adding firewall capabilities.
 
 Being an extension to YARP, this project follows much of the conventions in the YARP project, both in terms of solution and class structure. This also means that it can be configured in the same way as YARP; it supports configuration files, as well as a configuration API for programmatic, in-process configuration.
@@ -85,6 +90,9 @@ When `MatchType` is `Size`, evaluation is performed by comparing the configured 
 - `Selector` - a key indicating which `Cookie`, `RequestHeader`, `PostArgs`, or `QueryParam` value to use, if it existed in the request
 - `MatchValue` - the value to be compared against
 - `Transforms` - a list of transformations to be applied, in order
+
+ASP.NET Core and Kestrel have [their own limits on request sizes](https://learn.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads#server-and-app-configuration), and in general these should be preferred over general/global `RequestBody` size rules.
+Keep in mind that those limits will apply even if the firewall is in `Detection` mode, as they are inherent to the underlying server itself.
 
 ###### String Evaluators
 

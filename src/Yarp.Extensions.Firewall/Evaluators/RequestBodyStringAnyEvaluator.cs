@@ -1,7 +1,10 @@
+using System.Text;
+
 using Microsoft.Extensions.Logging;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Model;
+using Yarp.Extensions.Firewall.Utilities;
 
 namespace Yarp.Extensions.Firewall.Evaluators;
 
@@ -24,10 +27,12 @@ public class RequestBodyStringAnyEvaluator : RequestBodyConditionEvaluator<Strin
 
             if (!readResult.IsCompleted || !readResult.Buffer.IsEmpty)
             {
+                var bufferContent = Encoding.UTF8.GetString(readResult.Buffer);
+
                 context.MatchedValues.Add(new EvaluatorMatchValue(
                     MatchVariableName: $"{MatchVariable.RequestBody}{ConditionMatchType.String}",
                     OperatorName: nameof(StringOperator.Any),
-                    MatchVariableValue: "")); // TODO?
+                    MatchVariableValue: StringUtilities.FromStart(bufferContent, 100)));
                 return true;
             }
         }

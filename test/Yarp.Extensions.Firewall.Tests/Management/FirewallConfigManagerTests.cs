@@ -40,7 +40,7 @@ public class FirewallConfigManagerTests
     private static IServiceProvider CreateServices(
         IEnumerable<IFirewallConfigProvider> firewallConfigProviders,
         IEnumerable<IProxyConfigProvider> proxyConfigProviders,
-        IEnumerable<IFirewallConfigChangeListener>? configListeners = null)
+        IEnumerable<IFirewallConfigChangeListener> configListeners = null)
     {
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddLogging();

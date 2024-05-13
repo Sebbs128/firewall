@@ -45,8 +45,6 @@ internal sealed class StringConditionFactory : IConditionFactory
     {
         if (condition is StringMatchCondition stringCondition)
         {
-            // TODO: check stringCondition contains all expected parameters?
-            // although Validate() should be checking all parameters are there, this will enforce eg. a selector is provided when expected
             _ = stringCondition switch
             {
                 // Regex evaluators

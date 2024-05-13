@@ -1,0 +1,34 @@
+# run dotnet test (adding in code coverage report), then copies and uploads the produced results
+
+steps:
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test $(_BuildConfig)'
+  inputs:
+    command: 'test'
+    projects: test/**/*.csproj
+    arguments: '--configuration $(_BuildConfig) --collect "XPlat Code coverage"'
+
+- task: CopyFiles@2
+  displayName: Copy xunit test results
+  condition: succeededOrFailed()
+  inputs:
+    SourceFolder: $(Agent.TempDirectory)
+    Contents: '*.trx'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
+
+- task: PublishBuildArtifacts@1
+  displayName: Upload test results
+  condition: succeededOrFailed()
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/testresults'
+    artifactName: $(Agent.Os)_$(Agent.JobName) TestResults
+    ArtifactType: Container
+    parallel: true
+
+- task: PublishCodeCoverageResults@2
+  displayName: Upload code coverage results
+  condition: succeededOrFailed()
+  inputs:
+    summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+    parallel: true

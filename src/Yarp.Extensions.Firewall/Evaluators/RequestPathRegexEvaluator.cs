@@ -42,7 +42,7 @@ public class RequestPathRegexEvaluator : RegexConditionEvaluator
             context.MatchedValues.Add(new EvaluatorMatchValue(
                 MatchVariableName: $"{MatchVariable.RequestPath}{ConditionMatchType.String}",
                 OperatorName: nameof(StringOperator.Regex),
-                MatchVariableValue: matchValue[..Math.Min(100, matchValue.Length)]));
+                MatchVariableValue: StringUtilities.FromStart(matchValue, 100)));
         }
 
         //return Negate ? !isMatch : isMatch; // this is equivalent to a XOR, which is the ^ bool operator

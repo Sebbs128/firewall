@@ -34,7 +34,7 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
         var evaluator = Assert.Single(builderContext.RuleConditions);
 
         Assert.IsType<RequestBodySizeEvaluator>(evaluator);
-        
+
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Method = HttpMethods.Post;
         httpContext.Request.Scheme = "http";
@@ -50,7 +50,7 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
 
     [Theory]
     [MemberData(nameof(StringAnyMatchData))]
-    public async Task BodyStringEvaluator_ReturnsTrue_WhenMatchesAny(StringMatchCondition evaluatorCondition, Stream requestBody)
+    public async Task BodyStringEvaluator_ReturnsTrue_WhenMatchesAny(StringMatchCondition evaluatorCondition, Stream requestBody, string expectedMatch)
     {
         var builderContext = ValidateAndBuild(_stringFactory, evaluatorCondition);
         var evaluator = Assert.Single(builderContext.RuleConditions);
@@ -68,7 +68,7 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
         var evalContext = new EvaluationContext(httpContext);
 
         Assert.True(await evaluator.Evaluate(evalContext, CancellationToken.None));
-        Assert.Single(evalContext.MatchedValues, new EvaluatorMatchValue("RequestBodyString", StringOperator.Any.ToString(), ""));
+        Assert.Single(evalContext.MatchedValues, new EvaluatorMatchValue("RequestBodyString", StringOperator.Any.ToString(), expectedMatch));
     }
 
     [Theory]
@@ -165,13 +165,13 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
         Assert.Single(evalContext.MatchedValues, new EvaluatorMatchValue("RequestBodyString", StringOperator.EndsWith.ToString(), expectedMatch));
     }
 
-    public static TheoryData<StringMatchCondition, Stream> StringAnyMatchData => new()
+    public static TheoryData<StringMatchCondition, Stream, string> StringAnyMatchData => new()
     {
         {
             new StringMatchCondition
             {
                 MatchVariable = MatchVariable.RequestBody
-            }, StringToStream("request content")
+            }, StringToStream("request content"), "request content"
         }
     };
 

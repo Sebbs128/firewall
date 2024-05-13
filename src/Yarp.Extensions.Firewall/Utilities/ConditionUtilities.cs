@@ -83,8 +83,7 @@ internal static class ConditionUtilities
 
                 foreach (var matchValue in matchValues)
                 {
-                    // TODO: single-line mode?
-                    //   This path isn't actually used by anything now, in favour of unique RegexEvaluators
+                    // This path isn't actually used by anything now, in favour of unique RegexEvaluators
                     var match = Regex.Match(value, matchValue, RegexOpts, RegexMatchTimeout);
                     if (match?.Success == true)
                     {

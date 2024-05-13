@@ -1,4 +1,3 @@
-using System.Linq;
 using Microsoft.Extensions.Logging;
 
 using Yarp.Extensions.Firewall.Configuration;
@@ -46,8 +45,6 @@ internal sealed class SizeConditionFactory : IConditionFactory
     {
         if (condition is SizeMatchCondition sizeCondition)
         {
-            // TODO: check sizeCondition contains all expected parameters
-            // although Validate() should be checking all parameters are there, this will enforce eg. a selector is provided when expected
             _ = sizeCondition.MatchVariable switch
             {
                 MatchVariable.Cookie => context.AddRequestCookieSizeEvaluator(sizeCondition),

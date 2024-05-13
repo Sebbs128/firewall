@@ -41,10 +41,8 @@ public class RequestBodyRegexEvaluator : RegexConditionEvaluator
         ArgumentNullException.ThrowIfNull(context);
 
         // skip body evaluation on file uploads
-        // we primarily rely on the underlying web server's max request size limiting to prevent expecially large requests
-        // TODO: should we have a separate, smaller limit for non-file uploads?
-        //   both ModSec and Azure WAF do
-        //   https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/application-gateway-waf-request-size-limits#limits
+        // we primarily rely on the underlying web server's max request size limiting to prevent especially large requests
+        // https://learn.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-8.0#server-and-app-configuration
         if (context.HttpContext.Request.HasFileContent())
         {
             Log.FileContentSkipped(_logger, "RequestBodyRegex", context.HttpContext.Request.GetDisplayUrl());
@@ -110,7 +108,7 @@ public class RequestBodyRegexEvaluator : RegexConditionEvaluator
                 context.MatchedValues.Add(new EvaluatorMatchValue(
                     MatchVariableName: "RequestBody",
                     OperatorName: nameof(StringOperator.Regex),
-                    MatchVariableValue: matchValue[..Math.Min(100, matchValue.Length)]));
+                    MatchVariableValue: StringUtilities.FromStart(matchValue, 100)));
 
                 return true;
             }

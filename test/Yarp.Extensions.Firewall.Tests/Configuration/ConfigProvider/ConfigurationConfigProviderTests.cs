@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -15,9 +16,9 @@ public class ConfigurationConfigProviderTests
 {
     #region JSON test configuration
 
-    private readonly ConfigurationSnapshot _validConfigurationData = new ConfigurationSnapshot()
+    private readonly ConfigurationSnapshot _validConfigurationData = new()
     {
-        RouteFirewalls = new List<RouteFirewallConfig>
+        RouteFirewalls =
         {
             new RouteFirewallConfig
             {
@@ -28,8 +29,7 @@ public class ConfigurationConfigProviderTests
                 BlockedStatusCode = HttpStatusCode.Forbidden,
                 Rules = new List<RuleConfig>
                 {
-                    new RuleConfig
-                    {
+                    new() {
                         RuleName = "stringAndSize",
                         Priority = 10,
                         Action = MatchAction.Block,
@@ -53,12 +53,15 @@ public class ConfigurationConfigProviderTests
                                 Operator = NumberOperator.GreaterThanOrEqual,
                                 MatchVariable = MatchVariable.Cookie,
                                 Selector = "b",
-                                MatchValue = 100
+                                MatchValue = 100,
+                                Transforms = new[]
+                                {
+                                    Transform.Trim,
+                                }
                             }
                         }
                     },
-                    new RuleConfig
-                    {
+                    new() {
                         RuleName = "ipAddress1",
                         Priority = 11,
                         Action = MatchAction.Allow,
@@ -82,8 +85,7 @@ public class ConfigurationConfigProviderTests
                 BlockedStatusCode = HttpStatusCode.NotFound,
                 Rules = new List<RuleConfig>
                 {
-                    new RuleConfig
-                    {
+                    new() {
                         RuleName = "ipAddress2",
                         Priority = 5,
                         Action = MatchAction.Allow,
@@ -98,11 +100,13 @@ public class ConfigurationConfigProviderTests
                     }
                 }
             }
-        }
+        },
+        GeoIPDatabasePath = "./path/to/geoip.mmdb"
     };
 
     private const string _validJsonConfig = @"
 {
+    ""GeoIPDatabasePath"": ""./path/to/geoip.mmdb"",
     ""RouteFirewalls"": {
         ""routeA"": {
             ""Enabled"": true,
@@ -131,7 +135,10 @@ public class ConfigurationConfigProviderTests
                             ""Operator"": ""GreaterThanOrEqual"",
                             ""MatchVariable"": ""Cookie"",
                             ""Selector"": ""b"",
-                            ""MatchValue"": 100
+                            ""MatchValue"": 100,
+                            ""Transforms"": [
+                                ""Trim"",
+                            ]
                         }
                     ]
                 },
@@ -203,8 +210,6 @@ public class ConfigurationConfigProviderTests
 
         VerifyAllPropertiesAreSet(abstractConfig);
 
-        // TODO:
-        // can't just copy what Yarp.ReverseProxy.Tests has, as we expect eg. 0-valued enums and in some cases empty strings
         void VerifyFullyInitialized(object obj, string name)
         {
             switch (obj)
@@ -213,7 +218,44 @@ public class ConfigurationConfigProviderTests
                     Assert.Fail($"Property {name} is not initialized.");
                     break;
                 case Enum m:
-                    Assert.NotEqual(0, (int)(object)m);
+                    Assert.True(0 <= (int)(object)m);
+                    break;
+                case string str:
+                    Assert.NotEmpty(str);
+                    break;
+                case ValueType v when v is not bool:
+                    var equals = Equals(Activator.CreateInstance(v.GetType()), v);
+                    Assert.False(equals, $"Property {name} is not initialized.");
+                    if (v.GetType().Namespace == abstractionsNamespace)
+                    {
+                        VerifyAllPropertiesAreSet(v);
+                    }
+                    break;
+                case IDictionary d:
+                    Assert.NotEmpty(d);
+                    foreach (var value in d.Values)
+                    {
+                        VerifyFullyInitialized(value, name);
+                    }
+                    break;
+                case IEnumerable e:
+                    Assert.NotEmpty(e);
+                    foreach (var item in e)
+                    {
+                        VerifyFullyInitialized(item, name);
+                    }
+
+                    var type = e.GetType();
+                    if (!type.IsArray && type.Namespace == abstractionsNamespace)
+                    {
+                        VerifyAllPropertiesAreSet(e);
+                    }
+                    break;
+                case object o:
+                    if (o.GetType().Namespace == abstractionsNamespace)
+                    {
+                        VerifyAllPropertiesAreSet(o);
+                    }
                     break;
             }
         }

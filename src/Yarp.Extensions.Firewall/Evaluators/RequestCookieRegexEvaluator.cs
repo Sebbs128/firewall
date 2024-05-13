@@ -47,7 +47,7 @@ public class RequestCookieRegexEvaluator : RegexConditionEvaluator
                 context.MatchedValues.Add(new EvaluatorMatchValue(
                     MatchVariableName: $"{MatchVariable.Cookie}{ConditionMatchType.String}",
                     OperatorName: nameof(StringOperator.Regex),
-                    MatchVariableValue: matchValue[..Math.Min(100, matchValue.Length)]));
+                    MatchVariableValue: StringUtilities.FromStart(matchValue, 100)));
             }
         }
 
