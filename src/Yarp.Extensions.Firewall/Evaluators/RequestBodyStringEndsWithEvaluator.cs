@@ -44,6 +44,7 @@ public class RequestBodyStringEndsWithEvaluator : RequestBodyConditionEvaluator<
             // Needs to be larger if UrlDecode transform is used - the window size should be another x3 larger just to hold its worst case
             // all sizing is being handled in the constructor
             var arr = ArrayPool<byte>.Shared.Rent(_minWindowSize);
+            var head = arr.Length;
             try
             {
                 var window = new Memory<byte>(arr);
@@ -52,7 +53,7 @@ public class RequestBodyStringEndsWithEvaluator : RequestBodyConditionEvaluator<
                 do
                 {
                     // slide window contents down to make room for new data
-                    int bytesToCopy;
+                    int bytesToCopy = 0;
 
                     for (int i = 0; i < readResult.Buffer.Length; i += bytesToCopy)
                     {
@@ -64,12 +65,14 @@ public class RequestBodyStringEndsWithEvaluator : RequestBodyConditionEvaluator<
                         buffer.CopyTo(window.Span[(window.Length - bytesToCopy)..]);
                     }
 
+                    head = Math.Max(0, head - bytesToCopy);
+
                     bodyReader.AdvanceTo(readResult.Buffer.Start, readResult.Buffer.End);
                     readResult = await bodyReader.ReadAsync(cancellationToken);
                 }
                 while (!(readResult.IsCompleted || readResult.Buffer.IsSingleSegment));
 
-                var transformedChunk = Encoding.UTF8.GetString(window.Span.TrimStart((byte)0));
+                var transformedChunk = Encoding.UTF8.GetString(window.Span[head..]);
 
                 foreach (var transform in Transforms)
                 {

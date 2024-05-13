@@ -44,6 +44,7 @@ public class RequestBodyStringContainsEvaluator : RequestBodyConditionEvaluator<
             // Needs to be larger if UrlDecode transform is used - the window size should be another x3 larger just to hold its worst case
             // all sizing is being handled in the constructor
             var arr = ArrayPool<byte>.Shared.Rent(_minWindowSize);
+            var head = arr.Length;
             try
             {
                 var window = new Memory<byte>(arr);
@@ -65,7 +66,9 @@ public class RequestBodyStringContainsEvaluator : RequestBodyConditionEvaluator<
 
                         buffer.CopyTo(window.Span[(window.Length - bytesToCopy)..]);
 
-                        var transformedChunk = Encoding.UTF8.GetString(window.Span.TrimStart((byte)0));
+                        head = Math.Max(0, head - bytesToCopy);
+
+                        var transformedChunk = Encoding.UTF8.GetString(window.Span[head..]);
 
                         foreach (var transform in Transforms)
                         {

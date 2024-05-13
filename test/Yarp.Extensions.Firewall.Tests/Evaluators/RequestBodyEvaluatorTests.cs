@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Text;
 
 using Microsoft.AspNetCore.Http;
@@ -97,6 +98,7 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
     [MemberData(nameof(StringContainsMatchData))]
     public async Task BodyStringEvaluator_ReturnsTrue_WhenMatchesContains(StringMatchCondition evaluatorCondition, Stream requestBody, string expectedMatch)
     {
+        MakeArrayPoolDirty();
         var builderContext = ValidateAndBuild(_stringFactory, evaluatorCondition);
         var evaluator = Assert.Single(builderContext.RuleConditions);
 
@@ -143,6 +145,7 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
     [MemberData(nameof(StringEndsWithMatchData))]
     public async Task BodyStringEvaluator_ReturnsTrue_WhenMatchesEndsWith(StringMatchCondition evaluatorCondition, Stream requestBody, string expectedMatch)
     {
+        MakeArrayPoolDirty();
         var builderContext = ValidateAndBuild(_stringFactory, evaluatorCondition);
         var evaluator = Assert.Single(builderContext.RuleConditions);
 
@@ -259,5 +262,24 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
     private static MemoryStream StringToStream(string text)
     {
         return new MemoryStream(Encoding.UTF8.GetBytes(text));
+    }
+
+    private static void MakeArrayPoolDirty()
+    {
+        for (int x = 0; x < 50; x++)
+        {
+            for (int i = 4; i < 128; i *= 2)
+            {
+                var arr = ArrayPool<byte>.Shared.Rent(i * 8);
+
+                if (i * 8 < arr.Length)
+                {
+                    i = arr.Length / 8;
+                }
+
+                Array.Fill(arr, (byte)97); // fill with a
+                ArrayPool<byte>.Shared.Return(arr);
+            }
+        }
     }
 }
