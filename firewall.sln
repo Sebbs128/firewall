@@ -15,8 +15,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
 		global.json = global.json
 		NuGet.config = NuGet.config
+		TFMs.props = TFMs.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yarp.Extensions.Firewall.Telemetry.Consumption", "src\Yarp.Extensions.Firewall.Telemetry.Consumption\Yarp.Extensions.Firewall.Telemetry.Consumption.csproj", "{EF42B4C8-7F63-4392-8E61-8D493FF69B79}"

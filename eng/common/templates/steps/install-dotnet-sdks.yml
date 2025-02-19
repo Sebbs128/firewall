@@ -25,3 +25,11 @@ steps:
     version: 8.x
     useGlobalJson: true
     performMultiLevelLookup: true
+
+- task: UseDotNet@2
+  displayName: 'Install .NET 9 SDK'
+  inputs:
+    packageType: sdk
+    version: 9.x
+    useGlobalJson: true
+    performMultiLevelLookup: true
