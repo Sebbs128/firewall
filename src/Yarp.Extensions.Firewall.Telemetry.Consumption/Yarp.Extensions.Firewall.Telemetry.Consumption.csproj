@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <OutputType>Library</OutputType>
@@ -9,13 +8,10 @@
     <!-- disabled until I'm certain how the Telemetry Consumption is supposed to work -->
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Yarp.Telemetry.Consumption" Version="2.1.0" />
+    <PackageReference Include="Yarp.Telemetry.Consumption" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Yarp.Extensions.Firewall\Yarp.Extensions.Firewall.csproj" />
   </ItemGroup>
-
 </Project>
