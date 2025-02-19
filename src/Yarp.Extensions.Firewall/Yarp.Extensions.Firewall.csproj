@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>A firewall extension to the YARP library for ASP.NET Core</Description>
-    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>$(ReleaseTFMs)</TargetFrameworks>
     <OutputType>Library</OutputType>
     <RootNamespace>Yarp.Extensions.Firewall</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>

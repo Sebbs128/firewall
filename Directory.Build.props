@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+  <Import Project="TFMs.props" />
+  
   <PropertyGroup>
     <Copyright>© Wayne Sebbens 2024</Copyright>
     <Authors>Sebbs</Authors>
