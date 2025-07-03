@@ -9,5 +9,5 @@ public interface IFirewallConfigProvider
     /// Returns the current firewall configuration.
     /// </summary>
     /// <returns></returns>
-    IFirewallConfig GetConfig();
+    public IFirewallConfig GetConfig();
 }

@@ -13,7 +13,7 @@ public interface IConditionFactory
     /// <param name="context">The context to add any generated errors to.</param>
     /// <param name="condition">The condition values to validate.</param>
     /// <returns>True if this factory matches the given condition, otherwise false.</returns>
-    bool Validate(EvaluatorValidationContext context, MatchCondition condition);
+    public bool Validate(EvaluatorValidationContext context, MatchCondition condition);
 
     /// <summary>
     /// Checks if the given condition values match a known condition evaluator, and if so, generates a
@@ -22,5 +22,5 @@ public interface IConditionFactory
     /// <param name="context">The context to add any generated condtion evaluators to.</param>
     /// <param name="condition">The condition values to use as input.</param>
     /// <returns>True if this factory matches the given condition, otherwise false.</returns>
-    bool Build(ConditionBuilderContext context, MatchCondition condition);
+    public bool Build(ConditionBuilderContext context, MatchCondition condition);
 }
