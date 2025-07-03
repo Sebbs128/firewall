@@ -276,7 +276,7 @@ public class ConfigurationConfigProviderTests
         Assert.Equal(2, abstractConfig.RouteFirewalls.Count);
 
         var firewall1 = validConfig.RouteFirewalls.First(f => f.RouteId == "routeA");
-        Assert.Single(abstractConfig.RouteFirewalls.Where(f => f.RouteId == "routeA"));
+        Assert.Single(abstractConfig.RouteFirewalls, f => f.RouteId == "routeA");
         var abstractFirewall1 = abstractConfig.RouteFirewalls.Single(f => f.RouteId == "routeA");
         Assert.Equal(firewall1.Enabled, abstractFirewall1.Enabled);
         Assert.Equal(firewall1.Mode, abstractFirewall1.Mode);
@@ -286,17 +286,17 @@ public class ConfigurationConfigProviderTests
         Assert.Equal(firewall1.Rules.Count, abstractFirewall1.Rules.Count);
 
         var rule1_1 = firewall1.Rules.First(r => r.RuleName == "stringAndSize");
-        Assert.Single(abstractFirewall1.Rules.Where(r => r.RuleName == "stringAndSize"));
+        Assert.Single(abstractFirewall1.Rules, r => r.RuleName == "stringAndSize");
         var abstractRule1_1 = abstractFirewall1.Rules.Single(r => r.RuleName == "stringAndSize");
         Assert.Equal(rule1_1, abstractRule1_1);
 
         var rule1_2 = firewall1.Rules.First(r => r.RuleName == "ipAddress1");
-        Assert.Single(abstractFirewall1.Rules.Where(r => r.RuleName == "ipAddress1"));
+        Assert.Single(abstractFirewall1.Rules, r => r.RuleName == "ipAddress1");
         var abstractRule1_2 = abstractFirewall1.Rules.Single(r => r.RuleName == "ipAddress1");
         Assert.Equal(rule1_2, abstractRule1_2);
 
         var firewall2 = validConfig.RouteFirewalls.First(f => f.RouteId == "routeB");
-        Assert.Single(abstractConfig.RouteFirewalls.Where(f => f.RouteId == "routeB"));
+        Assert.Single(abstractConfig.RouteFirewalls, f => f.RouteId == "routeB");
         var abstractFirewall2 = abstractConfig.RouteFirewalls.Single(f => f.RouteId == "routeB");
         Assert.Equal(firewall2.Enabled, abstractFirewall2.Enabled);
         Assert.Equal(firewall2.Mode, abstractFirewall2.Mode);

@@ -2,10 +2,12 @@ using MaxMind.Db;
 using MaxMind.GeoIP2;
 
 using Microsoft.Extensions.Logging;
-using Yarp.Extensions.Firewall.Configuration;
-using Yarp.Extensions.Firewall.Utilities;
 
-namespace Yarp.Extensions.Firewall.GeoIP;
+using Yarp.Extensions.Firewall.Configuration;
+using Yarp.Extensions.Firewall.GeoIP;
+using Yarp.Extensions.Firewall.MaxMindGeoIP.Utilities;
+
+namespace Yarp.Extensions.Firewall.MaxMindGeoIP;
 internal sealed class GeoIPDatabaseProviderFactory : IGeoIPDatabaseProviderFactory, IDisposable
 {
     private readonly IFirewallConfigProvider[] _providers;
@@ -23,7 +25,7 @@ internal sealed class GeoIPDatabaseProviderFactory : IGeoIPDatabaseProviderFacto
         _logger = logger;
     }
 
-    public GeoIPDatabaseProvider GetCurrent()
+    public IGeoIPDatabaseProvider GetCurrent()
     {
         // intent is to lazily create the DatabaseReader as
         //   a) the path may not initially exist
@@ -184,7 +186,7 @@ internal sealed class GeoIPDatabaseProviderFactory : IGeoIPDatabaseProviderFacto
             foreach (var instance in _configs)
             {
                 instance?.CallbackCleanup?.Dispose();
-            } 
+            }
         }
     }
 

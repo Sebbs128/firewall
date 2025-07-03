@@ -9,7 +9,9 @@ using Microsoft.Extensions.Primitives;
 
 using NSubstitute;
 
+using Yarp.Extensions.Firewall.Common.Tests.GeoIP;
 using Yarp.Extensions.Firewall.Configuration;
+using Yarp.Extensions.Firewall.GeoIP;
 using Yarp.Extensions.Firewall.Management;
 using Yarp.ReverseProxy;
 using Yarp.ReverseProxy.Configuration;
@@ -29,7 +31,8 @@ public class FirewallConfigManagerTests
         serviceCollection.AddLogging();
         serviceCollection.AddRouting();
         var proxyBuilder = serviceCollection.AddReverseProxy().LoadFromMemory(routes, clusters);
-        proxyBuilder.AddFirewall().LoadFromMemory(firewalls, string.Empty);
+        proxyBuilder.AddFirewall().LoadFromMemory(firewalls, string.Empty)
+            .Services.AddSingleton<IGeoIPDatabaseProviderFactory, DummyGeoIPDatabaseProviderFactory>();
 
         serviceCollection.TryAddSingleton(Substitute.For<IServer>());
         serviceCollection.TryAddSingleton(Substitute.For<IWebHostEnvironment>());
@@ -52,7 +55,8 @@ public class FirewallConfigManagerTests
             serviceCollection.AddSingleton(configProvider);
         }
 
-        proxyBuilder.AddFirewall();
+        proxyBuilder.AddFirewall()
+            .Services.AddSingleton<IGeoIPDatabaseProviderFactory, DummyGeoIPDatabaseProviderFactory>();
         foreach (var configProvider in firewallConfigProviders)
         {
             serviceCollection.AddSingleton(configProvider);

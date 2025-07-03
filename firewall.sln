@@ -37,6 +37,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{79AA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicFirewallSample", "samples\BasicFirewallSample\BasicFirewallSample.csproj", "{29D30885-BBF5-4611-865D-A72F1CA554C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yarp.Extensions.Firewall.MaxMindGeoIP", "src\Yarp.Extensions.Firewall.MaxMindGeoIP\Yarp.Extensions.Firewall.MaxMindGeoIP.csproj", "{921A57CF-721F-497F-9F83-6B9CB6842616}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yarp.Extensions.Firewall.MaxMindGeoIP.Tests", "test\Yarp.Extensions.Firewall.MaxMindGeoIP.Tests\Yarp.Extensions.Firewall.MaxMindGeoIP.Tests.csproj", "{4816DB1C-B128-4B37-A2AA-4DF454A394A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yarp.Extensions.Firewall.Tests.Common", "test\Yarp.Extensions.Firewall.Tests.Common\Yarp.Extensions.Firewall.Tests.Common.csproj", "{B99372AD-6098-4675-85B0-20A25FE1355A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +69,18 @@ Global
 		{29D30885-BBF5-4611-865D-A72F1CA554C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29D30885-BBF5-4611-865D-A72F1CA554C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29D30885-BBF5-4611-865D-A72F1CA554C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{921A57CF-721F-497F-9F83-6B9CB6842616}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{921A57CF-721F-497F-9F83-6B9CB6842616}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{921A57CF-721F-497F-9F83-6B9CB6842616}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{921A57CF-721F-497F-9F83-6B9CB6842616}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4816DB1C-B128-4B37-A2AA-4DF454A394A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4816DB1C-B128-4B37-A2AA-4DF454A394A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4816DB1C-B128-4B37-A2AA-4DF454A394A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4816DB1C-B128-4B37-A2AA-4DF454A394A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B99372AD-6098-4675-85B0-20A25FE1355A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B99372AD-6098-4675-85B0-20A25FE1355A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B99372AD-6098-4675-85B0-20A25FE1355A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B99372AD-6098-4675-85B0-20A25FE1355A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +92,9 @@ Global
 		{7BF0DA4A-1E92-4348-9786-6162CE8DF167} = {E6F79643-8A7F-4BC0-9B3E-9C31BE12891A}
 		{4312EBA2-B409-4E15-B783-9A622185A70E} = {8BC4CF27-9B38-4E81-9E33-6C4FC3295727}
 		{29D30885-BBF5-4611-865D-A72F1CA554C5} = {79AAA909-9BC0-438B-BFC8-61CCAA13451B}
+		{921A57CF-721F-497F-9F83-6B9CB6842616} = {DACE61A2-5A67-4169-946A-67FC99579AEB}
+		{4816DB1C-B128-4B37-A2AA-4DF454A394A1} = {E6F79643-8A7F-4BC0-9B3E-9C31BE12891A}
+		{B99372AD-6098-4675-85B0-20A25FE1355A} = {E6F79643-8A7F-4BC0-9B3E-9C31BE12891A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {704E6595-FCD2-4B64-A2E0-EEB78C260656}

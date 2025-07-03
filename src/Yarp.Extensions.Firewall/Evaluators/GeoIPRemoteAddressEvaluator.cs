@@ -35,17 +35,21 @@ public class GeoIPRemoteAddressEvaluator : ConditionEvaluator
         if (clientAddress is not null)
         {
             using var dbProvider = _geoIpDbReader.GetCurrent();
-            dbProvider.Get().TryCountry(clientAddress, out var countryResponse);
-            foreach (var country in Countries)
+            var requestCountry = dbProvider.LookupCountry(clientAddress);
+
+            if (requestCountry?.Name is not null)
             {
-                if (country.Equals(countryResponse!.Country.Name, StringComparison.InvariantCultureIgnoreCase))
+                foreach (var country in Countries)
                 {
-                    isMatch = true;
-                    context.MatchedValues.Add(new EvaluatorMatchValue(
-                        MatchVariableName: "GeoIPRemoteAddress",
-                        OperatorName: "Equals",
-                        MatchVariableValue: countryResponse!.Country.Name));
-                    break;
+                    if (country.Equals(requestCountry.Name, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        isMatch = true;
+                        context.MatchedValues.Add(new EvaluatorMatchValue(
+                            MatchVariableName: "GeoIPRemoteAddress",
+                            OperatorName: "Equals",
+                            MatchVariableValue: requestCountry.Name));
+                        break;
+                    }
                 }
             }
         }

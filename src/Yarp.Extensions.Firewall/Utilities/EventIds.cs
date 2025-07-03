@@ -20,8 +20,6 @@ internal static class EventIds
     public static readonly EventId ActionTaken = new EventId(12, "ActionTaken");
 
     public static readonly EventId FileContentSkipped = new EventId(15, "FileContentSkipped");
-
-    public static readonly EventId GeoIPDatabaseOpened = new EventId(20, "GeoIPDatabaseOpened");
 }
 
 #pragma warning restore IDE0090
