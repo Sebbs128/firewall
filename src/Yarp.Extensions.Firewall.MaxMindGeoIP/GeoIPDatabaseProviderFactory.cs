@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.GeoIP;
+using Yarp.Extensions.Firewall.MaxMindGeoIP.Configuration;
 using Yarp.Extensions.Firewall.MaxMindGeoIP.Utilities;
 
 namespace Yarp.Extensions.Firewall.MaxMindGeoIP;
@@ -97,7 +98,8 @@ internal sealed class GeoIPDatabaseProviderFactory : IGeoIPDatabaseProviderFacto
         // first valid (file exists and is a Country database) will be used
         foreach (var config in _configs!)
         {
-            var dbpath = config.LatestConfig.GeoIPDatabasePath;
+            var settings = config.LatestConfig.GetExtendedConfiguration<GeoIPDatabaseConfig>();
+            var dbpath = settings?.GeoIPDatabasePath;
             if (string.IsNullOrWhiteSpace(dbpath))
                 continue;
 

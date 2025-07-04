@@ -1,9 +1,13 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Yarp.Extensions.Firewall.GeoIP;
 using Yarp.Extensions.Firewall.MaxMindGeoIP;
+using Yarp.Extensions.Firewall.MaxMindGeoIP.Configuration;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Yarp.Extensions.Firewall.Management;
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 
 /// <summary>
 /// Extension methods for adding MaxMind GeoIP services to the firewall builder.
@@ -22,6 +26,7 @@ public static class IFirewallBuilderExtensions
     {
         // GeoIP Database Provider Factory
         builder.Services.TryAddSingleton<IGeoIPDatabaseProviderFactory, GeoIPDatabaseProviderFactory>();
+        builder.AddConfigurationExtensionProvider<GeoIPDatabaseConfigurationExtensionProvider>();
 
         return builder;
     }

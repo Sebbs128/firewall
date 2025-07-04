@@ -8,7 +8,9 @@ internal sealed class ConfigurationSnapshot : IFirewallConfig
 
     IReadOnlyList<RouteFirewallConfig> IFirewallConfig.RouteFirewalls => RouteFirewalls;
 
-    public string GeoIPDatabasePath { get; internal set; } = string.Empty;
+    public Dictionary<Type, object> ConfigurationExtensions { get; internal set; } = new Dictionary<Type, object>();
+
+    IDictionary<Type, object> IFirewallConfig.ConfigurationExtensions => ConfigurationExtensions;
 
     public IChangeToken ChangeToken { get; internal set; } = default!;
 }

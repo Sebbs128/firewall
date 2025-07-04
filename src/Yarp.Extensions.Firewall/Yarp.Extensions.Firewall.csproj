@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Yarp.Extensions.Firewall.Tests" />
+    <InternalsVisibleTo Include="Yarp.Extensions.Firewall.Tests.Common" />
     <InternalsVisibleTo Include="Yarp.Extensions.Firewall.MaxMindGeoIP.Tests" />
     <InternalsVisibleTo Include="Yarp.Extensions.Firewall.FunctionalTests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" Key="$(NSubstitutePublicKey)" />

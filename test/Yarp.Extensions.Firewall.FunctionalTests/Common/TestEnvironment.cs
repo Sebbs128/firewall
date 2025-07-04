@@ -13,6 +13,7 @@ using Xunit.Abstractions;
 using Yarp.Extensions.Firewall.Common.Tests.GeoIP;
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.GeoIP;
+using Yarp.Extensions.Firewall.MaxMindGeoIP.Configuration;
 using Yarp.ReverseProxy.Configuration;
 
 namespace Yarp.Extensions.Firewall.FunctionalTests.Common;
@@ -93,10 +94,15 @@ public class TestEnvironment
                 Rules = FirewallRules
             };
 
+            var geoIpDatabaseConfig = new GeoIPDatabaseConfig
+            {
+                GeoIPDatabasePath = GeoIPDatabasePath
+            };
+
             var proxyBuilder = services.AddReverseProxy()
                 .LoadFromMemory(new[] { route }, new[] { cluster })
                 .AddFirewall()
-                .LoadFromMemory(new[] { firewall }, GeoIPDatabasePath)
+                .LoadFromMemory(new[] { firewall }, new Dictionary<Type, object> { { typeof(GeoIPDatabaseConfig), geoIpDatabaseConfig } })
                 .Services.AddSingleton<IGeoIPDatabaseProviderFactory, DummyGeoIPDatabaseProviderFactory>();
         },
         app =>

@@ -19,6 +19,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Yarp.Extensions.Firewall.MaxMindGeoIP\Yarp.Extensions.Firewall.MaxMindGeoIP.csproj" />
     <ProjectReference Include="..\..\src\Yarp.Extensions.Firewall\Yarp.Extensions.Firewall.csproj" />
     <ProjectReference Include="..\Yarp.Extensions.Firewall.Tests\Yarp.Extensions.Firewall.Tests.csproj" />
   </ItemGroup>

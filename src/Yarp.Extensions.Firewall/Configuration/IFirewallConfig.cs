@@ -24,9 +24,9 @@ public interface IFirewallConfig
     public IReadOnlyList<RouteFirewallConfig> RouteFirewalls { get; }
 
     /// <summary>
-    /// Path to a MaxMind GeoIP2 Country database.
+    /// Configuration relating to components providing extensions to the firewall.
     /// </summary>
-    public string GeoIPDatabasePath { get; }
+    public IDictionary<Type, object> ConfigurationExtensions { get; }
 
     /// <summary>
     /// A notification that triggers when this snapshot expires.

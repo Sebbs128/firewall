@@ -31,7 +31,7 @@ public class FirewallConfigManagerTests
         serviceCollection.AddLogging();
         serviceCollection.AddRouting();
         var proxyBuilder = serviceCollection.AddReverseProxy().LoadFromMemory(routes, clusters);
-        proxyBuilder.AddFirewall().LoadFromMemory(firewalls, string.Empty)
+        proxyBuilder.AddFirewall().LoadFromMemory(firewalls, new Dictionary<Type, object>())
             .Services.AddSingleton<IGeoIPDatabaseProviderFactory, DummyGeoIPDatabaseProviderFactory>();
 
         serviceCollection.TryAddSingleton(Substitute.For<IServer>());
@@ -262,8 +262,8 @@ public class FirewallConfigManagerTests
             Match = new RouteMatch { Path = "/" }
         };
 
-        var config1 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall1 }, string.Empty);
-        var config2 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall2 }, string.Empty);
+        var config1 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall1 }, new Dictionary<Type, object>());
+        var config2 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall2 }, new Dictionary<Type, object>());
         var proxyConfig1 = new YarpInMemoryConfigProvider(new List<RouteConfig> { route1 }, new List<ClusterConfig> { cluster1 });
         var proxyConfig2 = new YarpInMemoryConfigProvider(new List<RouteConfig> { route2 }, new List<ClusterConfig> { cluster2 });
 
@@ -587,7 +587,7 @@ public class FirewallConfigManagerTests
 
         public IReadOnlyList<RouteFirewallConfig> RouteFirewalls { get; }
 
-        public string GeoIPDatabasePath { get; } = string.Empty;
+        public IDictionary<Type, object> ConfigurationExtensions { get; }
 
         public IChangeToken ChangeToken { get; }
 

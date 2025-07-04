@@ -12,6 +12,7 @@ namespace Yarp.Extensions.Firewall.Configuration.ConfigProvider;
 internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDisposable
 {
     private readonly IConfiguration _configuration;
+    private readonly IEnumerable<IFirewallConfigurationExtensionProvider> _configExtensionProviders;
     private readonly ILogger<ConfigurationConfigProvider> _logger;
     private readonly object _lock = new();
 
@@ -20,12 +21,16 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
     private bool _disposed;
     private IDisposable? _subscription;
 
-    public ConfigurationConfigProvider(IConfiguration configuration, ILogger<ConfigurationConfigProvider> logger)
+    public ConfigurationConfigProvider(
+        IConfiguration configuration,
+        IEnumerable<IFirewallConfigurationExtensionProvider> configExtensionProviders,
+        ILogger<ConfigurationConfigProvider> logger)
     {
         ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
         ArgumentNullException.ThrowIfNull(logger, nameof(logger));
 
         _configuration = configuration;
+        _configExtensionProviders = configExtensionProviders;
         _logger = logger;
     }
 
@@ -50,14 +55,18 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
             ConfigurationSnapshot newSnapshot;
             try
             {
-                newSnapshot = new ConfigurationSnapshot
-                {
-                    GeoIPDatabasePath = _configuration[nameof(IFirewallConfig.GeoIPDatabasePath)] ?? string.Empty
-                };
+                newSnapshot = new ConfigurationSnapshot();
 
                 foreach (var section in _configuration.GetSection(nameof(IFirewallConfig.RouteFirewalls)).GetChildren())
                 {
                     newSnapshot.RouteFirewalls.Add(CreateRouteFirewall(section));
+                }
+
+                foreach (var configExtension in _configExtensionProviders)
+                {
+                    var extendedConfig = configExtension.GetExtendedConfiguration(_configuration);
+
+                    newSnapshot.ConfigurationExtensions[configExtension.Type] = extendedConfig;
                 }
             }
             catch (Exception ex)

@@ -10,12 +10,12 @@ using NSubstitute;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Configuration.ConfigProvider;
+using Yarp.Extensions.Firewall.MaxMindGeoIP.Configuration;
 
-namespace Yarp.Extensions.Firewall.Tests.Configuration.ConfigProvider;
+namespace Yarp.Extensions.Firewall.MaxMindGeoIP.Tests.Configuration.ConfigProvider;
 public class ConfigurationConfigProviderTests
 {
     #region JSON test configuration
-
     private static readonly ConfigurationSnapshot _validConfigurationData = new()
     {
         RouteFirewalls =
@@ -75,29 +75,15 @@ public class ConfigurationConfigProviderTests
                         }
                     }
                 }
-            },
-            new RouteFirewallConfig
+            }
+        },
+        ConfigurationExtensions = new Dictionary<Type, object>
+        {
             {
-                RouteId = "routeB",
-                Enabled = true,
-                Mode = FirewallMode.Detection,
-                RedirectUri = "https://localhost:20000/blocked.html",
-                BlockedStatusCode = HttpStatusCode.NotFound,
-                Rules = new List<RuleConfig>
+                typeof(GeoIPDatabaseConfig),
+                new GeoIPDatabaseConfig
                 {
-                    new() {
-                        RuleName = "ipAddress2",
-                        Priority = 5,
-                        Action = MatchAction.Allow,
-                        Conditions = new List<MatchCondition>
-                        {
-                            new IPAddressMatchCondition
-                            {
-                                IPAddressOrRanges = "192.168.0.0/16",
-                                MatchVariable = IPMatchVariable.RemoteAddress
-                            }
-                        }
-                    }
+                    GeoIPDatabasePath = "./path/to/geoip.mmdb",
                 }
             }
         }
@@ -105,6 +91,9 @@ public class ConfigurationConfigProviderTests
 
     private const string _validJsonConfig = """
         {
+            "GeoIPDatabaseConfig": {
+                "GeoIPDatabasePath": "./path/to/geoip.mmdb"
+            },
             "RouteFirewalls": {
                 "routeA": {
                     "Enabled": true,
@@ -152,29 +141,9 @@ public class ConfigurationConfigProviderTests
                             ]
                         }
                     }
-                },
-                "routeB": {
-                    "Enabled": true,
-                    "Mode": "Detection",
-                    "RedirectUri": "https://localhost:20000/blocked.html",
-                    "BlockedStatusCode": "NotFound",
-                    "Rules": {
-                        "ipAddress2": {
-                            "Priority": 5,
-                            "Action": "Allow",
-                                "Conditions": [
-                                {
-                                    "MatchType": "IPAddress",
-                                    "IPAddressOrRanges": "192.168.0.0/16",
-                                    "MatchVariable": "RemoteAddress"
-                                }
-                            ]
-                        }
-                    }
                 }
             }
         }
-
         """;
 
     #endregion
@@ -187,7 +156,7 @@ public class ConfigurationConfigProviderTests
         var firewallConfig = builder.AddJsonStream(stream).Build();
         var logger = Substitute.For<ILogger<ConfigurationConfigProvider>>();
 
-        var provider = new ConfigurationConfigProvider(firewallConfig, [], logger);
+        var provider = new ConfigurationConfigProvider(firewallConfig, [new GeoIPDatabaseConfigurationExtensionProvider()], logger);
         Assert.NotNull(provider);
         var abstractConfig = provider.GetConfig();
 
@@ -202,7 +171,7 @@ public class ConfigurationConfigProviderTests
         var firewallConfig = builder.AddJsonStream(stream).Build();
         var logger = Substitute.For<ILogger<ConfigurationConfigProvider>>();
 
-        var provider = new ConfigurationConfigProvider(firewallConfig, [], logger);
+        var provider = new ConfigurationConfigProvider(firewallConfig, [new GeoIPDatabaseConfigurationExtensionProvider()], logger);
         var abstractConfig = (ConfigurationSnapshot)provider.GetConfig();
 
         var abstractionsNamespace = typeof(RouteFirewallConfig).Namespace;
@@ -231,10 +200,7 @@ public class ConfigurationConfigProviderTests
                     }
                     break;
                 case IDictionary d:
-                    // disabled case for now, IFirewallConfig.ConfigurationExtensions may be empty
-                    // We should still ensure it's not null and that values are initialized though
-                    //Assert.NotEmpty(d);
-                    Assert.NotNull(d);
+                    Assert.NotEmpty(d);
                     foreach (var value in d.Values)
                     {
                         VerifyFullyInitialized(value, name);
@@ -275,7 +241,7 @@ public class ConfigurationConfigProviderTests
     private void VerifyValidAbstractConfig(IFirewallConfig validConfig, IFirewallConfig abstractConfig)
     {
         Assert.NotNull(abstractConfig);
-        Assert.Equal(2, abstractConfig.RouteFirewalls.Count);
+        Assert.Single(abstractConfig.RouteFirewalls);
 
         var firewall1 = validConfig.RouteFirewalls.First(f => f.RouteId == "routeA");
         Assert.Single(abstractConfig.RouteFirewalls, f => f.RouteId == "routeA");
@@ -297,14 +263,10 @@ public class ConfigurationConfigProviderTests
         var abstractRule1_2 = abstractFirewall1.Rules.Single(r => r.RuleName == "ipAddress1");
         Assert.Equal(rule1_2, abstractRule1_2);
 
-        var firewall2 = validConfig.RouteFirewalls.First(f => f.RouteId == "routeB");
-        Assert.Single(abstractConfig.RouteFirewalls, f => f.RouteId == "routeB");
-        var abstractFirewall2 = abstractConfig.RouteFirewalls.Single(f => f.RouteId == "routeB");
-        Assert.Equal(firewall2.Enabled, abstractFirewall2.Enabled);
-        Assert.Equal(firewall2.Mode, abstractFirewall2.Mode);
-        Assert.Equal(firewall2.RedirectUri, abstractFirewall2.RedirectUri);
-        Assert.Equal(firewall2.BlockedStatusCode, abstractFirewall2.BlockedStatusCode);
-
-        Assert.Equal(firewall2.Rules, abstractFirewall2.Rules);
+        Assert.Single(abstractConfig.ConfigurationExtensions);
+        Assert.True(abstractConfig.ConfigurationExtensions.TryGetValue(typeof(GeoIPDatabaseConfig), out var geoIPDatabaseConfigObj));
+        var abstractGeoIpDbConfig = Assert.IsType<GeoIPDatabaseConfig>(geoIPDatabaseConfigObj);
+        var validGeoIpDbConfig = validConfig.GetExtendedConfiguration<GeoIPDatabaseConfig>();
+        Assert.Equal(validGeoIpDbConfig, abstractGeoIpDbConfig);
     }
 }
