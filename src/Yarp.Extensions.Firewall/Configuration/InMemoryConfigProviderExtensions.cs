@@ -15,11 +15,11 @@ public static class InMemoryConfigProviderExtensions
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="firewalls"></param>
-    /// <param name="geoIPDatabasePath"></param>
+    /// <param name="componentExtensions"></param>
     /// <returns></returns>
-    public static IFirewallBuilder LoadFromMemory(this IFirewallBuilder builder, IReadOnlyList<RouteFirewallConfig> firewalls, string geoIPDatabasePath)
+    public static IFirewallBuilder LoadFromMemory(this IFirewallBuilder builder, IReadOnlyList<RouteFirewallConfig> firewalls, IDictionary<Type, object> componentExtensions)
     {
-        builder.Services.AddSingleton(new InMemoryConfigProvider(firewalls, geoIPDatabasePath));
+        builder.Services.AddSingleton(new InMemoryConfigProvider(firewalls, componentExtensions));
         builder.Services.AddSingleton<IFirewallConfigProvider>(sp => sp.GetRequiredService<InMemoryConfigProvider>());
         return builder;
     }

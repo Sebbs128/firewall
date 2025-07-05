@@ -12,10 +12,11 @@ using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Evaluators;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
 using Yarp.Extensions.Firewall.GeoIP;
+using Yarp.Extensions.Firewall.MaxMindGeoIP.Tests.Common;
 using Yarp.Extensions.Firewall.Model;
-using Yarp.Extensions.Firewall.Tests.Common;
+using Yarp.Extensions.Firewall.Tests.Evaluators;
 
-namespace Yarp.Extensions.Firewall.Tests.Evaluators;
+namespace Yarp.Extensions.Firewall.MaxMindGeoIP.Tests.Evaluators;
 public class GeoIPEvaluatorTests : ConditionExtensionsTestsBase
 {
     private readonly GeoIPConditionFactory _geoIPConditionFactory;
@@ -119,7 +120,7 @@ public class GeoIPEvaluatorTests : ConditionExtensionsTestsBase
     {
         {
             new string[] { "United Kingdom" },
-            new IPAddress(new byte[] { 81, 2, 69, 160 }),
+            new IPAddress([81, 2, 69, 160]),
             "United Kingdom"
         }
     };

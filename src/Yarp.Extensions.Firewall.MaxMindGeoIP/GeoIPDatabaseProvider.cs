@@ -1,6 +1,10 @@
+using System.Net;
+
 using MaxMind.GeoIP2;
 
-namespace Yarp.Extensions.Firewall.GeoIP;
+using Yarp.Extensions.Firewall.GeoIP;
+
+namespace Yarp.Extensions.Firewall.MaxMindGeoIP;
 
 /// <summary>
 /// Manages lifetime of a given MaxMind GeoIP2 database reader.
@@ -13,7 +17,7 @@ namespace Yarp.Extensions.Firewall.GeoIP;
 /// Only the actual owner (currently, the GeoIPDatabaseProviderFactory) can actually cause the DatabaseReader to be disposed,
 /// which is done by trigging a cancellation of the provided CancellationToken.
 /// </remarks>
-public sealed class GeoIPDatabaseProvider : IDisposable
+public sealed class GeoIPDatabaseProvider : IGeoIPDatabaseProvider, IDisposable
 {
     private readonly DatabaseReader _databaseReader;
     private readonly CancellationToken _disposeToken;
@@ -28,12 +32,22 @@ public sealed class GeoIPDatabaseProvider : IDisposable
         _disposeTokenRegistration = _disposeToken.Register(DisposeIfCancllationRequested);
     }
 
+    /// <inheritdoc/>
+    public Country? LookupCountry(IPAddress ipAddress)
+    {
+        var dbReader = Get();
+
+        return dbReader.TryCountry(ipAddress, out var country) && country is not null
+            ? new(country.Country.IsoCode, country.Country.Name)
+            : null;
+    }
+
     /// <summary>
     /// Returns the current GeoIP2 database reader.
     /// </summary>
     /// <returns></returns>
     /// <exception cref="ObjectDisposedException"></exception>
-    public IGeoIP2DatabaseReader Get()
+    internal IGeoIP2DatabaseReader Get()
     {
         if (_dbReaderDisposed)
             throw new ObjectDisposedException(nameof(GeoIPDatabaseProvider));

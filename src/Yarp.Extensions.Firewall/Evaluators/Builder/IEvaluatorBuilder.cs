@@ -12,7 +12,7 @@ public interface IEvaluatorBuilder
     /// Validates that each rule for the given route firewall is known and has the expected parameters.
     /// All conditions are validated so all errors can be repoted.
     /// </summary>
-    IReadOnlyList<Exception> Validate(RouteFirewallConfig config);
+    public IReadOnlyList<Exception> Validate(RouteFirewallConfig config);
 
     /// <summary>
     /// Builds the rules for the given route firewall into executable rules.
@@ -20,5 +20,5 @@ public interface IEvaluatorBuilder
     /// <param name="firewall"></param>
     /// <param name="route"></param>
     /// <returns></returns>
-    RouteEvaluator Build(RouteFirewallConfig firewall, RouteConfig? route);
+    public RouteEvaluator Build(RouteFirewallConfig firewall, RouteConfig? route);
 }

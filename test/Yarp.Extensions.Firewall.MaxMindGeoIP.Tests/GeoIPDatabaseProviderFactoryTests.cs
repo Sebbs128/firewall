@@ -9,20 +9,23 @@ using NSubstitute;
 
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.GeoIP;
-using Yarp.Extensions.Firewall.Tests.Common;
+using Yarp.Extensions.Firewall.Management;
+using Yarp.Extensions.Firewall.MaxMindGeoIP.Configuration;
+using Yarp.Extensions.Firewall.MaxMindGeoIP.Tests.Common;
 
-namespace Yarp.Extensions.Firewall.Tests.GeoIP;
+namespace Yarp.Extensions.Firewall.MaxMindGeoIP.Tests;
 public class GeoIPDatabaseProviderFactoryTests
 {
     private static IServiceProvider CreateServices(
         List<RouteFirewallConfig> firewalls,
-        string geoIpDbPath)
+        Dictionary<Type, object> componentExtensions)
     {
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddLogging();
         serviceCollection.AddRouting();
         var proxyBuilder = serviceCollection.AddReverseProxy();
-        proxyBuilder.AddFirewall().LoadFromMemory(firewalls, geoIpDbPath);
+        proxyBuilder.AddFirewall().LoadFromMemory(firewalls, componentExtensions)
+            .AddMaxMindGeoIP();
 
         serviceCollection.TryAddSingleton(Substitute.For<IServer>());
         serviceCollection.TryAddSingleton(Substitute.For<IWebHostEnvironment>());
@@ -39,7 +42,8 @@ public class GeoIPDatabaseProviderFactoryTests
 
         var proxyBuilder = serviceCollection.AddReverseProxy();
 
-        proxyBuilder.AddFirewall();
+        proxyBuilder.AddFirewall()
+            .AddMaxMindGeoIP();
         foreach (var configProvider in firewallConfigProviders)
         {
             serviceCollection.AddSingleton(configProvider);
@@ -55,14 +59,14 @@ public class GeoIPDatabaseProviderFactoryTests
     [Fact]
     public void Constructor_Works()
     {
-        var services = CreateServices(new List<RouteFirewallConfig>(), string.Empty);
+        var services = CreateServices([], []);
         _ = services.GetRequiredService<IGeoIPDatabaseProviderFactory>();
     }
 
     [Fact]
     public void GetDatabaseReader_WhenDbPathIsEmpty_ReturnsNull()
     {
-        var services = CreateServices(new List<RouteFirewallConfig>(), string.Empty);
+        var services = CreateServices([], []);
         var factory = services.GetRequiredService<IGeoIPDatabaseProviderFactory>();
         Assert.Null(factory.GetCurrent());
     }
@@ -70,7 +74,7 @@ public class GeoIPDatabaseProviderFactoryTests
     [Fact]
     public void GetDatabaseReader_WhenDbPathDoesNotExist_ReturnsNull()
     {
-        var services = CreateServices(new List<RouteFirewallConfig>(), TestResources.GetGeoIPDatabasePath("NonExistentFile"));
+        var services = CreateServices([], new Dictionary<Type, object> { { typeof(GeoIPDatabaseConfig), TestResources.GetGeoIPDatabaseConfig("NonExistentFile") } });
         var factory = services.GetRequiredService<IGeoIPDatabaseProviderFactory>();
         Assert.Null(factory.GetCurrent());
     }
@@ -78,7 +82,7 @@ public class GeoIPDatabaseProviderFactoryTests
     [Fact]
     public void GetDatabaseReader_WhenDbIsNotCountryDb_ThrowsInvalidDataException()
     {
-        var services = CreateServices(new List<RouteFirewallConfig>(), TestResources.GetGeoIPDatabasePath("GeoLite2-City.mmdb"));
+        var services = CreateServices([], new Dictionary<Type, object> { { typeof(GeoIPDatabaseConfig), TestResources.GetGeoIPDatabaseConfig("GeoLite2-City.mmdb") } });
         var factory = services.GetRequiredService<IGeoIPDatabaseProviderFactory>();
         Assert.Throws<InvalidDataException>(() => factory.GetCurrent());
     }
@@ -86,11 +90,12 @@ public class GeoIPDatabaseProviderFactoryTests
     [Fact]
     public void GetDatabaseReader_WhenDbIsCountryDb_Works()
     {
-        var services = CreateServices(new List<RouteFirewallConfig>(), TestResources.GetGeoIPDatabasePath("GeoLite2-Country.mmdb"));
+        var services = CreateServices([], new Dictionary<Type, object> { { typeof(GeoIPDatabaseConfig), TestResources.GetGeoIPDatabaseConfig("GeoLite2-Country.mmdb") } });
         var factory = services.GetRequiredService<IGeoIPDatabaseProviderFactory>();
         var dbProvider = factory.GetCurrent();
+
         Assert.NotNull(dbProvider);
-        Assert.Equal("United States", dbProvider.Get().Country("128.101.101.101").Country.Name); // IP address from GeoIP2-dotnet examples at https://github.com/maxmind/GeoIP2-dotnet#city-database
+        Assert.Equal("United States", dbProvider.LookupCountry(new IPAddress([128, 101, 101, 101])).Name); // IP address from GeoIP2-dotnet examples at https://github.com/maxmind/GeoIP2-dotnet#city-database
     }
 
     [Fact]
@@ -117,7 +122,7 @@ public class GeoIPDatabaseProviderFactoryTests
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
                     }
                 }
@@ -144,22 +149,35 @@ public class GeoIPDatabaseProviderFactoryTests
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
                     }
                 }
             }
         };
 
-        var config1 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall1 }, string.Empty);
-        var config2 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall2 }, TestResources.GetGeoIPDatabasePath("GeoLite2-Country.mmdb"));
+        var config1 = new InMemoryConfigProvider(
+            new List<RouteFirewallConfig> { firewall1 },
+            new Dictionary<Type, object>());
+        var config2 = new InMemoryConfigProvider(
+            new List<RouteFirewallConfig> { firewall2 },
+            new Dictionary<Type, object>()
+            {
+                {
+                    typeof(GeoIPDatabaseConfig),
+                    new GeoIPDatabaseConfig
+                    {
+                        GeoIPDatabasePath = TestResources.GetGeoIPDatabasePath("GeoLite2-Country.mmdb")
+                    }
+                }
+            });
 
-        var services = CreateServices(new[] { config1, config2 });
+        var services = CreateServices([config1, config2]);
 
         var factory = services.GetRequiredService<IGeoIPDatabaseProviderFactory>();
         var dbProvider = factory.GetCurrent();
         Assert.NotNull(dbProvider);
-        Assert.NotNull(dbProvider.Get().Country("128.101.101.101")); // IP address from GeoIP2-dotnet examples at https://github.com/maxmind/GeoIP2-dotnet#city-database
+        Assert.NotNull(dbProvider.LookupCountry(new IPAddress([128, 101, 101, 101]))); // IP address from GeoIP2-dotnet examples at https://github.com/maxmind/GeoIP2-dotnet#city-database
     }
 
     [Fact]
@@ -220,18 +238,18 @@ public class GeoIPDatabaseProviderFactoryTests
             }
         };
 
-        var config1 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall1 }, string.Empty);
-        var config2 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall2 }, string.Empty);
+        var config1 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall1 }, new Dictionary<Type, object>());
+        var config2 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall2 }, new Dictionary<Type, object>());
 
         var services = CreateServices(new[] { config1, config2 });
 
         var factory = services.GetRequiredService<IGeoIPDatabaseProviderFactory>();
         Assert.Null(factory.GetCurrent());
 
-        config2.Update(new List<RouteFirewallConfig> { firewall2 }, TestResources.GetGeoIPDatabasePath("GeoLite2-Country.mmdb"));
+        config2.Update(new List<RouteFirewallConfig> { firewall2 }, new Dictionary<Type, object> { { typeof(GeoIPDatabaseConfig), TestResources.GetGeoIPDatabaseConfig("GeoLite2-Country.mmdb") } });
 
         var dbProvider = factory.GetCurrent();
         Assert.NotNull(dbProvider);
-        Assert.NotNull(dbProvider.Get().Country("128.101.101.101")); // IP address from GeoIP2-dotnet examples at https://github.com/maxmind/GeoIP2-dotnet#city-database
+        Assert.NotNull(dbProvider.LookupCountry(new IPAddress([128, 101, 101, 101]))); // IP address from GeoIP2-dotnet examples at https://github.com/maxmind/GeoIP2-dotnet#city-database
     }
 }

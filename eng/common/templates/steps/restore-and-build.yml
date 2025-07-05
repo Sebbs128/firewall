@@ -5,9 +5,11 @@ steps:
   displayName: 'dotnet restore $(_BuildConfig)'
   inputs:
     command: 'restore'
+    projects: '**/*.sln'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build $(_BuildConfig)'
   inputs:
     command: 'build'
+    projects: '**/*.sln'
     arguments: --configuration $(_BuildConfig)

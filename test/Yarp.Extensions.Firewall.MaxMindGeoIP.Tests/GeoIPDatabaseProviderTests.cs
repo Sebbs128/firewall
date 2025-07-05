@@ -1,9 +1,8 @@
 using MaxMind.GeoIP2;
 
-using Yarp.Extensions.Firewall.GeoIP;
-using Yarp.Extensions.Firewall.Tests.Common;
+using Yarp.Extensions.Firewall.MaxMindGeoIP.Tests.Common;
 
-namespace Yarp.Extensions.Firewall.Tests.GeoIP;
+namespace Yarp.Extensions.Firewall.MaxMindGeoIP.Tests;
 public class GeoIPDatabaseProviderTests
 {
     [Fact]

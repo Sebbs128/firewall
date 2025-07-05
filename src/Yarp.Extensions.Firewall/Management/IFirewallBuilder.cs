@@ -10,5 +10,5 @@ public interface IFirewallBuilder
     /// <summary>
     /// Gets the services collection.
     /// </summary>
-    IServiceCollection Services { get; }
+    public IServiceCollection Services { get; }
 }

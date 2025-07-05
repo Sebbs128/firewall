@@ -3,7 +3,7 @@
 [![Build Status](https://dev.azure.com/sebbs/Yarp.Extensions.Firewall/_apis/build/status%2FSebbs128.firewall?repoName=Sebbs128%2Ffirewall&branchName=main)](https://dev.azure.com/sebbs/Yarp.Extensions.Firewall/_build/latest?definitionId=16&repoName=Sebbs128%2Ffirewall&branchName=main)
 [![CodeQL](https://github.com/Sebbs128/firewall/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/Sebbs128/firewall/actions/workflows/github-code-scanning/codeql)
 [![Nuget](https://img.shields.io/nuget/vpre/Sebbs.Yarp.Extensions.Firewall.svg?label=NuGet)](https://www.nuget.org/packages/Sebbs.Yarp.Extensions.Firewall)
-
+[![Nuget](https://img.shields.io/nuget/vpre/Sebbs.Yarp.Extensions.Firewall.MaxMindGeoIP.svg?label=NuGet)](https://www.nuget.org/packages/Sebbs.Yarp.Extensions.Firewall.MaxMindGeoIP)
 
 [YARP ("Yet Another Reverse Proxy")](https://github.com/microsoft/reverse-proxy) is a reverse proxy toolkit for ASP.NET Core. This project extends YARP's functionality by adding firewall capabilities.
 
@@ -119,16 +119,22 @@ A `MatchType` of `String` will evaluate request properties against a list of val
 
 ###### GeoIP Evaluators
 
-The `GeoIP` value for `MatchType` will use a [MaxMind GeoIP2](https://dev.maxmind.com/geoip/updating-databases) Country database to look up the client's country based on the IP address from either the socket address or remote address, and evaluate this against a list of supplied country names.
+The `GeoIP` value for `MatchType` will look up the client's country based on the IP address from either the socket address or remote address, and evaluate this against a list of supplied country names.
 
 - `MatchVariable` - the property to retrieve the request's IP address from
   - `SocketAddress` - use the IP address from the actual connection; if the request was previously proxied, this might not be the actual client's address but rather the address of the proxy
   - `RemoteAddress` - the perceived client's address; at present, this will be the first valid value from the `X-Forwarded-For` header, falling back to the socket address if none was found
 - `MatchCountryValues` - a list of country names (not case sensitive) to be evaluated against
 
-The path to a GeoIP2 or GeoLite2 Country database must be provided to use this evaluator, and is configured at the top level (adjacent to `RouteFirewalls`) with the `GeoIPDatabasePath` configuration property. As with all other configuration values, the database path can be updated without requiring a restart, and as MaxMind frequently updates the databases (at time of writing, twice weekly) frequent updating is encouraged.
+The `Yarp.Extensions.Firewall.MaxMindGeoIP` library (in this solution) allows the use of a [MaxMind GeoIP2](https://dev.maxmind.com/geoip/updating-databases) Country database for this purpose.
+This package must be referenced in your project, and added to the service collection via `IFirewallBuilder.AddMaxMindGeoIP()`.
+
+The path to a GeoIP2 or GeoLite2 Country database is configured by a `GeoIPDatabaseConfig` object inside the firewall configuration (adjacent to `RouteFirewalls`), containing a `GeoIPDatabasePath` property. As with all other configuration values, the database path can be updated without requiring a restart, and as MaxMind frequently updates the databases (at time of writing, twice weekly) frequent updating is encouraged.
 
 No database files are provided in this project, however one to suit your purpose (commercial, enterprise, or free) can be obtained from MaxMind. Note you will need the _Country_ database, and supplying any other type will fail to load the database and any configured GeoIP evaluators.
+
+Alternatively, other GeoIP databases can be used by implementing the `IGeoIPDatabaseProviderFactory` and `IGeoIPDatabaseProvider` interfaces, and registering them with the service collection with `IFirewallBuilder.Services.TryAddSingleton<IGeoIPDatabaseProviderFactory, YourGeoIPDatabaseProviderFactory>()`. Configuration for your implementation can be done by implementing the `IFirewallConfigurationExtensionProvider` interface (or extneding the `FirewallConfigurationExtensionProvider` class), and registering it with the service collection with `IFirewallBuilder.AddConfigurationExtensionProvider<YourFirewallConfigurationExtensionProvider>()`.
+(This also works for any other way you would like to extend the firewall functionality.)
 
 ###### Transforms
 
@@ -222,6 +228,9 @@ For example, place `"RouteFirewalls"` inside the section used for YARP (eg. `"Re
                     }
                 }
             }
+        },
+        "GeoIPDatabaseConfig": {
+            "GeoIPDatabasePath": "./path/to/GeoLite2-Country.mmdb"
         }
     }
 }

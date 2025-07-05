@@ -13,7 +13,7 @@ public sealed class InMemoryConfigProvider : IFirewallConfigProvider
     /// <summary>
     /// Creates a new instance.
     /// </summary>
-    public InMemoryConfigProvider(IReadOnlyList<RouteFirewallConfig> rules, string geoIPDatabasePath) : this(rules, geoIPDatabasePath, Guid.NewGuid().ToString())
+    public InMemoryConfigProvider(IReadOnlyList<RouteFirewallConfig> rules, IDictionary<Type, object> componentExtensions) : this(rules, componentExtensions, Guid.NewGuid().ToString())
     {
     }
 
@@ -21,11 +21,11 @@ public sealed class InMemoryConfigProvider : IFirewallConfigProvider
     /// Creates a new instance, specifying a revision id of the configuration.
     /// </summary>
     /// <param name="rules"></param>
-    /// <param name="geoIPDatabasePath"></param>
+    /// <param name="componentExtensions"></param>
     /// <param name="revisionId"></param>
-    public InMemoryConfigProvider(IReadOnlyList<RouteFirewallConfig> rules, string geoIPDatabasePath, string revisionId)
+    public InMemoryConfigProvider(IReadOnlyList<RouteFirewallConfig> rules, IDictionary<Type, object> componentExtensions, string revisionId)
     {
-        _config = new InMemoryConfig(rules, geoIPDatabasePath, revisionId);
+        _config = new InMemoryConfig(rules, componentExtensions, revisionId);
     }
 
     /// <summary>
@@ -37,18 +37,18 @@ public sealed class InMemoryConfigProvider : IFirewallConfigProvider
     /// <summary>
     /// Swaps the config state with a new snapshot of the configuration, then signales that the old one is outdated.
     /// </summary>
-    public void Update(IReadOnlyList<RouteFirewallConfig> routeFirewalls, string geoIPDatabasePath)
+    public void Update(IReadOnlyList<RouteFirewallConfig> routeFirewalls, IDictionary<Type, object> componentExtensions)
     {
-        var newConfig = new InMemoryConfig(routeFirewalls, geoIPDatabasePath);
+        var newConfig = new InMemoryConfig(routeFirewalls, componentExtensions);
         UpdateInternal(newConfig);
     }
 
     /// <summary>
     /// Swaps the config state with a new snapshot of the configuration, then signales that the old one is outdated.
     /// </summary>
-    public void Update(IReadOnlyList<RouteFirewallConfig> routeFirewalls, string geoIPDatabasePath, string revisionId)
+    public void Update(IReadOnlyList<RouteFirewallConfig> routeFirewalls, IDictionary<Type, object> componentExtensions, string revisionId)
     {
-        var newConfig = new InMemoryConfig(routeFirewalls, geoIPDatabasePath, revisionId);
+        var newConfig = new InMemoryConfig(routeFirewalls, componentExtensions, revisionId);
         UpdateInternal(newConfig);
     }
 
@@ -65,14 +65,14 @@ public sealed class InMemoryConfigProvider : IFirewallConfigProvider
     {
         private readonly CancellationTokenSource _cts = new();
 
-        public InMemoryConfig(IReadOnlyList<RouteFirewallConfig> routeFirewalls, string geoIPDatabasePath) : this(routeFirewalls, geoIPDatabasePath, Guid.NewGuid().ToString())
+        public InMemoryConfig(IReadOnlyList<RouteFirewallConfig> routeFirewalls, IDictionary<Type, object> componentExtensions) : this(routeFirewalls, componentExtensions, Guid.NewGuid().ToString())
         {
         }
 
-        public InMemoryConfig(IReadOnlyList<RouteFirewallConfig> routeFirewalls, string geoIPDatabasePath, string revisionId)
+        public InMemoryConfig(IReadOnlyList<RouteFirewallConfig> routeFirewalls, IDictionary<Type, object> componentExtensions, string revisionId)
         {
             RouteFirewalls = routeFirewalls;
-            GeoIPDatabasePath = geoIPDatabasePath;
+            ConfigurationExtensions = componentExtensions;
             RevisionId = revisionId;
             ChangeToken = new CancellationChangeToken(_cts.Token);
         }
@@ -81,7 +81,7 @@ public sealed class InMemoryConfigProvider : IFirewallConfigProvider
 
         public IReadOnlyList<RouteFirewallConfig> RouteFirewalls { get; }
 
-        public string GeoIPDatabasePath { get; }
+        public IDictionary<Type, object> ConfigurationExtensions { get; }
 
         public IChangeToken ChangeToken { get; }
 

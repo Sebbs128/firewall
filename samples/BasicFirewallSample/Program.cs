@@ -1,3 +1,5 @@
+using Yarp.Extensions.Firewall.Management;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -9,7 +11,9 @@ builder.Services.AddReverseProxy()
     // Add the firewall capability to the reverse proxy
     .AddFirewall()
     // Initialise the firewall from the "ReverseProxy" section of configuration
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
+    // Add the MaxMind GeoIP database provider for IP address geolocation rules
+    .AddMaxMindGeoIP();
 
 var app = builder.Build();
 

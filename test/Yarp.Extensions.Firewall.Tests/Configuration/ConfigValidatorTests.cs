@@ -1,7 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 
+using Yarp.Extensions.Firewall.Common.Tests.GeoIP;
 using Yarp.Extensions.Firewall.Configuration;
-using Yarp.Extensions.Firewall.Management;
+using Yarp.Extensions.Firewall.GeoIP;
 
 namespace Yarp.Extensions.Firewall.Tests.Configuration;
 public class ConfigValidatorTests
@@ -10,7 +11,8 @@ public class ConfigValidatorTests
     {
         var services = new ServiceCollection();
         services.AddReverseProxy()
-            .AddFirewall();
+            .AddFirewall()
+            .Services.AddSingleton<IGeoIPDatabaseProviderFactory, DummyGeoIPDatabaseProviderFactory>();
         services.AddOptions();
         services.AddLogging();
         services.AddRouting();

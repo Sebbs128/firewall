@@ -10,5 +10,5 @@ public interface IFirewallConfigValidator
     /// </summary>
     /// <param name="firewall"></param>
     /// <returns></returns>
-    ValueTask<IList<Exception>> ValidateFirewall(RouteFirewallConfig firewall);
+    public ValueTask<IList<Exception>> ValidateFirewall(RouteFirewallConfig firewall);
 }

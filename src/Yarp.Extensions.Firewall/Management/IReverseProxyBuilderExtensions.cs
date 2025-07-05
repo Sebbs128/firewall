@@ -9,7 +9,9 @@ using Yarp.Extensions.Firewall.Configuration.ConfigProvider;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
 using Yarp.Extensions.Firewall.Management;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Microsoft.Extensions.DependencyInjection;
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 
 /// <summary>
 /// Extension methods for adding firewall services.
@@ -48,7 +50,9 @@ public static class IReverseProxyBuilderExtensions
 
         builder.Services.AddSingleton<IFirewallConfigProvider>(sp =>
         {
-            return new ConfigurationConfigProvider(config, sp.GetRequiredService<ILogger<ConfigurationConfigProvider>>());
+            return new ConfigurationConfigProvider(config,
+                sp.GetService<IEnumerable<IFirewallConfigurationExtensionProvider>>() ?? [],
+                sp.GetRequiredService<ILogger<ConfigurationConfigProvider>>());
         });
 
         return builder;
@@ -62,6 +66,18 @@ public static class IReverseProxyBuilderExtensions
     public static IFirewallBuilder AddConditionFactory<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TFactory>(this IFirewallBuilder builder) where TFactory : class, IConditionFactory
     {
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IConditionFactory, TFactory>());
+        return builder;
+    }
+
+    /// <summary>
+    /// Adds a configuration extension provider of the specified type to the firewall builder.
+    /// </summary>
+    /// <typeparam name="T">The type of the configuration extension provider.</typeparam>
+    /// <returns></returns>
+    public static IFirewallBuilder AddConfigurationExtensionProvider<T>(this IFirewallBuilder builder)
+        where T : class, IFirewallConfigurationExtensionProvider
+    {
+        builder.Services.AddSingleton<IFirewallConfigurationExtensionProvider, T>();
         return builder;
     }
 }

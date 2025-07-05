@@ -1,29 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Description>A firewall extension to the YARP library for ASP.NET Core</Description>
+    <Description>MaxMind.GeoIP2 lookups for Yarp.Extensions.Firewall</Description>
     <TargetFrameworks>$(ReleaseTFMs)</TargetFrameworks>
     <OutputType>Library</OutputType>
-    <RootNamespace>Yarp.Extensions.Firewall</RootNamespace>
+    <RootNamespace>Yarp.Extensions.Firewall.MaxMindGeoIP</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PackageId>Sebbs.Yarp.Extensions.Firewall</PackageId>
+    <PackageId>Sebbs.Yarp.Extensions.Firewall.MaxMindGeoIP</PackageId>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <NoWarn>IDE0290</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Yarp.ReverseProxy" />
+    <PackageReference Include="MaxMind.GeoIP2" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Yarp.Extensions.Firewall.Tests" />
-    <InternalsVisibleTo Include="Yarp.Extensions.Firewall.Tests.Common" />
     <InternalsVisibleTo Include="Yarp.Extensions.Firewall.MaxMindGeoIP.Tests" />
     <InternalsVisibleTo Include="Yarp.Extensions.Firewall.FunctionalTests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" Key="$(NSubstitutePublicKey)" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\" />
+    <ProjectReference Include="..\Yarp.Extensions.Firewall\Yarp.Extensions.Firewall.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
