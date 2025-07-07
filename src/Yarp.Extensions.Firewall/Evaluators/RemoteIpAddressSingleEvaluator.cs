@@ -8,19 +8,13 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates the remote client address from the HTTP request against individual IP addresses.
 /// </summary>
-public class RemoteIpAddressSingleEvaluator : ConditionEvaluator
+/// <inheritdoc/>
+public class RemoteIpAddressSingleEvaluator(IReadOnlyList<IPAddress> ipAddresses, bool negate) : ConditionEvaluator(negate)
 {
-    /// <inheritdoc/>
-    public RemoteIpAddressSingleEvaluator(IReadOnlyList<IPAddress> ipAddresses, bool negate)
-        : base(negate)
-    {
-        IpAddresses = ipAddresses;
-    }
-
     /// <summary>
     /// IP addresses to match against.
     /// </summary>
-    public IReadOnlyList<IPAddress> IpAddresses { get; }
+    public IReadOnlyList<IPAddress> IpAddresses { get; } = ipAddresses;
 
     /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)

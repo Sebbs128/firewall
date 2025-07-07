@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.Net;
 
 using Microsoft.AspNetCore.Http;
@@ -27,7 +26,7 @@ public class RouteEvaluator
         Mode = mode;
         RedirectUri = redirectUri;
         BlockedStatusCode = blockedStatusCode;
-        RuleEvaluators = ruleEvaluators.ToArray();
+        RuleEvaluators = [.. ruleEvaluators];
     }
 
     /// <summary>
@@ -71,7 +70,9 @@ public class RouteEvaluator
         foreach (var evaluator in RuleEvaluators)
         {
             if (cancellationToken.IsCancellationRequested)
+            {
                 break;
+            }
 
             EvaluationContext evaluationContext = new(context);
 

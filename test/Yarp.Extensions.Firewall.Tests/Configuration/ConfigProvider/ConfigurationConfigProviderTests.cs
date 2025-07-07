@@ -27,26 +27,26 @@ public class ConfigurationConfigProviderTests
                 Mode = FirewallMode.Prevention,
                 RedirectUri = "https://localhost:10000/blocked",
                 BlockedStatusCode = HttpStatusCode.Forbidden,
-                Rules = new List<RuleConfig>
-                {
+                Rules =
+                [
                     new() {
                         RuleName = "stringAndSize",
                         Priority = 10,
                         Action = MatchAction.Block,
-                        Conditions = new List<MatchCondition>
-                        {
+                        Conditions =
+                        [
                             new StringMatchCondition
                             {
                                 Operator = StringOperator.Contains,
                                 MatchVariable = MatchVariable.QueryParam,
                                 Selector = "a",
-                                MatchValues = new[] { "1" },
-                                Transforms = new[]
-                                {
+                                MatchValues = ["1"],
+                                Transforms =
+                                [
                                     Transform.Trim,
                                     Transform.UrlDecode,
                                     Transform.Uppercase,
-                                }
+                                ]
                             },
                             new SizeMatchCondition
                             {
@@ -54,27 +54,27 @@ public class ConfigurationConfigProviderTests
                                 MatchVariable = MatchVariable.Cookie,
                                 Selector = "b",
                                 MatchValue = 100,
-                                Transforms = new[]
-                                {
+                                Transforms =
+                                [
                                     Transform.Trim,
-                                }
+                                ]
                             }
-                        }
+                        ]
                     },
                     new() {
                         RuleName = "ipAddress1",
                         Priority = 11,
                         Action = MatchAction.Allow,
-                        Conditions = new List<MatchCondition>
-                        {
+                        Conditions =
+                        [
                             new IPAddressMatchCondition
                             {
                                 IPAddressOrRanges = "2001::abcd",
                                 MatchVariable = IPMatchVariable.SocketAddress
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             },
             new RouteFirewallConfig
             {
@@ -83,22 +83,22 @@ public class ConfigurationConfigProviderTests
                 Mode = FirewallMode.Detection,
                 RedirectUri = "https://localhost:20000/blocked.html",
                 BlockedStatusCode = HttpStatusCode.NotFound,
-                Rules = new List<RuleConfig>
-                {
+                Rules =
+                [
                     new() {
                         RuleName = "ipAddress2",
                         Priority = 5,
                         Action = MatchAction.Allow,
-                        Conditions = new List<MatchCondition>
-                        {
+                        Conditions =
+                        [
                             new IPAddressMatchCondition
                             {
                                 IPAddressOrRanges = "192.168.0.0/16",
                                 MatchVariable = IPMatchVariable.RemoteAddress
                             }
-                        }
+                        ]
                     }
-                }
+                ]
             }
         }
     };
@@ -272,7 +272,7 @@ public class ConfigurationConfigProviderTests
         }
     }
 
-    private void VerifyValidAbstractConfig(IFirewallConfig validConfig, IFirewallConfig abstractConfig)
+    private static void VerifyValidAbstractConfig(IFirewallConfig validConfig, IFirewallConfig abstractConfig)
     {
         Assert.NotNull(abstractConfig);
         Assert.Equal(2, abstractConfig.RouteFirewalls.Count);

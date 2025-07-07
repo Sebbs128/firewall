@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
+using Yarp.Extensions.Firewall.Common.Tests;
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Evaluators;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
@@ -56,7 +57,7 @@ public class RequestPostArgsEvaluatorTestss : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.PostArgs,
                 Selector = "a",
                 Operator = StringOperator.Equals,
-                MatchValues = new[] { "1" }
+                MatchValues = ["1"]
             }, new FormCollection(new()
             {
                 { "a", "1" }
@@ -68,7 +69,7 @@ public class RequestPostArgsEvaluatorTestss : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.PostArgs,
                 Selector = "a",
                 Operator = StringOperator.StartsWith,
-                MatchValues = new[] { "1" }
+                MatchValues = ["1"]
             }, new FormCollection(new()
             {
                 { "a", "123" }
@@ -80,7 +81,7 @@ public class RequestPostArgsEvaluatorTestss : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.PostArgs,
                 Selector = "a",
                 Operator = StringOperator.EndsWith,
-                MatchValues = new[] { "1" }
+                MatchValues = ["1"]
             }, new FormCollection(new()
             {
                 { "a", "321" }

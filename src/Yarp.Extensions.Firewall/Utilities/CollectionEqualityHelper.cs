@@ -1,4 +1,4 @@
-﻿namespace Yarp.Extensions.Firewall.Utilities;
+namespace Yarp.Extensions.Firewall.Utilities;
 
 internal static class CollectionEqualityHelper
 {

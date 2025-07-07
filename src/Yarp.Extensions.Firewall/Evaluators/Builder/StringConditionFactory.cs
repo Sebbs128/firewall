@@ -4,14 +4,9 @@ using Yarp.Extensions.Firewall.Configuration;
 
 namespace Yarp.Extensions.Firewall.Evaluators.Builder;
 
-internal sealed class StringConditionFactory : IConditionFactory
+internal sealed class StringConditionFactory(ILoggerFactory loggerFactory) : IConditionFactory
 {
-    private readonly ILoggerFactory _loggerFactory;
-
-    public StringConditionFactory(ILoggerFactory loggerFactory)
-    {
-        _loggerFactory = loggerFactory;
-    }
+    private readonly ILoggerFactory _loggerFactory = loggerFactory;
 
     public bool Validate(EvaluatorValidationContext context, MatchCondition condition)
     {
@@ -82,7 +77,9 @@ internal sealed class StringConditionFactory : IConditionFactory
     private static void ValidateConditionWithSelector(EvaluatorValidationContext context, StringMatchCondition condition)
     {
         if (string.IsNullOrWhiteSpace(condition.Selector))
+        {
             context.Errors.Add(new ArgumentException("Missing selector value for SizeMatchCondition"));
+        }
 
         ValidateCondition(context, condition);
     }
@@ -99,7 +96,10 @@ internal sealed class StringConditionFactory : IConditionFactory
             case StringOperator.StartsWith:
             case StringOperator.EndsWith:
                 if (condition.MatchValues.Count == 0)
+                {
                     context.Errors.Add(new ArgumentException("Missing match values for StringMatchCondition"));
+                }
+
                 break;
             default:
                 context.Errors.Add(new ArgumentException($"Unexpected match operator for StringMatchCondition: {condition.Operator}"));

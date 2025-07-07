@@ -49,7 +49,7 @@ public class MatchConditionDiscriminator : JsonConverter<MatchCondition>
         return null;
     }
 
-    private static readonly MatchVariable[] _matchVariablesWithSelector = new[] { MatchVariable.Cookie, MatchVariable.RequestHeader, MatchVariable.PostArgs, MatchVariable.QueryParam };
+    private static readonly MatchVariable[] _matchVariablesWithSelector = [MatchVariable.Cookie, MatchVariable.RequestHeader, MatchVariable.PostArgs, MatchVariable.QueryParam];
 
     /// <summary>
     /// Writes a specified <see cref="MatchCondition"/> as JSON.

@@ -9,29 +9,19 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates the length of the URL path.
 /// </summary>
-public class RequestPathSizeEvaluator : ConditionEvaluator<NumberOperator>
+/// <inheritdoc/>
+public class RequestPathSizeEvaluator(NumberOperator @operator, uint matchValue, bool negate, IReadOnlyList<Transform> transforms) : ConditionEvaluator<NumberOperator>(@operator, negate)
 {
-    /// <inheritdoc/>
-    public RequestPathSizeEvaluator(NumberOperator @operator, uint matchValue, bool negate, IReadOnlyList<Transform> transforms)
-        : base(@operator, negate)
-    {
-        MatchValue = matchValue;
-
-        // Lower and Upper transforms don't affect the string's length, so we can ignore them
-        Transforms = transforms
-            .Where(t => t is not Transform.Uppercase or Transform.Lowercase)
-            .ToList();
-    }
 
     /// <summary>
     /// Value to compare against.
     /// </summary>
-    public uint MatchValue { get; }
+    public uint MatchValue { get; } = matchValue;
 
     /// <summary>
     /// Transformations to apply before evaluating.
     /// </summary>
-    public IReadOnlyList<Transform> Transforms { get; }
+    public IReadOnlyList<Transform> Transforms { get; } = [.. transforms.Where(t => t is not Transform.Uppercase or Transform.Lowercase)];
 
     /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
@@ -45,7 +35,9 @@ public class RequestPathSizeEvaluator : ConditionEvaluator<NumberOperator>
         {
             // Lower and Upper transforms don't affect the string's length, so we can ignore them
             if (transform is Transform.Lowercase || transform is Transform.Uppercase)
+            {
                 continue;
+            }
 
             requestUri = StringUtilities.ApplyTransform(requestUri, transform);
         }

@@ -53,10 +53,8 @@ internal sealed class FirewallConfigManager : IFirewallStateLookup, IDisposable
         _configs = new ConfigState[_providers.Length];
     }
 
-    private static IReadOnlyList<IFirewallConfig> ExtractListOfFirewallConfigs(IEnumerable<ConfigState> configStates)
-    {
-        return configStates.Select(state => state.LatestConfig).ToList().AsReadOnly();
-    }
+    private static ReadOnlyCollection<IFirewallConfig> ExtractListOfFirewallConfigs(IEnumerable<ConfigState> configStates) =>
+        configStates.Select(state => state.LatestConfig).ToList().AsReadOnly();
 
     internal async Task InitialLoadAsync()
     {
@@ -74,7 +72,7 @@ internal sealed class FirewallConfigManager : IFirewallStateLookup, IDisposable
 
                 var config = LoadConfig(provider);
                 _configs[i] = new ConfigState(provider, config);
-                firewalls.AddRange(config.RouteFirewalls ?? Array.Empty<RouteFirewallConfig>());
+                firewalls.AddRange(config.RouteFirewalls ?? []);
             }
 
             var firewallConfigs = ExtractListOfFirewallConfigs(_configs);
@@ -130,7 +128,7 @@ internal sealed class FirewallConfigManager : IFirewallStateLookup, IDisposable
             }
 
             // If we didn't/couldn't get a new config then re-use the last one.
-            firewalls.AddRange(instance.LatestConfig.RouteFirewalls ?? Array.Empty<RouteFirewallConfig>());
+            firewalls.AddRange(instance.LatestConfig.RouteFirewalls ?? []);
         }
 
         var firewallConfigs = ExtractListOfFirewallConfigs(_configs);
@@ -248,7 +246,7 @@ internal sealed class FirewallConfigManager : IFirewallStateLookup, IDisposable
         }
 
         // Update routes first because firewalls need to reference them
-        UpdateRuntimeRoutes(new List<RouteModel>(_proxyStateLookup.GetRoutes()));
+        UpdateRuntimeRoutes([.. _proxyStateLookup.GetRoutes()]);
         return UpdateRuntimeFirewalls(configuredFirewalls);
     }
 
@@ -437,17 +435,11 @@ internal sealed class FirewallConfigManager : IFirewallStateLookup, IDisposable
         }
     }
 
-    private class ConfigState
+    private class ConfigState(IFirewallConfigProvider provider, IFirewallConfig config)
     {
-        public ConfigState(IFirewallConfigProvider provider, IFirewallConfig config)
-        {
-            Provider = provider;
-            LatestConfig = config;
-        }
+        public IFirewallConfigProvider Provider { get; } = provider;
 
-        public IFirewallConfigProvider Provider { get; }
-
-        public IFirewallConfig LatestConfig { get; set; }
+        public IFirewallConfig LatestConfig { get; set; } = config;
 
         public bool LoadFailed { get; set; }
 

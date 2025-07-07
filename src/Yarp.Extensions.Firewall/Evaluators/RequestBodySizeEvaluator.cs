@@ -34,9 +34,8 @@ public class RequestBodySizeEvaluator : RequestBodyConditionEvaluator<NumberOper
     }
 
     // Lower and Upper transforms don't affect the string's length, so we can ignore them
-    private static List<Transform> RemoveCaseTransforms(IReadOnlyList<Transform> transforms) => transforms
-        .Where(t => t is not Transform.Uppercase or Transform.Lowercase)
-        .ToList();
+    private static List<Transform> RemoveCaseTransforms(IReadOnlyList<Transform> transforms) =>
+        [.. transforms.Where(t => t is not Transform.Uppercase or Transform.Lowercase)];
 
     private readonly bool _orEqual;
     private readonly bool _resultWhenLimitExceeded;
@@ -84,9 +83,13 @@ public class RequestBodySizeEvaluator : RequestBodyConditionEvaluator<NumberOper
                     if (transform is Transform.Trim)
                     {
                         if (firstRead)
+                        {
                             transformedChunk = transformedChunk.TrimStart();
+                        }
                         else if (readResult.IsCompleted || buffer.IsSingleSegment)
+                        {
                             transformedChunk = transformedChunk.TrimEnd();
+                        }
 
                         continue;
                     }

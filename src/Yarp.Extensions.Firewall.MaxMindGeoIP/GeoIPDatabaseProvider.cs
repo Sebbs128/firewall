@@ -49,8 +49,14 @@ public sealed class GeoIPDatabaseProvider : IGeoIPDatabaseProvider, IDisposable
     /// <exception cref="ObjectDisposedException"></exception>
     internal IGeoIP2DatabaseReader Get()
     {
+#if NET8_0_OR_GREATER
+        ObjectDisposedException.ThrowIf(_dbReaderDisposed, nameof(GeoIPDatabaseProvider));
+#else
         if (_dbReaderDisposed)
+        {
             throw new ObjectDisposedException(nameof(GeoIPDatabaseProvider));
+        }
+#endif
 
         Interlocked.Increment(ref _references);
         return _databaseReader;

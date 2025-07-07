@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
+using Yarp.Extensions.Firewall.Common.Tests;
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Evaluators;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
@@ -57,7 +58,7 @@ public class RequestCookieEvaluatorTestss : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.Cookie,
                 Selector = "a",
                 Operator = StringOperator.Equals,
-                MatchValues = new[] { "1" }
+                MatchValues = ["1"]
             },
             new RequestCookieCollection(new Dictionary<string, string>()
             {
@@ -70,7 +71,7 @@ public class RequestCookieEvaluatorTestss : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.Cookie,
                 Selector = "a",
                 Operator = StringOperator.StartsWith,
-                MatchValues = new[] { "1" }
+                MatchValues = ["1"]
             },
             new RequestCookieCollection(new Dictionary<string, string>()
             {
@@ -83,7 +84,7 @@ public class RequestCookieEvaluatorTestss : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.Cookie,
                 Selector = "a",
                 Operator = StringOperator.EndsWith,
-                MatchValues = new[] { "1" }
+                MatchValues = ["1"]
             },
             new RequestCookieCollection(new Dictionary<string, string>()
             {

@@ -67,9 +67,13 @@ public class RequestBodyStringStartsWithEvaluator : RequestBodyConditionEvaluato
                     if (transform is Transform.Trim)
                     {
                         if (firstRead)
+                        {
                             transformedChunk = transformedChunk.TrimStart();
+                        }
                         else if (readResult.IsCompleted || buffer.IsSingleSegment)
+                        {
                             transformedChunk = transformedChunk.TrimEnd();
+                        }
 
                         continue;
                     }
@@ -89,7 +93,9 @@ public class RequestBodyStringStartsWithEvaluator : RequestBodyConditionEvaluato
                     for (int i = 0; i < discardedMatchValues.Length; i++)
                     {
                         if (discardedMatchValues[i])
+                        {
                             continue;
+                        }
 
                         string matchValue = MatchValues[i];
 
@@ -120,16 +126,22 @@ public class RequestBodyStringStartsWithEvaluator : RequestBodyConditionEvaluato
                     }
 
                     if (allDiscarded)
+                    {
                         return false;
+                    }
                 }
 
                 if (transformedBody.Length > _maxMatchLength)
+                {
                     return false;
+                }
 
                 bodyReader.AdvanceTo(buffer.Start, buffer.End);
 
                 if (readResult.IsCompleted || buffer.IsSingleSegment)
+                {
                     return false;
+                }
             }
         }
         return false;

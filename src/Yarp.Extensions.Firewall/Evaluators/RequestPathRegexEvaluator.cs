@@ -9,19 +9,14 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates the URL path against a regular expression.
 /// </summary>
-public class RequestPathRegexEvaluator : RegexConditionEvaluator
+/// <inheritdoc/>
+public class RequestPathRegexEvaluator(IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms) : RegexConditionEvaluator(matchPatterns, negate)
 {
-    /// <inheritdoc/>
-    public RequestPathRegexEvaluator(IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms)
-        : base(matchPatterns, negate)
-    {
-        Transforms = transforms;
-    }
 
     /// <summary>
     /// Transformations to apply before evaluating.
     /// </summary>
-    public IReadOnlyList<Transform> Transforms { get; }
+    public IReadOnlyList<Transform> Transforms { get; } = transforms;
 
     /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)

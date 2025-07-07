@@ -72,17 +72,17 @@ public class GeoIPDatabaseProviderFactoryTests
     }
 
     [Fact]
-    public void GetDatabaseReader_WhenDbPathDoesNotExist_ReturnsNull()
+    public void GetDatabaseReader_WhenDbPathDoesNotExist_ThrowsFileNotFoundException()
     {
-        var services = CreateServices([], new Dictionary<Type, object> { { typeof(GeoIPDatabaseConfig), TestResources.GetGeoIPDatabaseConfig("NonExistentFile") } });
+        var services = CreateServices([], new Dictionary<Type, object> { [typeof(GeoIPDatabaseConfig)] = TestResources.GetGeoIPDatabaseConfig("NonExistentFile") });
         var factory = services.GetRequiredService<IGeoIPDatabaseProviderFactory>();
-        Assert.Null(factory.GetCurrent());
+        Assert.Throws<FileNotFoundException>(() => factory.GetCurrent());
     }
 
     [Fact]
     public void GetDatabaseReader_WhenDbIsNotCountryDb_ThrowsInvalidDataException()
     {
-        var services = CreateServices([], new Dictionary<Type, object> { { typeof(GeoIPDatabaseConfig), TestResources.GetGeoIPDatabaseConfig("GeoLite2-City.mmdb") } });
+        var services = CreateServices([], new Dictionary<Type, object> { [typeof(GeoIPDatabaseConfig)] = TestResources.GetGeoIPDatabaseConfig("GeoLite2-City.mmdb") });
         var factory = services.GetRequiredService<IGeoIPDatabaseProviderFactory>();
         Assert.Throws<InvalidDataException>(() => factory.GetCurrent());
     }
@@ -90,7 +90,7 @@ public class GeoIPDatabaseProviderFactoryTests
     [Fact]
     public void GetDatabaseReader_WhenDbIsCountryDb_Works()
     {
-        var services = CreateServices([], new Dictionary<Type, object> { { typeof(GeoIPDatabaseConfig), TestResources.GetGeoIPDatabaseConfig("GeoLite2-Country.mmdb") } });
+        var services = CreateServices([], new Dictionary<Type, object> { [typeof(GeoIPDatabaseConfig)] = TestResources.GetGeoIPDatabaseConfig("GeoLite2-Country.mmdb") });
         var factory = services.GetRequiredService<IGeoIPDatabaseProviderFactory>();
         var dbProvider = factory.GetCurrent();
 
@@ -108,15 +108,15 @@ public class GeoIPDatabaseProviderFactoryTests
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
             BlockedStatusCode = HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
-                new RuleConfig()
+            Rules =
+            [
+                new()
                 {
                     RuleName = "queryParam-a-contains-1",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
@@ -124,9 +124,9 @@ public class GeoIPDatabaseProviderFactoryTests
                             Selector = "a",
                             MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
         var firewall2 = new RouteFirewallConfig
         {
@@ -135,15 +135,15 @@ public class GeoIPDatabaseProviderFactoryTests
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
             BlockedStatusCode = HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
-                new RuleConfig()
+            Rules =
+            [
+                new()
                 {
                     RuleName = "queryParam-a-contains-1",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
@@ -151,16 +151,16 @@ public class GeoIPDatabaseProviderFactoryTests
                             Selector = "a",
                             MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
 
         var config1 = new InMemoryConfigProvider(
-            new List<RouteFirewallConfig> { firewall1 },
+            [firewall1],
             new Dictionary<Type, object>());
         var config2 = new InMemoryConfigProvider(
-            new List<RouteFirewallConfig> { firewall2 },
+            [firewall2],
             new Dictionary<Type, object>()
             {
                 {
@@ -190,25 +190,25 @@ public class GeoIPDatabaseProviderFactoryTests
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
             BlockedStatusCode = HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
-                new RuleConfig()
+            Rules =
+            [
+                new()
                 {
                     RuleName = "queryParam-a-contains-1",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
         var firewall2 = new RouteFirewallConfig
         {
@@ -217,36 +217,36 @@ public class GeoIPDatabaseProviderFactoryTests
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
             BlockedStatusCode = HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
-                new RuleConfig()
+            Rules =
+            [
+                new()
                 {
                     RuleName = "queryParam-a-contains-1",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
 
-        var config1 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall1 }, new Dictionary<Type, object>());
-        var config2 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall2 }, new Dictionary<Type, object>());
+        var config1 = new InMemoryConfigProvider([firewall1], new Dictionary<Type, object>());
+        var config2 = new InMemoryConfigProvider([firewall2], new Dictionary<Type, object>());
 
-        var services = CreateServices(new[] { config1, config2 });
+        var services = CreateServices([config1, config2]);
 
         var factory = services.GetRequiredService<IGeoIPDatabaseProviderFactory>();
         Assert.Null(factory.GetCurrent());
 
-        config2.Update(new List<RouteFirewallConfig> { firewall2 }, new Dictionary<Type, object> { { typeof(GeoIPDatabaseConfig), TestResources.GetGeoIPDatabaseConfig("GeoLite2-Country.mmdb") } });
+        config2.Update([firewall2], new Dictionary<Type, object> { { typeof(GeoIPDatabaseConfig), TestResources.GetGeoIPDatabaseConfig("GeoLite2-Country.mmdb") } });
 
         var dbProvider = factory.GetCurrent();
         Assert.NotNull(dbProvider);

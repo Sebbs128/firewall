@@ -3,18 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Yarp.ReverseProxy.Configuration;
 
 namespace Yarp.Extensions.Firewall.Management;
-internal class FirewallConfigManagerProxyChangeListener : IConfigChangeListener
+internal class FirewallConfigManagerProxyChangeListener(IServiceProvider serviceProvider) : IConfigChangeListener
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
     private FirewallConfigManager? _firewallConfigManager;
     private bool _firewallConfigInitialised;
-
-    public FirewallConfigManagerProxyChangeListener(IServiceProvider serviceProvider)
-    {
-        // injecting IServiceProvider instead of FirewallConfigManager to avoid a circular dependency
-        // ProxyConfigManager -> this (as IConfigChangeListener) -> FirewallConfigManager -> ProxyConfigManager (as IProxyStateLookup)
-        _serviceProvider = serviceProvider;
-    }
 
     public void ConfigurationApplied(IReadOnlyList<IProxyConfig> proxyConfigs)
     {

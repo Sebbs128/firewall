@@ -1,4 +1,4 @@
-﻿namespace Yarp.Extensions.Firewall.Model;
+namespace Yarp.Extensions.Firewall.Model;
 
 /// <summary>
 /// Representation of a route firewall for use at runtime.
@@ -9,11 +9,15 @@ internal sealed class RouteFirewallState
 
     public RouteFirewallState(string routeId)
     {
+#if NET7_0_OR_GREATER
+        ArgumentException.ThrowIfNullOrEmpty(routeId, nameof(routeId));
+#else
         if (string.IsNullOrEmpty(routeId))
         {
             throw new ArgumentNullException(nameof(routeId));
         }
-        RouteId = routeId; 
+#endif
+        RouteId = routeId;
     }
 
     public string RouteId { get; }

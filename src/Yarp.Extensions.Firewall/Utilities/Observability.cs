@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
-
 using System.Diagnostics;
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Yarp.Extensions.Firewall.Utilities;
 
 internal static class Observability
 {
-    public static readonly ActivitySource FirewallActivitySource = new ActivitySource("Yarp.Extensions.Firewall");
+    public static readonly ActivitySource FirewallActivitySource = new("Yarp.Extensions.Firewall");
 
     public static Activity? GetFirewallActivity(this HttpContext context)
     {

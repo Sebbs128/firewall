@@ -7,7 +7,7 @@ using Yarp.Extensions.Firewall.GeoIP;
 namespace Yarp.Extensions.Firewall.Tests.Configuration;
 public class ConfigValidatorTests
 {
-    private IServiceProvider CreateServices(Action<IServiceCollection> configure = null)
+    private static IServiceProvider CreateServices(Action<IServiceCollection> configure = null)
     {
         var services = new ServiceCollection();
         services.AddReverseProxy()

@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-
 using System.Globalization;
+
+using Microsoft.Extensions.Configuration;
 
 namespace Yarp.Extensions.Firewall.Configuration.ConfigProvider;
 
@@ -41,9 +41,7 @@ internal static class ConfigurationReadingExtensions
             return null;
         }
 
-        return children
-            .Select(s => uint.Parse(s.Value!, NumberStyles.None, CultureInfo.InvariantCulture))
-            .ToArray();
+        return [.. children.Select(s => uint.Parse(s.Value!, NumberStyles.None, CultureInfo.InvariantCulture))];
     }
 
     internal static string[]? ReadStringArray(this IConfigurationSection section)
@@ -53,6 +51,6 @@ internal static class ConfigurationReadingExtensions
             return null;
         }
 
-        return children.Select(s => s.Value!).ToArray();
+        return [.. children.Select(s => s.Value!)];
     }
 }

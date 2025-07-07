@@ -3,6 +3,7 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
+using Yarp.Extensions.Firewall.Common.Tests;
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Evaluators;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
@@ -186,8 +187,8 @@ public class IPAddressEvaluatorTests : ConditionExtensionsTestsBase
     public static TheoryData<IReadOnlyList<IPAddress>, IPAddress, string> IPAddressData => new()
     {
         {
-            new IPAddress[] { new IPAddress(new byte[] { 127, 0, 0, 1 }) },
-            new IPAddress(new byte[] { 127, 0, 0, 1 }),
+            [ new IPAddress([127, 0, 0, 1]) ],
+            new([127, 0, 0, 1]),
             "127.0.0.1"
         }
     };
@@ -195,8 +196,8 @@ public class IPAddressEvaluatorTests : ConditionExtensionsTestsBase
     public static TheoryData<IReadOnlyList<IPNetwork>, IPAddress, string> IPRangeData => new()
     {
         {
-            new IPNetwork[] { new IPNetwork(new IPAddress(new byte[] { 127, 0, 0, 1 }), 32) },
-            new IPAddress(new byte[] { 127, 0, 0, 1 }),
+            [ new(new IPAddress([127, 0, 0, 1]), 32) ],
+            new([127, 0, 0, 1]),
             "127.0.0.1/32"
         }
     };
@@ -204,8 +205,8 @@ public class IPAddressEvaluatorTests : ConditionExtensionsTestsBase
     public static TheoryData<IReadOnlyList<IPAddress>, StringValues, string> XFFHeaderAddressData => new()
     {
         {
-            new IPAddress[] { new IPAddress(new byte[] { 127, 0, 0, 1 }) },
-            new StringValues("127.0.0.1"),
+            [ new([127, 0, 0, 1]) ],
+            new("127.0.0.1"),
             "127.0.0.1"
         }
     };
@@ -213,8 +214,8 @@ public class IPAddressEvaluatorTests : ConditionExtensionsTestsBase
     public static TheoryData<IReadOnlyList<IPNetwork>, StringValues, string> XFFHeaderRangeData => new()
     {
         {
-            new IPNetwork[] { new IPNetwork(new IPAddress(new byte[] { 127, 0, 0, 1 }), 32) },
-            new StringValues("127.0.0.1"),
+            [ new(new IPAddress([127, 0, 0, 1]), 32) ],
+            new("127.0.0.1"),
             "127.0.0.1/32"
         }
     };

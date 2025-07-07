@@ -20,7 +20,9 @@ public static class HttpContextExtensions
             foreach (var item in header)
             {
                 if (IPAddress.TryParse(item, out var value))
+                {
                     return value;
+                }
             }
         }
         return context.Connection.RemoteIpAddress;

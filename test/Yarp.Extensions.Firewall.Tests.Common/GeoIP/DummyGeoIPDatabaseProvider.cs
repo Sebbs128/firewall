@@ -3,7 +3,7 @@ using System.Net;
 using Yarp.Extensions.Firewall.GeoIP;
 
 namespace Yarp.Extensions.Firewall.Common.Tests.GeoIP;
-public class DummyGeoIPDatabaseProvider : IGeoIPDatabaseProvider
+public sealed class DummyGeoIPDatabaseProvider : IGeoIPDatabaseProvider
 {
     public void Dispose()
     {

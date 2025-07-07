@@ -7,25 +7,19 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates a HTTP cookie against a regular expression.
 /// </summary>
-public class RequestCookieRegexEvaluator : RegexConditionEvaluator
+/// <inheritdoc/>
+public class RequestCookieRegexEvaluator(string selector, IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms) : RegexConditionEvaluator(matchPatterns, negate)
 {
-    /// <inheritdoc/>
-    public RequestCookieRegexEvaluator(string selector, IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms)
-        : base(matchPatterns, negate)
-    {
-        Selector = selector;
-        Transforms = transforms;
-    }
 
     /// <summary>
     /// Cookie name to evaluate.
     /// </summary>
-    public string Selector { get; }
+    public string Selector { get; } = selector;
 
     /// <summary>
     /// Transformations to apply before evaluating.
     /// </summary>
-    public IReadOnlyList<Transform> Transforms { get; }
+    public IReadOnlyList<Transform> Transforms { get; } = transforms;
 
     /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)

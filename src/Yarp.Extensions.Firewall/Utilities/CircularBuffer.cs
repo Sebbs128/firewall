@@ -16,7 +16,9 @@ internal class CircularBuffer : IDisposable
     public CircularBuffer(PipeReader reader, int minBufferSize, int? maxChunkSize = null)
     {
         if (maxChunkSize is not null && minBufferSize < maxChunkSize)
+        {
             throw new ArgumentException("maxChunkSize must be less than minBufferSize", nameof(maxChunkSize));
+        }
 
         _owner = MemoryPool<byte>.Shared.Rent(minBufferSize);
         _window = _owner.Memory;
@@ -33,7 +35,9 @@ internal class CircularBuffer : IDisposable
         _readResult = await _reader.ReadAsync(cancellationToken);
 
         if (_readResult.IsCompleted || _readResult.IsCanceled || _readResult.Buffer.Length == 0)
+        {
             return false;
+        }
 
         int bytesToCopy;
         for (int i = 0; i < _readResult.Buffer.Length; i += bytesToCopy)

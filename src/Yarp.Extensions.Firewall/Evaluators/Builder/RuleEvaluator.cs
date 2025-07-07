@@ -17,7 +17,7 @@ public sealed class RuleEvaluator
         Priority = priority;
         Action = action;
 
-        ConditionEvaluators = conditionEvaluators.ToArray();
+        ConditionEvaluators = [.. conditionEvaluators];
     }
 
     internal string RuleName { get; }
@@ -36,12 +36,16 @@ public sealed class RuleEvaluator
         foreach (var evaluator in ConditionEvaluators)
         {
             if (cancellationToken.IsCancellationRequested)
+            {
                 break;
+            }
 
             // if any ConditionEvaluator returns false, then exit
             // conditions implicitly have an 'AND' between each
             if (!await evaluator.Evaluate(context, cancellationToken))
+            {
                 return false;
+            }
         }
 
         return true;

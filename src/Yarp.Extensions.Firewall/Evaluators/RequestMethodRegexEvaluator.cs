@@ -7,18 +7,14 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates the HTTP method against a regular expression.
 /// </summary>
-public class RequestMethodRegexEvaluator : RegexConditionEvaluator
+/// <inheritdoc/>
+public class RequestMethodRegexEvaluator(IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms) : RegexConditionEvaluator(matchPatterns, negate)
 {
-    /// <inheritdoc/>
-    public RequestMethodRegexEvaluator(IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms) : base(matchPatterns, negate)
-    {
-        Transforms = transforms;
-    }
 
     /// <summary>
     /// Transformations to apply before evaluating.
     /// </summary>
-    public IReadOnlyList<Transform> Transforms { get; }
+    public IReadOnlyList<Transform> Transforms { get; } = transforms;
 
     /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)

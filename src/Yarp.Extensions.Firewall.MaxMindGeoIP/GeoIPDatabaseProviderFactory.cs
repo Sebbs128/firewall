@@ -12,7 +12,7 @@ namespace Yarp.Extensions.Firewall.MaxMindGeoIP;
 internal sealed class GeoIPDatabaseProviderFactory : IGeoIPDatabaseProviderFactory, IDisposable
 {
     private readonly IFirewallConfigProvider[] _providers;
-    private readonly object _lock = new object();
+    private readonly object _lock = new();
     private readonly ILogger<GeoIPDatabaseProviderFactory> _logger;
     private ConfigState[]? _configs;
     private GeoIPDatabaseProvider? _databaseReader;
@@ -21,7 +21,9 @@ internal sealed class GeoIPDatabaseProviderFactory : IGeoIPDatabaseProviderFacto
 
     public GeoIPDatabaseProviderFactory(IEnumerable<IFirewallConfigProvider> providers, ILogger<GeoIPDatabaseProviderFactory> logger)
     {
-        _providers = providers?.ToArray() ?? throw new ArgumentNullException(nameof(providers));
+        ArgumentNullException.ThrowIfNull(providers, nameof(providers));
+
+        _providers = [.. providers];
 
         _logger = logger;
     }
@@ -88,7 +90,9 @@ internal sealed class GeoIPDatabaseProviderFactory : IGeoIPDatabaseProviderFacto
         }
 
         if (sourcesChanged)
+        {
             BuildDatabaseReader();
+        }
 
         ListenForConfigChanges();
     }
@@ -101,28 +105,34 @@ internal sealed class GeoIPDatabaseProviderFactory : IGeoIPDatabaseProviderFacto
             var settings = config.LatestConfig.GetExtendedConfiguration<GeoIPDatabaseConfig>();
             var dbpath = settings?.GeoIPDatabasePath;
             if (string.IsNullOrWhiteSpace(dbpath))
-                continue;
-
-            if (File.Exists(dbpath))
             {
-                var dbReader = new DatabaseReader(dbpath);
-                // ensure it is a Country database
-                if (!dbReader.Metadata.DatabaseType.Contains("Country"))
-                    throw new InvalidDataException($"A GeoIP2/GeoLite2 Country database was expected, but the database type is {dbReader.Metadata.DatabaseType}");
-
-                // GeoIP2.DatabaseReader should be reused, as creation of it is expensive
-                // we also need to ensure that it's not disposed while an evaluator is using it
-                var oldDisposeSource = _providerDisposeSource;
-                _providerDisposeSource = new();
-
-                _databaseReader = new(dbReader, _providerDisposeSource.Token);
-                Log.DatabaseOpened(_logger, dbReader.Metadata, dbpath);
-
-                oldDisposeSource.Cancel();
-                oldDisposeSource.Dispose();
-
-                return;
+                continue;
             }
+
+            if (!File.Exists(dbpath))
+            {
+                throw new FileNotFoundException("The path for the MaxMind GeoIP2 or GeoLite2 Country database doesn't exist.");
+            }
+
+            var dbReader = new DatabaseReader(dbpath);
+            // ensure it is a Country database
+            if (!dbReader.Metadata.DatabaseType.Contains("Country"))
+            {
+                throw new InvalidDataException($"A GeoIP2/GeoLite2 Country database was expected, but the database type is {dbReader.Metadata.DatabaseType}");
+            }
+
+            // GeoIP2.DatabaseReader should be reused, as creation of it is expensive
+            // we also need to ensure that it's not disposed while an evaluator is using it
+            var oldDisposeSource = _providerDisposeSource;
+            _providerDisposeSource = new();
+
+            _databaseReader = new(dbReader, _providerDisposeSource.Token);
+            Log.DatabaseOpened(_logger, dbReader.Metadata, dbpath);
+
+            oldDisposeSource.Cancel();
+            oldDisposeSource.Dispose();
+
+            return;
         }
     }
 
@@ -156,7 +166,9 @@ internal sealed class GeoIPDatabaseProviderFactory : IGeoIPDatabaseProviderFacto
         }
 
         if (poll)
+        {
             source.CancelAfter(TimeSpan.FromMinutes(5));
+        }
 
         source.Token.Register(ReloadConfig, this);
 

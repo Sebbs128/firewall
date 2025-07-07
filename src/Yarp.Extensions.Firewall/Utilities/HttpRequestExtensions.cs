@@ -23,14 +23,7 @@ public static class HttpRequestExtensions
         }
 
         // Matches multipart/form-data
-        if (contentType!.MediaType!.Equals("multipart/form-data", StringComparison.OrdinalIgnoreCase))
-        {
-            if (request.Form.Files.Count > 0)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return contentType!.MediaType!.Equals("multipart/form-data", StringComparison.OrdinalIgnoreCase)
+            && request.Form.Files.Count > 0;
     }
 }

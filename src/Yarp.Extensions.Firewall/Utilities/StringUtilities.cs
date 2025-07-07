@@ -12,7 +12,9 @@ internal static class StringUtilities
     public static string? ApplyTransform(string? value, Transform transform)
     {
         if (string.IsNullOrEmpty(value))
+        {
             return value;
+        }
 
         return transform switch
         {
@@ -80,7 +82,9 @@ internal static class StringUtilities
         var start = Math.Max(0, index - (int)Math.Ceiling((atMost - substringLength) / 2d));
 
         if (s.Length - start < atMost && atMost < s.Length)
+        {
             start = s.Length - atMost;
+        }
 
         return FromStart(s[start..], atMost);
     }

@@ -7,31 +7,24 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates a given request header against string values.
 /// </summary>
-public class RequestHeaderStringEvaluator : ConditionEvaluator<StringOperator>
+/// <inheritdoc/>
+public class RequestHeaderStringEvaluator(string selector, StringOperator @operator, IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms) : ConditionEvaluator<StringOperator>(@operator, negate)
 {
-    /// <inheritdoc/>
-    public RequestHeaderStringEvaluator(string selector, StringOperator @operator, IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms)
-        : base(@operator, negate)
-    {
-        Selector = selector;
-        MatchValues = matchValues;
-        Transforms = transforms;
-    }
 
     /// <summary>
     /// HTTP header name to evaluate.
     /// </summary>
-    public string Selector { get; }
+    public string Selector { get; } = selector;
 
     /// <summary>
     /// Values to match against.
     /// </summary>
-    public IReadOnlyList<string> MatchValues { get; }
+    public IReadOnlyList<string> MatchValues { get; } = matchValues;
 
     /// <summary>
     /// Transformations to apply before evaluating.
     /// </summary>
-    public IReadOnlyList<Transform> Transforms { get; }
+    public IReadOnlyList<Transform> Transforms { get; } = transforms;
 
     /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)

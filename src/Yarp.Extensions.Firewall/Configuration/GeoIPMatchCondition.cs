@@ -19,7 +19,7 @@ public sealed record GeoIPMatchCondition : MatchCondition, IEquatable<GeoIPMatch
     /// <summary>
     /// List of country names to match for the condition.
     /// </summary>
-    public IReadOnlyList<string> MatchCountryValues { get; init; } = Array.Empty<string>();
+    public IReadOnlyList<string> MatchCountryValues { get; init; } = [];
 
     /// <inheritdoc/>
     public bool Equals(GeoIPMatchCondition? other)

@@ -18,7 +18,7 @@ public sealed record StringMatchCondition : TransformableMatchCondition, IEquata
     /// <summary>
     /// Target values to evaluate against.
     /// </summary>
-    public IReadOnlyList<string> MatchValues { get; init; } = Array.Empty<string>();
+    public IReadOnlyList<string> MatchValues { get; init; } = [];
 
     /// <inheritdoc/>
     public bool Equals(StringMatchCondition? other)

@@ -14,14 +14,14 @@ public class MatchConditionTests
             Operator = StringOperator.Contains,
             MatchVariable = MatchVariable.QueryParam,
             Selector = "a",
-            MatchValues = new[] { "1" }
+            MatchValues = ["1"]
         };
         var b = new StringMatchCondition
         {
             Operator = StringOperator.Contains,
             MatchVariable = MatchVariable.QueryParam,
             Selector = "A",
-            MatchValues = new[] { "1" }
+            MatchValues = ["1"]
         };
         var c = b with { };
 
@@ -39,12 +39,12 @@ public class MatchConditionTests
             Operator = StringOperator.Contains,
             MatchVariable = MatchVariable.QueryParam,
             Selector = "a",
-            MatchValues = new[] { "1" }
+            MatchValues = ["1"]
         };
         var b = a with { Operator = StringOperator.Equals };
         var c = a with { MatchVariable = MatchVariable.PostArgs };
         var d = a with { Selector = "b" };
-        var e = a with { MatchValues = new[] { "2" } };
+        var e = a with { MatchValues = ["2"] };
 
         Assert.False(a.Equals(b));
         Assert.False(a.Equals(c));
@@ -66,7 +66,7 @@ public class MatchConditionTests
             Operator = StringOperator.Contains,
             MatchVariable = MatchVariable.QueryParam,
             Selector = "a",
-            MatchValues = new[] { "1" }
+            MatchValues = ["1"]
         };
 
         var json = JsonSerializer.Serialize(a);
@@ -215,18 +215,18 @@ public class MatchConditionTests
         var a = new GeoIPMatchCondition
         {
             MatchVariable = IPMatchVariable.SocketAddress,
-            MatchCountryValues = new[]
-            {
+            MatchCountryValues =
+            [
                 "United Kingdom"
-            }
+            ]
         };
         var b = new GeoIPMatchCondition
         {
             MatchVariable = IPMatchVariable.SocketAddress,
-            MatchCountryValues = new[]
-            {
+            MatchCountryValues =
+            [
                 "United Kingdom"
-            }
+            ]
         };
         var c = b with { };
 
@@ -242,13 +242,13 @@ public class MatchConditionTests
         var a = new GeoIPMatchCondition
         {
             MatchVariable = IPMatchVariable.SocketAddress,
-            MatchCountryValues = new[]
-            {
+            MatchCountryValues =
+            [
                 "United Kingdom"
-            }
+            ]
         };
         var b = a with { MatchVariable = IPMatchVariable.RemoteAddress };
-        var c = b with { MatchCountryValues = new[] { "United States" } };
+        var c = b with { MatchCountryValues = ["United States"] };
 
         Assert.False(a.Equals(b));
         Assert.False(a.Equals(c));
@@ -266,10 +266,10 @@ public class MatchConditionTests
         var a = new GeoIPMatchCondition
         {
             MatchVariable = IPMatchVariable.SocketAddress,
-            MatchCountryValues = new[]
-            {
+            MatchCountryValues =
+            [
                 "United Kingdom"
-            }
+            ]
         };
 
         var json = JsonSerializer.Serialize(a);

@@ -7,16 +7,14 @@ namespace Yarp.Extensions.Firewall.Utilities;
 /// Adapter around <see cref="Microsoft.AspNetCore.HttpOverrides.IPNetwork"/>
 /// to present the same API shape as .NET 8's System.Net.IPNetwork in .NET 6 and 7 builds of the library.
 /// </summary>
-public class IPNetworkWrapper : Microsoft.AspNetCore.HttpOverrides.IPNetwork
+/// <remarks>
+/// Creates a new instance.
+/// </remarks>
+/// <param name="prefix"></param>
+/// <param name="prefixLength"></param>
+public class IPNetworkWrapper(IPAddress prefix, int prefixLength)
+    : Microsoft.AspNetCore.HttpOverrides.IPNetwork(prefix, prefixLength)
 {
-    /// <summary>
-    /// Creates a new instance.
-    /// </summary>
-    /// <param name="prefix"></param>
-    /// <param name="prefixLength"></param>
-    public IPNetworkWrapper(IPAddress prefix, int prefixLength) : base(prefix, prefixLength)
-    {
-    }
 
     /// <summary>
     /// Gets the <see cref="IPAddress"/> that represents the prefix of the network.

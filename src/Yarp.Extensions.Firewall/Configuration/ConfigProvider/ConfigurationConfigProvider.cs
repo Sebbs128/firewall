@@ -114,10 +114,10 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
     {
         if (section.GetChildren() is var children && !children.Any())
         {
-            return new List<RuleConfig>();
+            return [];
         }
 
-        return children.Select(CreateRule).ToList();
+        return [.. children.Select(CreateRule)];
     }
 
     private static RuleConfig CreateRule(IConfigurationSection section)
@@ -135,10 +135,10 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
     {
         if (section.GetChildren() is var children && !children.Any())
         {
-            return new List<MatchCondition>();
+            return [];
         }
 
-        return children.Select(CreateCondition).ToList();
+        return [.. children.Select(CreateCondition)];
     }
 
     private static MatchCondition CreateCondition(IConfigurationSection section)
@@ -162,7 +162,7 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
         {
             MatchVariable = section.ReadEnum<MatchVariable>(nameof(StringMatchCondition.MatchVariable)),
             Selector = section[nameof(StringMatchCondition.Selector)] ?? string.Empty,
-            MatchValues = section.GetSection(nameof(StringMatchCondition.MatchValues)).ReadStringArray() ?? Array.Empty<string>(),
+            MatchValues = section.GetSection(nameof(StringMatchCondition.MatchValues)).ReadStringArray() ?? [],
             Operator = section.ReadEnum<StringOperator>(nameof(StringMatchCondition.Operator)) ?? StringOperator.Any,
             Transforms = CreateTransforms(section.GetSection(nameof(StringMatchCondition.Transforms))),
         };
@@ -194,7 +194,7 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
         return new GeoIPMatchCondition
         {
             MatchVariable = section.ReadEnum<IPMatchVariable>(nameof(GeoIPMatchCondition.MatchVariable)),
-            MatchCountryValues = section.GetSection(nameof(GeoIPMatchCondition.MatchCountryValues)).ReadStringArray() ?? Array.Empty<string>(),
+            MatchCountryValues = section.GetSection(nameof(GeoIPMatchCondition.MatchCountryValues)).ReadStringArray() ?? [],
         };
     }
 
@@ -202,14 +202,13 @@ internal sealed class ConfigurationConfigProvider : IFirewallConfigProvider, IDi
     {
         if (section.GetChildren() is var children && !children.Any())
         {
-            return new List<Transform>();
+            return [];
         }
 
-        return children
+        return [.. children
             .Select(CreateTransform)
             .Where(v => v is not null)
-            .Cast<Transform>()
-            .ToList();
+            .Cast<Transform>()];
     }
 
     private static Transform? CreateTransform(IConfigurationSection section)

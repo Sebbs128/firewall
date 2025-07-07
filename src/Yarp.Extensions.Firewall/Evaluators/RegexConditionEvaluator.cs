@@ -14,9 +14,7 @@ public abstract class RegexConditionEvaluator : ConditionEvaluator<StringOperato
     /// <inheritdoc/>
     protected RegexConditionEvaluator(IReadOnlyList<string> matchPatterns, bool negate) : base(StringOperator.Regex, negate)
     {
-        MatchPatterns = matchPatterns
-            .Select(s => new Regex(s, ConditionUtilities.RegexOpts, RegexMatchTimeout))
-            .ToList();
+        MatchPatterns = [.. matchPatterns.Select(s => new Regex(s, ConditionUtilities.RegexOpts, RegexMatchTimeout))];
     }
 
     /// <summary>

@@ -4,14 +4,9 @@ using Yarp.Extensions.Firewall.Configuration;
 
 namespace Yarp.Extensions.Firewall.Evaluators.Builder;
 
-internal sealed class SizeConditionFactory : IConditionFactory
+internal sealed class SizeConditionFactory(ILoggerFactory loggerFactory) : IConditionFactory
 {
-    private readonly ILoggerFactory _loggerFactory;
-
-    public SizeConditionFactory(ILoggerFactory loggerFactory)
-    {
-        _loggerFactory = loggerFactory;
-    }
+    private readonly ILoggerFactory _loggerFactory = loggerFactory;
 
     public bool Validate(EvaluatorValidationContext context, MatchCondition condition)
     {
@@ -66,7 +61,9 @@ internal sealed class SizeConditionFactory : IConditionFactory
     private static void ValidateConditionWithSelector(EvaluatorValidationContext context, SizeMatchCondition condition)
     {
         if (string.IsNullOrWhiteSpace(condition.Selector))
+        {
             context.Errors.Add(new ArgumentException("Missing selector value for SizeMatchCondition"));
+        }
 
         ValidateCondition(context, condition);
     }

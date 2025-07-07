@@ -7,25 +7,19 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates a HTTP header against a regular expression.
 /// </summary>
-public class RequestHeaderRegexEvaluator : RegexConditionEvaluator
+/// <inheritdoc/>
+public class RequestHeaderRegexEvaluator(string selector, IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms) : RegexConditionEvaluator(matchPatterns, negate)
 {
-    /// <inheritdoc/>
-    public RequestHeaderRegexEvaluator(string selector, IReadOnlyList<string> matchPatterns, bool negate, IReadOnlyList<Transform> transforms)
-        : base(matchPatterns, negate)
-    {
-        Selector = selector;
-        Transforms = transforms;
-    }
 
     /// <summary>
     /// HTTP header name to evaluate.
     /// </summary>
-    public string Selector { get; }
+    public string Selector { get; } = selector;
 
     /// <summary>
     /// Transformations to apply before evaluating.
     /// </summary>
-    public IReadOnlyList<Transform> Transforms { get; }
+    public IReadOnlyList<Transform> Transforms { get; } = transforms;
 
     /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)
