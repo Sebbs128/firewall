@@ -14,10 +14,7 @@ public sealed class GeoIPDatabaseConfig
     /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
-        if (obj is not GeoIPDatabaseConfig other)
-            return false;
-
-        return string.Equals(GeoIPDatabasePath, other.GeoIPDatabasePath, StringComparison.OrdinalIgnoreCase);
+        return obj is GeoIPDatabaseConfig other && string.Equals(GeoIPDatabasePath, other.GeoIPDatabasePath, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <inheritdoc/>
