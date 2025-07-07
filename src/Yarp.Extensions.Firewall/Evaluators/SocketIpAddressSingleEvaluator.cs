@@ -7,19 +7,14 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates the socket address from the HTTP request against individual IP addresses.
 /// </summary>
-public sealed class SocketIpAddressSingleEvaluator : ConditionEvaluator
+/// <inheritdoc/>
+public sealed class SocketIpAddressSingleEvaluator(IReadOnlyList<IPAddress> ipAddresses, bool negate) : ConditionEvaluator(negate)
 {
-    /// <inheritdoc/>
-    public SocketIpAddressSingleEvaluator(IReadOnlyList<IPAddress> ipAddresses, bool negate)
-        : base(negate)
-    {
-        IpAddresses = ipAddresses;
-    }
 
     /// <summary>
     /// IP addresses to match against.
     /// </summary>
-    public IReadOnlyList<IPAddress> IpAddresses { get; }
+    public IReadOnlyList<IPAddress> IpAddresses { get; } = ipAddresses;
 
     /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)

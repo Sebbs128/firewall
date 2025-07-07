@@ -27,7 +27,9 @@ internal static class ConditionUtilities
                 return !string.IsNullOrEmpty(value);
             case StringOperator.Equals:
                 if (string.IsNullOrEmpty(value))
+                {
                     return false;
+                }
 
                 foreach (var matchValue in matchValues)
                 {
@@ -40,7 +42,9 @@ internal static class ConditionUtilities
                 return false;
             case StringOperator.Contains:
                 if (string.IsNullOrEmpty(value))
+                {
                     return false;
+                }
 
                 foreach (var matchValue in matchValues)
                 {
@@ -53,7 +57,9 @@ internal static class ConditionUtilities
                 return false;
             case StringOperator.StartsWith:
                 if (string.IsNullOrEmpty(value))
+                {
                     return false;
+                }
 
                 foreach (var matchValue in matchValues)
                 {
@@ -66,7 +72,9 @@ internal static class ConditionUtilities
                 return false;
             case StringOperator.EndsWith:
                 if (string.IsNullOrEmpty(value))
+                {
                     return false;
+                }
 
                 foreach (var matchValue in matchValues)
                 {
@@ -79,7 +87,9 @@ internal static class ConditionUtilities
                 return false;
             case StringOperator.Regex:
                 if (value is null)
+                {
                     return false;
+                }
 
                 foreach (var matchValue in matchValues)
                 {

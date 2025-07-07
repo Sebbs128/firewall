@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
+using Yarp.Extensions.Firewall.Common.Tests;
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Evaluators;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
@@ -60,7 +61,7 @@ public class RequestHeaderEvaluatorTestss : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.RequestHeader,
                 Selector = "a",
                 Operator = StringOperator.Equals,
-                MatchValues = new[] { "1" }
+                MatchValues = ["1"]
             },
             new HeaderDictionary(new Dictionary<string, StringValues>()
             {
@@ -73,7 +74,7 @@ public class RequestHeaderEvaluatorTestss : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.RequestHeader,
                 Selector = "a",
                 Operator = StringOperator.StartsWith,
-                MatchValues = new[] { "1" }
+                MatchValues = ["1"]
             },
             new HeaderDictionary(new Dictionary<string, StringValues>()
             {
@@ -86,7 +87,7 @@ public class RequestHeaderEvaluatorTestss : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.RequestHeader,
                 Selector = "a",
                 Operator = StringOperator.EndsWith,
-                MatchValues = new[] { "1" }
+                MatchValues = ["1"]
             },
             new HeaderDictionary(new Dictionary<string, StringValues>()
             {

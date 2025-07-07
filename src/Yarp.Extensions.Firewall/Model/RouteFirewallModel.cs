@@ -12,35 +12,28 @@ namespace Yarp.Extensions.Firewall.Model;
 /// Instead, instances of <see cref="RouteFirewallModel"/> are replaced
 /// in their entirety when values need to change.
 /// </remarks>
-public sealed class RouteFirewallModel
+/// <remarks>
+/// Creates a new instance.
+/// </remarks>
+public sealed class RouteFirewallModel(
+    RouteFirewallConfig config,
+    RouteState? route,
+    RouteEvaluator evaluator)
 {
-    /// <summary>
-    /// Creates a new instance.
-    /// </summary>
-    public RouteFirewallModel(
-        RouteFirewallConfig config,
-        RouteState? route,
-        RouteEvaluator evaluator)
-    {
-        Config = config ?? throw new ArgumentNullException(nameof(config));
-        Route = route;
-        Evaluator = evaluator ?? throw new ArgumentNullException(nameof(evaluator));
-    }
-
     /// <summary>
     /// The <see cref="RouteState"/> instance associated with this route.
     /// </summary>
-    public RouteState? Route { get; }
+    public RouteState? Route { get; } = route;
 
     /// <summary>
     /// The <see cref="RouteEvaluator"/> instance associated with this route.
     /// </summary>
-    public RouteEvaluator Evaluator { get; }
+    public RouteEvaluator Evaluator { get; } = evaluator ?? throw new ArgumentNullException(nameof(evaluator));
 
     /// <summary>
     /// The configuration data used to build this firewall.
     /// </summary>
-    public RouteFirewallConfig Config { get; }
+    public RouteFirewallConfig Config { get; } = config ?? throw new ArgumentNullException(nameof(config));
 
     internal bool HasConfigChanged(RouteFirewallConfig newConfig, RouteState? route, int? firewallRevision)
     {

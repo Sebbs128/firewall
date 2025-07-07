@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
+using Yarp.Extensions.Firewall.Common.Tests;
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Evaluators;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
@@ -22,7 +23,7 @@ public class RequestMethodEvaluatorTests : ConditionExtensionsTestsBase
         {
             MatchVariable = MatchVariable.RequestMethod,
             Operator = stringOperator,
-            MatchValues = new[] { requestMethod }
+            MatchValues = [requestMethod]
         };
 
         var builderContext = ValidateAndBuild(_stringFactory, evaluatorCondition);
@@ -54,7 +55,7 @@ public class RequestMethodEvaluatorTests : ConditionExtensionsTestsBase
             MatchVariable = MatchVariable.RequestMethod,
             Operator = stringOperator,
             Negate = true,
-            MatchValues = new[] { requestMethod }
+            MatchValues = [requestMethod]
         };
 
         var builderContext = ValidateAndBuild(_stringFactory, evaluatorCondition);

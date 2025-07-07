@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Http;
 
 namespace Yarp.Extensions.Firewall.Tests.Common;
-public class RequestCookieCollection : Dictionary<string, string>, IRequestCookieCollection
+public class RequestCookieCollection(IDictionary<string, string> dictionary)
+    : Dictionary<string, string>(dictionary), IRequestCookieCollection
 {
-    public RequestCookieCollection(IDictionary<string, string> dictionary) : base(dictionary)
-    {
-    }
-
     string IRequestCookieCollection.this[string key] => base[key];
 
-    ICollection<string> IRequestCookieCollection.Keys => base.Keys;
+    ICollection<string> IRequestCookieCollection.Keys => Keys;
 }

@@ -2,18 +2,13 @@ using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.GeoIP;
 
 namespace Yarp.Extensions.Firewall.Evaluators.Builder;
-internal sealed class GeoIPConditionFactory : IConditionFactory
+internal sealed class GeoIPConditionFactory(IGeoIPDatabaseProviderFactory geoIpDbFactory) : IConditionFactory
 {
-    private readonly IGeoIPDatabaseProviderFactory _geoIpDbFactory;
-
-    public GeoIPConditionFactory(IGeoIPDatabaseProviderFactory geoIpDbFactory)
-    {
-        _geoIpDbFactory = geoIpDbFactory;
-    }
+    private readonly IGeoIPDatabaseProviderFactory _geoIpDbFactory = geoIpDbFactory;
 
     public bool Validate(EvaluatorValidationContext context, MatchCondition condition)
     {
-        if (condition is GeoIPMatchCondition geoIPMatchCondition)
+        if (condition is GeoIPMatchCondition)
         {
             try
             {

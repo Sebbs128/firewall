@@ -17,9 +17,7 @@ public class RequestMethodSizeEvaluator : ConditionEvaluator<NumberOperator>
         Negate = negate;
 
         // Lower and Upper transforms don't affect the string's length, so we can ignore them
-        Transforms = transforms
-            .Where(t => t is not Transform.Uppercase or Transform.Lowercase)
-            .ToList();
+        Transforms = [.. transforms.Where(t => t is not Transform.Uppercase or Transform.Lowercase)];
     }
 
     /// <summary>

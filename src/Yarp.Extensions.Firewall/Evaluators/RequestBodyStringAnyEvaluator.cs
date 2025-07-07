@@ -11,14 +11,9 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates the request body for any content.
 /// </summary>
-public class RequestBodyStringAnyEvaluator : RequestBodyConditionEvaluator<StringOperator>
+/// <inheritdoc/>
+public class RequestBodyStringAnyEvaluator(bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyStringAnyEvaluator> logger) : RequestBodyConditionEvaluator<StringOperator>(StringOperator.Any, negate, transforms, logger)
 {
-    /// <inheritdoc/>
-    public RequestBodyStringAnyEvaluator(bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyStringAnyEvaluator> logger)
-        : base(StringOperator.Any, negate, transforms, logger)
-    {
-    }
-
     internal override async Task<bool> EvaluateInternal(EvaluationContext context, CancellationToken cancellationToken)
     {
         if (context.HttpContext.Request.BodyReader is not null)

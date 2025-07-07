@@ -92,7 +92,9 @@ internal sealed class CustomRuleMiddleware
                 }
 
                 if (responseStatusSet)
+                {
                     return;
+                }
             }
         }
 

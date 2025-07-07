@@ -9,25 +9,19 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates the URL path against string values.
 /// </summary>
-public class RequestPathStringEvaluator : ConditionEvaluator<StringOperator>
+/// <inheritdoc/>
+public class RequestPathStringEvaluator(StringOperator @operator, IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms) : ConditionEvaluator<StringOperator>(@operator, negate)
 {
-    /// <inheritdoc/>
-    public RequestPathStringEvaluator(StringOperator @operator, IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms)
-        : base(@operator, negate)
-    {
-        MatchValues = matchValues;
-        Transforms = transforms;
-    }
 
     /// <summary>
     /// Values to match against.
     /// </summary>
-    public IReadOnlyList<string> MatchValues { get; }
+    public IReadOnlyList<string> MatchValues { get; } = matchValues;
 
     /// <summary>
     /// Transformations to apply before evaluating.
     /// </summary>
-    public IReadOnlyList<Transform> Transforms { get; }
+    public IReadOnlyList<Transform> Transforms { get; } = transforms;
 
     /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)

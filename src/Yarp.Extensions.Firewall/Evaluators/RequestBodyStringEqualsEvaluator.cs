@@ -67,9 +67,13 @@ public class RequestBodyStringEqualsEvaluator : RequestBodyConditionEvaluator<St
                     if (transform is Transform.Trim)
                     {
                         if (firstRead)
+                        {
                             transformedChunk = transformedChunk.TrimStart();
+                        }
                         else if (readResult.IsCompleted || buffer.IsSingleSegment)
+                        {
                             transformedChunk = transformedChunk.TrimEnd();
+                        }
 
                         continue;
                     }
@@ -83,7 +87,9 @@ public class RequestBodyStringEqualsEvaluator : RequestBodyConditionEvaluator<St
                 string transformedBody = readSoFar.ToString();
 
                 if (transformedBody.Length > _maxMatchLength)
+                {
                     return false;
+                }
 
                 // only run checks for matches if enough has been read for the smallest MatchValue
                 if (transformedBody.Length >= _minMatchLength)
@@ -92,7 +98,9 @@ public class RequestBodyStringEqualsEvaluator : RequestBodyConditionEvaluator<St
                     for (int i = 0; i < discardedMatchValues.Length; i++)
                     {
                         if (discardedMatchValues[i])
+                        {
                             continue;
+                        }
 
                         string matchValue = MatchValues[i];
 
@@ -107,7 +115,9 @@ public class RequestBodyStringEqualsEvaluator : RequestBodyConditionEvaluator<St
 
                         // not enough read to check. skip.
                         if (matchValue.Length < transformedBody.Length)
+                        {
                             continue;
+                        }
 
                         if (transformedBody.Equals(matchValue, StringComparison.Ordinal))
                         {
@@ -123,13 +133,17 @@ public class RequestBodyStringEqualsEvaluator : RequestBodyConditionEvaluator<St
                     }
 
                     if (allDiscarded)
+                    {
                         return false;
+                    }
                 }
 
                 bodyReader.AdvanceTo(buffer.Start, buffer.End);
 
                 if (readResult.IsCompleted || buffer.IsSingleSegment)
+                {
                     return false;
+                }
             }
         }
         return false;

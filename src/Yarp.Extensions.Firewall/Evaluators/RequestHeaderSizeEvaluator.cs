@@ -7,35 +7,24 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates the length of a given request header.
 /// </summary>
-public class RequestHeaderSizeEvaluator : ConditionEvaluator<NumberOperator>
+/// <inheritdoc/>
+public class RequestHeaderSizeEvaluator(string selector, NumberOperator @operator, uint matchValue, bool negate, IReadOnlyList<Transform> transforms) : ConditionEvaluator<NumberOperator>(@operator, negate)
 {
-    /// <inheritdoc/>
-    public RequestHeaderSizeEvaluator(string selector, NumberOperator @operator, uint matchValue, bool negate, IReadOnlyList<Transform> transforms)
-        : base(@operator, negate)
-    {
-        Selector = selector;
-        MatchValue = matchValue;
-
-        // Lower and Upper transforms don't affect the string's length, so we can ignore them
-        Transforms = transforms
-            .Where(t => t is not Transform.Uppercase or Transform.Lowercase)
-            .ToList();
-    }
 
     /// <summary>
     /// HTTP header name to evaluate.
     /// </summary>
-    public string Selector { get; }
+    public string Selector { get; } = selector;
 
     /// <summary>
     /// Value to compare against.
     /// </summary>
-    public uint MatchValue { get; }
+    public uint MatchValue { get; } = matchValue;
 
     /// <summary>
     /// Transformations to apply before evaluating.
     /// </summary>
-    public IReadOnlyList<Transform> Transforms { get; }
+    public IReadOnlyList<Transform> Transforms { get; } = [.. transforms.Where(t => t is not Transform.Uppercase or Transform.Lowercase)];
 
     /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)

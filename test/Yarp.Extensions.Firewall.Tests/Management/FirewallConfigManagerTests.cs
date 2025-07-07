@@ -30,6 +30,7 @@ public class FirewallConfigManagerTests
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddLogging();
         serviceCollection.AddRouting();
+
         var proxyBuilder = serviceCollection.AddReverseProxy().LoadFromMemory(routes, clusters);
         proxyBuilder.AddFirewall().LoadFromMemory(firewalls, new Dictionary<Type, object>())
             .Services.AddSingleton<IGeoIPDatabaseProviderFactory, DummyGeoIPDatabaseProviderFactory>();
@@ -77,6 +78,7 @@ public class FirewallConfigManagerTests
     }
 
     [Fact]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "Causes ambiguity over the two CreateServices methods")]
     public void Constructor_Works()
     {
         var services = CreateServices(new List<RouteFirewallConfig>(), new List<RouteConfig>(), new List<ClusterConfig>());
@@ -84,6 +86,7 @@ public class FirewallConfigManagerTests
     }
 
     [Fact]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "Causes ambiguity over the two CreateServices methods")]
     public async Task Lookup_StartsEmpty()
     {
         var services = CreateServices(new List<RouteFirewallConfig>(), new List<RouteConfig>(), new List<ClusterConfig>());
@@ -107,25 +110,25 @@ public class FirewallConfigManagerTests
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
             BlockedStatusCode = HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
+            Rules =
+            [
                 new RuleConfig()
                 {
                     RuleName = "queryParam-a-contains-1",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
         var cluster = new ClusterConfig
         {
@@ -142,7 +145,7 @@ public class FirewallConfigManagerTests
             Match = new RouteMatch { Path = "/" }
         };
 
-        var services = CreateServices(new List<RouteFirewallConfig> { firewall }, new List<RouteConfig> { route }, new List<ClusterConfig> { cluster });
+        var services = CreateServices([firewall], [route], [cluster]);
 
         ProxyConfigManagerInitialLoadAsync(services);
 
@@ -165,7 +168,7 @@ public class FirewallConfigManagerTests
             RouteId = "route1"
         };
 
-        var services = CreateServices(new List<RouteFirewallConfig> { firewall, firewall }, new List<RouteConfig>(), new List<ClusterConfig>());
+        var services = CreateServices([firewall, firewall], [], []);
 
         var manager = services.GetRequiredService<FirewallConfigManager>();
 
@@ -184,26 +187,26 @@ public class FirewallConfigManagerTests
             Enabled = true,
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
-            BlockedStatusCode = System.Net.HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
+            BlockedStatusCode = HttpStatusCode.Forbidden,
+            Rules =
+            [
                 new RuleConfig()
                 {
                     RuleName = "queryParam-a-contains-1",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
         var cluster1 = new ClusterConfig
         {
@@ -226,26 +229,26 @@ public class FirewallConfigManagerTests
             Enabled = true,
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
-            BlockedStatusCode = System.Net.HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
+            BlockedStatusCode = HttpStatusCode.Forbidden,
+            Rules =
+            [
                 new RuleConfig()
                 {
                     RuleName = "queryParam-a-contains-1",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
         var cluster2 = new ClusterConfig
         {
@@ -262,12 +265,12 @@ public class FirewallConfigManagerTests
             Match = new RouteMatch { Path = "/" }
         };
 
-        var config1 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall1 }, new Dictionary<Type, object>());
-        var config2 = new InMemoryConfigProvider(new List<RouteFirewallConfig> { firewall2 }, new Dictionary<Type, object>());
-        var proxyConfig1 = new YarpInMemoryConfigProvider(new List<RouteConfig> { route1 }, new List<ClusterConfig> { cluster1 });
-        var proxyConfig2 = new YarpInMemoryConfigProvider(new List<RouteConfig> { route2 }, new List<ClusterConfig> { cluster2 });
+        var config1 = new InMemoryConfigProvider([firewall1], new Dictionary<Type, object>());
+        var config2 = new InMemoryConfigProvider([firewall2], new Dictionary<Type, object>());
+        var proxyConfig1 = new YarpInMemoryConfigProvider([route1], [cluster1]);
+        var proxyConfig2 = new YarpInMemoryConfigProvider([route2], [cluster2]);
 
-        var services = CreateServices(new[] { config1, config2 }, new[] { proxyConfig1, proxyConfig2 });
+        var services = CreateServices([config1, config2], [proxyConfig1, proxyConfig2]);
 
         ProxyConfigManagerInitialLoadAsync(services);
 
@@ -290,8 +293,8 @@ public class FirewallConfigManagerTests
     {
         const string TestAddress = "https://localhost:123/";
 
-        var configProviderA = new OnDemandFailingInMemoryConfigProvider(new List<RouteFirewallConfig>(), "A1");
-        var configProviderB = new OnDemandFailingInMemoryConfigProvider(new List<RouteFirewallConfig>(), "B1");
+        var configProviderA = new OnDemandFailingInMemoryConfigProvider([], "A1");
+        var configProviderB = new OnDemandFailingInMemoryConfigProvider([], "B1");
 
         var cluster1 = new ClusterConfig
         {
@@ -323,12 +326,12 @@ public class FirewallConfigManagerTests
             Match = new RouteMatch { Path = "/" }
         };
 
-        var proxyConfig = new YarpInMemoryConfigProvider(new List<RouteConfig> { route1, route2 }, new List<ClusterConfig> { cluster1, cluster2 });
+        var proxyConfig = new YarpInMemoryConfigProvider([route1, route2], [cluster1, cluster2]);
 
         var configChangeListenerCounter = new ConfigChangeListenerCounter();
         var fakeConfigChangeListener = new FakeConfigChangeListener();
 
-        var services = CreateServices(new[] { configProviderA, configProviderB, }, new[] { proxyConfig }, new IFirewallConfigChangeListener[] { configChangeListenerCounter, fakeConfigChangeListener });
+        var services = CreateServices([configProviderA, configProviderB,], [proxyConfig], [configChangeListenerCounter, fakeConfigChangeListener]);
 
         ProxyConfigManagerInitialLoadAsync(services);
 
@@ -350,26 +353,26 @@ public class FirewallConfigManagerTests
             Enabled = true,
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
-            BlockedStatusCode = System.Net.HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
+            BlockedStatusCode = HttpStatusCode.Forbidden,
+            Rules =
+            [
                 new RuleConfig()
                 {
                     RuleName = "queryParam-a-contains-1",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
         var firewall2 = new RouteFirewallConfig
         {
@@ -377,33 +380,33 @@ public class FirewallConfigManagerTests
             Enabled = true,
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
-            BlockedStatusCode = System.Net.HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
+            BlockedStatusCode = HttpStatusCode.Forbidden,
+            Rules =
+            [
                 new RuleConfig()
                 {
                     RuleName = "queryParam-a-contains-1",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
 
         fakeConfigChangeListener.Reset();
         configChangeListenerCounter.Reset();
 
         // Updating one config provider should load and apply successfully
-        configProviderA.Update(new List<RouteFirewallConfig>() { firewall1 }, "A2");
+        configProviderA.Update([firewall1], "A2");
 
         Assert.Equal(2, configChangeListenerCounter.NumberOfLoadedConfigurations);
         Assert.Equal(0, configChangeListenerCounter.NumberOfFailedConfigurationLoads);
@@ -422,7 +425,7 @@ public class FirewallConfigManagerTests
         // Updating one config provider to return null should fail to load
         configProviderB.ShouldConfigLoadingFail = true;
 
-        configProviderB.Update(new List<RouteFirewallConfig>() { firewall2 }, "B2");
+        configProviderB.Update([firewall2], "B2");
 
         Assert.Equal(2, configChangeListenerCounter.NumberOfLoadedConfigurations);
         Assert.Equal(1, configChangeListenerCounter.NumberOfFailedConfigurationLoads);
@@ -441,8 +444,8 @@ public class FirewallConfigManagerTests
     {
         const string TestAddress = "https://localhost:123/";
 
-        var configProviderA = new OnDemandFailingInMemoryConfigProvider(new List<RouteFirewallConfig>(), "A1");
-        var configProviderB = new OnDemandFailingInMemoryConfigProvider(new List<RouteFirewallConfig>(), "B1");
+        var configProviderA = new OnDemandFailingInMemoryConfigProvider([], "A1");
+        var configProviderB = new OnDemandFailingInMemoryConfigProvider([], "B1");
 
         var cluster1 = new ClusterConfig
         {
@@ -474,12 +477,12 @@ public class FirewallConfigManagerTests
             Match = new RouteMatch { Path = "/" }
         };
 
-        var proxyConfig = new YarpInMemoryConfigProvider(new List<RouteConfig> { route1, route2 }, new List<ClusterConfig> { cluster1, cluster2 });
+        var proxyConfig = new YarpInMemoryConfigProvider([route1, route2], [cluster1, cluster2]);
 
         var configChangeListenerCounter = new ConfigChangeListenerCounter();
         var fakeConfigChangeListener = new FakeConfigChangeListener();
 
-        var services = CreateServices(new[] { configProviderA, configProviderB, }, new[] { proxyConfig }, new IFirewallConfigChangeListener[] { configChangeListenerCounter, fakeConfigChangeListener });
+        var services = CreateServices([configProviderA, configProviderB,], [proxyConfig], [configChangeListenerCounter, fakeConfigChangeListener]);
 
         ProxyConfigManagerInitialLoadAsync(services);
 
@@ -501,26 +504,26 @@ public class FirewallConfigManagerTests
             Enabled = true,
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
-            BlockedStatusCode = System.Net.HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
+            BlockedStatusCode = HttpStatusCode.Forbidden,
+            Rules =
+            [
                 new RuleConfig()
                 {
                     RuleName = "queryParam-a-contains-1",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
         var firewall2 = new RouteFirewallConfig
         {
@@ -531,7 +534,7 @@ public class FirewallConfigManagerTests
         configChangeListenerCounter.Reset();
 
         // Updating one config provider should load and apply successfully
-        configProviderA.Update(new List<RouteFirewallConfig>() { firewall1 }, "A2");
+        configProviderA.Update([firewall1], "A2");
 
         Assert.Equal(2, configChangeListenerCounter.NumberOfLoadedConfigurations);
         Assert.Equal(0, configChangeListenerCounter.NumberOfFailedConfigurationLoads);
@@ -548,7 +551,7 @@ public class FirewallConfigManagerTests
         configChangeListenerCounter.Reset();
 
         // Updating one config provider with invalid config should fail to apply
-        configProviderB.Update(new List<RouteFirewallConfig>() { firewall2 }, "B2");
+        configProviderB.Update([firewall2], "B2");
 
         Assert.Equal(2, configChangeListenerCounter.NumberOfLoadedConfigurations);
         Assert.Equal(0, configChangeListenerCounter.NumberOfFailedConfigurationLoads);
@@ -574,7 +577,7 @@ public class FirewallConfigManagerTests
 
     private class InMemoryConfig : IFirewallConfig
     {
-        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cts = new();
 
         public InMemoryConfig(IReadOnlyList<RouteFirewallConfig> firewalls, string revisionId)
         {
@@ -598,14 +601,9 @@ public class FirewallConfigManagerTests
         }
     }
 
-    private class OnDemandFailingInMemoryConfigProvider : IFirewallConfigProvider
+    private class OnDemandFailingInMemoryConfigProvider(FirewallConfigManagerTests.InMemoryConfig config) : IFirewallConfigProvider
     {
-        private volatile InMemoryConfig _config;
-
-        public OnDemandFailingInMemoryConfigProvider(InMemoryConfig config)
-        {
-            _config = config;
-        }
+        private volatile InMemoryConfig _config = config;
 
         public OnDemandFailingInMemoryConfigProvider(IReadOnlyList<RouteFirewallConfig> firewalls, string revisionId)
             : this(new InMemoryConfig(firewalls, revisionId))
@@ -640,9 +638,11 @@ public class FirewallConfigManagerTests
     {
         public bool? HasApplyingSucceeded { get; private set; }
         public bool DidAtLeastOneErrorOccurWhileLoading { get; private set; }
+#pragma warning disable IDE1006 // Naming Styles
         public string[] EventuallyLoaded;
         public string[] SuccessfullyApplied;
         public string[] FailedApplied;
+#pragma warning restore IDE1006 // Naming Styles
 
         public FakeConfigChangeListener()
         {
@@ -653,26 +653,26 @@ public class FirewallConfigManagerTests
         {
             DidAtLeastOneErrorOccurWhileLoading = false;
             HasApplyingSucceeded = null;
-            EventuallyLoaded = Array.Empty<string>();
-            SuccessfullyApplied = Array.Empty<string>();
-            FailedApplied = Array.Empty<string>();
+            EventuallyLoaded = [];
+            SuccessfullyApplied = [];
+            FailedApplied = [];
         }
 
         public void ConfigurationApplied(IReadOnlyList<IFirewallConfig> firewallConfigs)
         {
             HasApplyingSucceeded = true;
-            SuccessfullyApplied = firewallConfigs.Select(c => c.RevisionId).ToArray();
+            SuccessfullyApplied = [.. firewallConfigs.Select(c => c.RevisionId)];
         }
 
         public void ConfigurationApplyingFailed(IReadOnlyList<IFirewallConfig> firewallConfigs, Exception ex)
         {
             HasApplyingSucceeded = false;
-            FailedApplied = firewallConfigs.Select(c => c.RevisionId).ToArray();
+            FailedApplied = [.. firewallConfigs.Select(c => c.RevisionId)];
         }
 
         public void ConfigurationLoaded(IReadOnlyList<IFirewallConfig> firewallConfigs)
         {
-            EventuallyLoaded = firewallConfigs.Select(c => c.RevisionId).ToArray();
+            EventuallyLoaded = [.. firewallConfigs.Select(c => c.RevisionId)];
         }
 
         public void ConfigurationLoadingFailed(IFirewallConfigProvider provider, Exception ex)
