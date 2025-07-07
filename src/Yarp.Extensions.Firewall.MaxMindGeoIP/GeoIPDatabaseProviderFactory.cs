@@ -103,8 +103,11 @@ internal sealed class GeoIPDatabaseProviderFactory : IGeoIPDatabaseProviderFacto
             if (string.IsNullOrWhiteSpace(dbpath))
                 continue;
 
-            if (File.Exists(dbpath))
+            if (!File.Exists(dbpath))
             {
+                throw new FileNotFoundException("The path for the MaxMind GeoIP2 or GeoLite2 Country database doesn't exist.");
+            }
+
                 var dbReader = new DatabaseReader(dbpath);
                 // ensure it is a Country database
                 if (!dbReader.Metadata.DatabaseType.Contains("Country"))

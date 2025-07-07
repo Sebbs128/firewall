@@ -19,10 +19,10 @@ internal sealed class GeoIPConditionFactory : IConditionFactory
             {
                 if (_geoIpDbFactory.GetCurrent() is null)
                 {
-                    context.Errors.Add(new ArgumentException("An existing path for the MaxMind GeoIP2 or GeoLite2 Country database is not configured."));
+                    context.Errors.Add(new InvalidDataException("A GeoIP database provider could not be created. Is it configured correctly?"));
                 }
             }
-            catch (InvalidDataException ex) // GeoIPDatabaseFactory throws this if database is not a Country database
+            catch (Exception ex)
             {
                 context.Errors.Add(ex);
             }

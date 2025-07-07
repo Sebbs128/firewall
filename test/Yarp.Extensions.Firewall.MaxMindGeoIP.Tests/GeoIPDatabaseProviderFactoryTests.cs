@@ -72,11 +72,11 @@ public class GeoIPDatabaseProviderFactoryTests
     }
 
     [Fact]
-    public void GetDatabaseReader_WhenDbPathDoesNotExist_ReturnsNull()
+    public void GetDatabaseReader_WhenDbPathDoesNotExist_ThrowsFileNotFoundException()
     {
-        var services = CreateServices([], new Dictionary<Type, object> { { typeof(GeoIPDatabaseConfig), TestResources.GetGeoIPDatabaseConfig("NonExistentFile") } });
+        var services = CreateServices([], new Dictionary<Type, object> { [typeof(GeoIPDatabaseConfig)] = TestResources.GetGeoIPDatabaseConfig("NonExistentFile") });
         var factory = services.GetRequiredService<IGeoIPDatabaseProviderFactory>();
-        Assert.Null(factory.GetCurrent());
+        Assert.Throws<FileNotFoundException>(() => factory.GetCurrent());
     }
 
     [Fact]
