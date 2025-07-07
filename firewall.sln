@@ -6,8 +6,14 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yarp.Extensions.Firewall", "src\Yarp.Extensions.Firewall\Yarp.Extensions.Firewall.csproj", "{420BEE28-ECDA-4556-90A8-4226099AC14F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E6F79643-8A7F-4BC0-9B3E-9C31BE12891A}"
+	ProjectSection(SolutionItems) = preProject
+		test\Directory.Build.props = test\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DACE61A2-5A67-4169-946A-67FC99579AEB}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yarp.Extensions.Firewall.Tests", "test\Yarp.Extensions.Firewall.Tests\Yarp.Extensions.Firewall.Tests.csproj", "{24E8D898-9660-4C7D-8823-6F04C846E3EE}"
 EndProject
