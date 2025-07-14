@@ -5,19 +5,14 @@ namespace Yarp.Extensions.Firewall.Model;
 /// <summary>
 /// Representation of a route for use at runtime.
 /// </summary>
-public class RouteState
+/// <remarks>
+/// Creates a new instance for the given route name.
+/// </remarks>
+/// <param name="routeId"></param>
+/// <exception cref="ArgumentNullException"></exception>
+public class RouteState(string routeId)
 {
     private volatile RouteModel _model = default!;
-
-    /// <summary>
-    /// Creates a new instance for the given route name.
-    /// </summary>
-    /// <param name="routeId"></param>
-    /// <exception cref="ArgumentNullException"></exception>
-    public RouteState(string routeId)
-    {
-        RouteId = routeId ?? throw new ArgumentNullException(nameof(routeId));
-    }
 
     /// <summary>
     /// Creates a new instance for the given route name and route representation.
@@ -33,7 +28,7 @@ public class RouteState
     /// <summary>
     /// The name of the route.
     /// </summary>
-    public string RouteId { get; }
+    public string RouteId { get; } = routeId ?? throw new ArgumentNullException(nameof(routeId));
 
     /// <summary>
     /// Encapsulates parts of a route that can change atomically in reaction to config changes.

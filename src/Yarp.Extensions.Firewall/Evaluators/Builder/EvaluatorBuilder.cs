@@ -5,14 +5,9 @@ using Yarp.ReverseProxy.Configuration;
 
 namespace Yarp.Extensions.Firewall.Evaluators.Builder;
 
-internal sealed class EvaluatorBuilder : IEvaluatorBuilder
+internal sealed class EvaluatorBuilder(IEnumerable<IConditionFactory> factories) : IEvaluatorBuilder
 {
-    private readonly IEnumerable<IConditionFactory> _factories;
-
-    public EvaluatorBuilder(IEnumerable<IConditionFactory> factories)
-    {
-        _factories = factories;
-    }
+    private readonly IEnumerable<IConditionFactory> _factories = factories;
 
     public IReadOnlyList<Exception> Validate(RouteFirewallConfig firewall)
     {
@@ -51,7 +46,6 @@ internal sealed class EvaluatorBuilder : IEvaluatorBuilder
 
     public RouteEvaluator Build(RouteFirewallConfig firewall, RouteConfig? route)
     {
-
         var ruleContext = new RuleEvaluatorBuilderContext
         {
             Firewall = firewall,

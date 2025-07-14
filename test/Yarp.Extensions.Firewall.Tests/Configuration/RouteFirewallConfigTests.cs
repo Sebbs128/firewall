@@ -21,26 +21,26 @@ public class RouteFirewallConfigTests
             Enabled = true,
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
-            BlockedStatusCode = System.Net.HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
+            BlockedStatusCode = HttpStatusCode.Forbidden,
+            Rules =
+            [
                 new RuleConfig()
                 {
                     RuleName = "a",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
         var b = new RouteFirewallConfig()
         {
@@ -48,26 +48,26 @@ public class RouteFirewallConfigTests
             Enabled = true,
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
-            BlockedStatusCode = System.Net.HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
+            BlockedStatusCode = HttpStatusCode.Forbidden,
+            Rules =
+            [
                 new RuleConfig()
                 {
                     RuleName = "A",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "A",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
         var c = b with { }; // Clone
 
@@ -87,25 +87,25 @@ public class RouteFirewallConfigTests
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
             BlockedStatusCode = HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
+            Rules =
+            [
                 new RuleConfig()
                 {
                     RuleName = "a",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
         var b = a with { RouteId = "different" };
         var c = a with { Enabled = false };
@@ -136,25 +136,25 @@ public class RouteFirewallConfigTests
             Mode = FirewallMode.Prevention,
             RedirectUri = "https://localhost:10000/blocked",
             BlockedStatusCode = HttpStatusCode.Forbidden,
-            Rules = new List<RuleConfig>
-            {
+            Rules =
+            [
                 new RuleConfig()
                 {
                     RuleName = "a",
                     Priority = 1,
                     Action = MatchAction.Allow,
-                    Conditions = new List<MatchCondition>()
-                    {
+                    Conditions =
+                    [
                         new StringMatchCondition
                         {
                             Operator = StringOperator.Contains,
                             MatchVariable = MatchVariable.QueryParam,
                             Selector = "a",
-                            MatchValues = new[] { "1" }
+                            MatchValues = ["1"]
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
 
         var json = JsonSerializer.Serialize(a);

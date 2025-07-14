@@ -93,7 +93,9 @@ public class RequestBodyStringContainsEvaluator : RequestBodyConditionEvaluator<
                     bodyReader.AdvanceTo(readResult.Buffer.Start, readResult.Buffer.End);
 
                     if (readResult.IsCompleted || readResult.Buffer.IsSingleSegment)
+                    {
                         return false;
+                    }
                 }
             }
             finally

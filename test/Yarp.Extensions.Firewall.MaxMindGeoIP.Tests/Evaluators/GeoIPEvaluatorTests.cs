@@ -8,13 +8,13 @@ using Microsoft.Extensions.Primitives;
 
 using NSubstitute;
 
+using Yarp.Extensions.Firewall.Common.Tests;
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Evaluators;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
 using Yarp.Extensions.Firewall.GeoIP;
 using Yarp.Extensions.Firewall.MaxMindGeoIP.Tests.Common;
 using Yarp.Extensions.Firewall.Model;
-using Yarp.Extensions.Firewall.Tests.Evaluators;
 
 namespace Yarp.Extensions.Firewall.MaxMindGeoIP.Tests.Evaluators;
 public class GeoIPEvaluatorTests : ConditionExtensionsTestsBase
@@ -119,7 +119,7 @@ public class GeoIPEvaluatorTests : ConditionExtensionsTestsBase
     public static TheoryData<IReadOnlyList<string>, IPAddress, string> IPAddressData => new()
     {
         {
-            new string[] { "United Kingdom" },
+            [ "United Kingdom" ],
             new IPAddress([81, 2, 69, 160]),
             "United Kingdom"
         }
@@ -128,7 +128,7 @@ public class GeoIPEvaluatorTests : ConditionExtensionsTestsBase
     public static TheoryData<IReadOnlyList<string>, StringValues, string> XFFHeaderAddressData => new()
     {
         {
-            new string[] { "United Kingdom" },
+            [ "United Kingdom" ],
             new StringValues("81.2.69.160"),
             "United Kingdom"
         }

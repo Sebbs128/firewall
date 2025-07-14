@@ -12,22 +12,20 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// The base class for request body evaluators.
 /// </summary>
 /// <typeparam name="TOperator"></typeparam>
-public abstract class RequestBodyConditionEvaluator<TOperator> : ConditionEvaluator<TOperator> where TOperator : Enum
+/// <inheritdoc/>
+public abstract class RequestBodyConditionEvaluator<TOperator>(
+    TOperator @operator,
+    bool negate,
+    IReadOnlyList<Transform> transforms,
+    ILogger<RequestBodyConditionEvaluator<TOperator>> logger)
+    : ConditionEvaluator<TOperator>(@operator, negate) where TOperator : Enum
 {
-    private readonly ILogger<RequestBodyConditionEvaluator<TOperator>> _logger;
-
-    /// <inheritdoc/>
-    protected RequestBodyConditionEvaluator(TOperator @operator, bool negate, IReadOnlyList<Transform> transforms, ILogger<RequestBodyConditionEvaluator<TOperator>> logger)
-        : base(@operator, negate)
-    {
-        Transforms = transforms;
-        _logger = logger;
-    }
+    private readonly ILogger<RequestBodyConditionEvaluator<TOperator>> _logger = logger;
 
     /// <summary>
     /// Transformations to apply before evaluating.
     /// </summary>
-    public IReadOnlyList<Transform> Transforms { get; }
+    public IReadOnlyList<Transform> Transforms { get; } = transforms;
 
     /// <inheritdoc/>
     public override async ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)

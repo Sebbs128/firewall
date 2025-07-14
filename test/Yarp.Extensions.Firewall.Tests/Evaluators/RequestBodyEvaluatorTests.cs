@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
+using Yarp.Extensions.Firewall.Common.Tests;
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Evaluators;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
@@ -182,7 +183,7 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
             {
                 MatchVariable = MatchVariable.RequestBody,
                 Operator = StringOperator.Equals,
-                MatchValues = new List<string> { "request content" }
+                MatchValues = ["request content"]
             }, StringToStream("request content"), "request content"
         },
         {
@@ -190,8 +191,8 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
             {
                 MatchVariable = MatchVariable.RequestBody,
                 Operator = StringOperator.Equals,
-                MatchValues = new List<string> { "/ / / / / / " },
-                Transforms = new List<Transform> { Transform.UrlDecode }
+                MatchValues = ["/ / / / / / "],
+                Transforms = [Transform.UrlDecode]
             }, StringToStream("%2F%20%2F%20%2F%20%2F%20%2F%20%2F%20"), "/ / / / / / "
         }
     };
@@ -203,7 +204,7 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
             {
                 MatchVariable = MatchVariable.RequestBody,
                 Operator = StringOperator.Contains,
-                MatchValues = new List<string> { "quest" }
+                MatchValues = ["quest"]
             }, StringToStream("request content"), "request content"
         },
         {
@@ -211,8 +212,8 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
             {
                 MatchVariable = MatchVariable.RequestBody,
                 Operator = StringOperator.Contains,
-                MatchValues = new List<string> { "/ / / / / / " },
-                Transforms = new List<Transform> { Transform.UrlDecode }
+                MatchValues = ["/ / / / / / "],
+                Transforms = [Transform.UrlDecode]
             }, StringToStream("%2F%20%2F%20%2F%20%2F%20%2F%20%2F%20"), "/ / / / / / "
         }
     };
@@ -224,7 +225,7 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
             {
                 MatchVariable = MatchVariable.RequestBody,
                 Operator = StringOperator.StartsWith,
-                MatchValues = new List<string> { "request" }
+                MatchValues = ["request"]
             }, StringToStream("request content"), "request content"
         },
         {
@@ -232,8 +233,8 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
             {
                 MatchVariable = MatchVariable.RequestBody,
                 Operator = StringOperator.StartsWith,
-                MatchValues = new List<string> { "/ / / / / / " },
-                Transforms = new List<Transform> { Transform.UrlDecode }
+                MatchValues = ["/ / / / / / "],
+                Transforms = [Transform.UrlDecode]
             }, StringToStream("%2F%20%2F%20%2F%20%2F%20%2F%20%2F%20"), "/ / / / / / "
         }
     };
@@ -245,7 +246,7 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
             {
                 MatchVariable = MatchVariable.RequestBody,
                 Operator = StringOperator.EndsWith,
-                MatchValues = new List<string> { "content" }
+                MatchValues = ["content"]
             }, StringToStream("request content"), "request content"
         },
         {
@@ -253,8 +254,8 @@ public class RequestBodyEvaluatorTests : ConditionExtensionsTestsBase
             {
                 MatchVariable = MatchVariable.RequestBody,
                 Operator = StringOperator.EndsWith,
-                MatchValues = new List<string> { "/ / / / / / " },
-                Transforms = new List<Transform> { Transform.UrlDecode }
+                MatchValues = ["/ / / / / / "],
+                Transforms = [Transform.UrlDecode]
             }, StringToStream("%2F%20%2F%20%2F%20%2F%20%2F%20%2F%20"), "/ / / / / / "
         }
     };

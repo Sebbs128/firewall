@@ -1,13 +1,10 @@
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
 
-namespace Yarp.Extensions.Firewall.Tests.Evaluators;
+namespace Yarp.Extensions.Firewall.Common.Tests;
 public abstract class ConditionExtensionsTestsBase
 {
-    protected static ConditionBuilderContext CreateBuilderContext()
-    {
-        return new ConditionBuilderContext();
-    }
+    protected static ConditionBuilderContext CreateBuilderContext() => new();
 
     protected static ConditionBuilderContext ValidateAndBuild(IConditionFactory factory, MatchCondition matchCondition)
     {

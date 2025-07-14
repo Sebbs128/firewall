@@ -9,7 +9,7 @@ public class ConditionUtilitiesTests
     [MemberData(nameof(SingleValueMatches))]
     public void EvaluateStringCondition_ReturnsTrue_WhenSingleValueMatches(string value, StringOperator stringOperator, string matchValue, string expected)
     {
-        Assert.True(ConditionUtilities.EvaluateStringCondition(value, stringOperator, new string[] { matchValue }, out var matchedValue));
+        Assert.True(ConditionUtilities.EvaluateStringCondition(value, stringOperator, [matchValue], out var matchedValue));
         Assert.Equal(expected, matchedValue);
     }
 

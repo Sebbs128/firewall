@@ -2,27 +2,22 @@ using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.GeoIP;
 
 namespace Yarp.Extensions.Firewall.Evaluators.Builder;
-internal sealed class GeoIPConditionFactory : IConditionFactory
+internal sealed class GeoIPConditionFactory(IGeoIPDatabaseProviderFactory geoIpDbFactory) : IConditionFactory
 {
-    private readonly IGeoIPDatabaseProviderFactory _geoIpDbFactory;
-
-    public GeoIPConditionFactory(IGeoIPDatabaseProviderFactory geoIpDbFactory)
-    {
-        _geoIpDbFactory = geoIpDbFactory;
-    }
+    private readonly IGeoIPDatabaseProviderFactory _geoIpDbFactory = geoIpDbFactory;
 
     public bool Validate(EvaluatorValidationContext context, MatchCondition condition)
     {
-        if (condition is GeoIPMatchCondition geoIPMatchCondition)
+        if (condition is GeoIPMatchCondition)
         {
             try
             {
                 if (_geoIpDbFactory.GetCurrent() is null)
                 {
-                    context.Errors.Add(new ArgumentException("An existing path for the MaxMind GeoIP2 or GeoLite2 Country database is not configured."));
+                    context.Errors.Add(new InvalidDataException("A GeoIP database provider could not be created. Is it configured correctly?"));
                 }
             }
-            catch (InvalidDataException ex) // GeoIPDatabaseFactory throws this if database is not a Country database
+            catch (Exception ex)
             {
                 context.Errors.Add(ex);
             }

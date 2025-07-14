@@ -6,21 +6,15 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates the Country determined from the socket address of the HTTP request against a list of countries.
 /// </summary>
-public class GeoIPSocketAddressEvaluator : ConditionEvaluator
+/// <inheritdoc/>
+public class GeoIPSocketAddressEvaluator(IReadOnlyList<string> countries, bool negate, IGeoIPDatabaseProviderFactory geoIpDbFactory) : ConditionEvaluator(negate)
 {
-    private readonly IGeoIPDatabaseProviderFactory _geoIpDbReader;
-
-    /// <inheritdoc/>
-    public GeoIPSocketAddressEvaluator(IReadOnlyList<string> countries, bool negate, IGeoIPDatabaseProviderFactory geoIpDbFactory) : base(negate)
-    {
-        Countries = countries;
-        _geoIpDbReader = geoIpDbFactory;
-    }
+    private readonly IGeoIPDatabaseProviderFactory _geoIpDbReader = geoIpDbFactory;
 
     /// <summary>
     /// Countries to match against.
     /// </summary>
-    public IReadOnlyList<string> Countries { get; }
+    public IReadOnlyList<string> Countries { get; } = countries;
 
     /// <inheritdoc/>
     public override ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)

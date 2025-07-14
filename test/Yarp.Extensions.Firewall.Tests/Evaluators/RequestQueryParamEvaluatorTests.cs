@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
+using Yarp.Extensions.Firewall.Common.Tests;
 using Yarp.Extensions.Firewall.Configuration;
 using Yarp.Extensions.Firewall.Evaluators;
 using Yarp.Extensions.Firewall.Evaluators.Builder;
@@ -53,7 +54,7 @@ public class RequestQueryParamEvaluatorTests : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.QueryParam,
                 Selector = "a",
                 Operator = StringOperator.Equals,
-                MatchValues = new[] { "1" }
+                MatchValues = ["1"]
             }, QueryString.Create("a", "1"), "1"
         },
         {
@@ -62,7 +63,7 @@ public class RequestQueryParamEvaluatorTests : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.QueryParam,
                 Selector = "a",
                 Operator = StringOperator.StartsWith,
-                MatchValues = new[] { "1" }
+                MatchValues = ["1"]
             }, QueryString.Create("a", "123"), "1"
         },
         {
@@ -71,7 +72,7 @@ public class RequestQueryParamEvaluatorTests : ConditionExtensionsTestsBase
                 MatchVariable = MatchVariable.QueryParam,
                 Selector = "a",
                 Operator = StringOperator.EndsWith,
-                MatchValues = new[] { "1" }
+                MatchValues = ["1"]
             }, QueryString.Create("a", "321"), "1"
         }
     };

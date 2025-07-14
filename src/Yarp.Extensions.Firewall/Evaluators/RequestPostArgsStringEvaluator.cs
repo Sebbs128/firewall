@@ -9,31 +9,24 @@ namespace Yarp.Extensions.Firewall.Evaluators;
 /// <summary>
 /// Evaluates a POST parameter against string values.
 /// </summary>
-public class RequestPostArgsStringEvaluator : ConditionEvaluator<StringOperator>
+/// <inheritdoc/>
+public class RequestPostArgsStringEvaluator(string selector, StringOperator @operator, IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms) : ConditionEvaluator<StringOperator>(@operator, negate)
 {
-    /// <inheritdoc/>
-    public RequestPostArgsStringEvaluator(string selector, StringOperator @operator, IReadOnlyList<string> matchValues, bool negate, IReadOnlyList<Transform> transforms)
-        : base(@operator, negate)
-    {
-        Selector = selector;
-        MatchValues = matchValues;
-        Transforms = transforms;
-    }
 
     /// <summary>
     /// POST parameter name to evaluate.
     /// </summary>
-    public string Selector { get; }
+    public string Selector { get; } = selector;
 
     /// <summary>
     /// Values to match against.
     /// </summary>
-    public IReadOnlyList<string> MatchValues { get; }
+    public IReadOnlyList<string> MatchValues { get; } = matchValues;
 
     /// <summary>
     /// Transformations to apply before evaluating.
     /// </summary>
-    public IReadOnlyList<Transform> Transforms { get; }
+    public IReadOnlyList<Transform> Transforms { get; } = transforms;
 
     /// <inheritdoc/>
     public override async ValueTask<bool> Evaluate(EvaluationContext context, CancellationToken cancellationToken = default)

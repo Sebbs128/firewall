@@ -14,32 +14,32 @@ public class RuleConfigTests
             RuleName = "a",
             Priority = 1,
             Action = MatchAction.Allow,
-            Conditions = new List<MatchCondition>()
-            {
+            Conditions =
+            [
                 new StringMatchCondition
                 {
                     Operator = StringOperator.Contains,
                     MatchVariable = MatchVariable.QueryParam,
                     Selector = "a",
-                    MatchValues = new[] { "1" }
+                    MatchValues = ["1"]
                 }
-            }
+            ]
         };
         var b = new RuleConfig()
         {
             RuleName = "A",
             Priority = 1,
             Action = MatchAction.Allow,
-            Conditions = new List<MatchCondition>()
-            {
+            Conditions =
+            [
                 new StringMatchCondition
                 {
                     Operator = StringOperator.Contains,
                     MatchVariable = MatchVariable.QueryParam,
                     Selector = "A",
-                    MatchValues = new[] { "1" }
+                    MatchValues = ["1"]
                 }
-            }
+            ]
         };
         var c = b with { }; // Clone
 
@@ -57,24 +57,24 @@ public class RuleConfigTests
             RuleName = "a",
             Priority = 1,
             Action = MatchAction.Allow,
-            Conditions = new List<MatchCondition>()
-            {
+            Conditions =
+            [
                 new StringMatchCondition
                 {
                     Operator = StringOperator.Contains,
                     MatchVariable = MatchVariable.QueryParam,
                     Selector = "a",
-                    MatchValues = new[] { "1" }
+                    MatchValues = ["1"]
                 }
-            }
+            ]
         };
         var b = a with { RuleName = "b" };
         var c = a with { Priority = 2 };
         var d = a with { Action = MatchAction.Block };
         var e = a with
         {
-            Conditions = new List<MatchCondition>()
-            {
+            Conditions =
+            [
                 new SizeMatchCondition
                 {
                     Operator = NumberOperator.GreaterThan,
@@ -82,7 +82,7 @@ public class RuleConfigTests
                     Selector = "a",
                     MatchValue = 1
                 }
-            }
+            ]
         };
 
         Assert.False(a.Equals(b));
@@ -105,14 +105,14 @@ public class RuleConfigTests
             RuleName = "a",
             Priority = 1,
             Action = MatchAction.Allow,
-            Conditions = new List<MatchCondition>()
-            {
+            Conditions =
+            [
                 new StringMatchCondition
                 {
                     Operator = StringOperator.Contains,
                     MatchVariable = MatchVariable.QueryParam,
                     Selector = "a",
-                    MatchValues = new[] { "1" }
+                    MatchValues = ["1"]
                 },
                 new SizeMatchCondition
                 {
@@ -126,7 +126,7 @@ public class RuleConfigTests
                     IPAddressOrRanges = "2001::abcd",
                     MatchVariable = IPMatchVariable.SocketAddress
                 }
-            }
+            ]
         };
 
         var json = JsonSerializer.Serialize(a);
