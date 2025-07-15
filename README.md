@@ -67,7 +67,7 @@ When evaluating an `IPAddress` `MatchType`, either the client's socket address o
 
 - `MatchVariable` - the property to retrieve the request's IP address from
   - `SocketAddress` - use the IP address from the actual connection; if the request was previously proxied, this might not be the actual client's address but rather the address of the proxy
-  - `RemoteAddress` - the perceived client's address; at present, this will be the first valid value from the `X-Forwarded-For` header, falling back to the socket address if none was found
+  - `RemoteAddress` - the perceived client's address; at present, this will be the first valid IP address from the `Forwarded` and `X-Forwarded-For` headers, plus the socket address
 - `IPAddressOrRanges` - the IP address(es) to evaluate against, and accepts both IPv4 and IPv6 addresses. This may be either a single IP address, a comma-separated list of IP address, or a CIDR range
 
 ###### Size Evaluators
@@ -133,12 +133,12 @@ The path to a GeoIP2 or GeoLite2 Country database is configured by a `GeoIPDatab
 
 No database files are provided in this project, however one to suit your purpose (commercial, enterprise, or free) can be obtained from MaxMind. Note you will need the _Country_ database, and supplying any other type will fail to load the database and any configured GeoIP evaluators.
 
-Alternatively, other GeoIP databases can be used by implementing the `IGeoIPDatabaseProviderFactory` and `IGeoIPDatabaseProvider` interfaces, and registering them with the service collection with `IFirewallBuilder.Services.TryAddSingleton<IGeoIPDatabaseProviderFactory, YourGeoIPDatabaseProviderFactory>()`. Configuration for your implementation can be done by implementing the `IFirewallConfigurationExtensionProvider` interface (or extneding the `FirewallConfigurationExtensionProvider` class), and registering it with the service collection with `IFirewallBuilder.AddConfigurationExtensionProvider<YourFirewallConfigurationExtensionProvider>()`.
+Alternatively, other GeoIP databases can be used by implementing the `IGeoIPDatabaseProviderFactory` and `IGeoIPDatabaseProvider` interfaces, and registering them with the service collection with `IFirewallBuilder.Services.TryAddSingleton<IGeoIPDatabaseProviderFactory, YourGeoIPDatabaseProviderFactory>()`. Configuration for your implementation can be done by implementing the `IFirewallConfigurationExtensionProvider` interface (or extending the `FirewallConfigurationExtensionProvider` class), and registering it with the service collection with `IFirewallBuilder.AddConfigurationExtensionProvider<YourFirewallConfigurationExtensionProvider>()`.
 (This also works for any other way you would like to extend the firewall functionality.)
 
 ###### Transforms
 
-Tranformations can be applied to the request values for `Size` and `String` evaluators prior to any comparisons to do things like changing the case, trimming whitespace, or applying URL decoding/encoding. `Tranforms` are applied in the order given in the condition configuration.
+Transformations can be applied to the request values for `Size` and `String` evaluators prior to any comparisons to do things like changing the case, trimming whitespace, or applying URL decoding/encoding. `Transforms` are applied in the order given in the condition configuration.
 
 - `Uppercase` - convert the request value to upper-case
 - `Lowercase` - convert the request value to lower-case
@@ -236,6 +236,6 @@ For example, place `"RouteFirewalls"` inside the section used for YARP (eg. `"Re
 }
 ```
 
-# Contributing
+## Contributing
 
 I'm eager to accept contributions and suggestions in any form. Please feel free to open an issue, discussion, or PR, or to message me on here or Mastodon.

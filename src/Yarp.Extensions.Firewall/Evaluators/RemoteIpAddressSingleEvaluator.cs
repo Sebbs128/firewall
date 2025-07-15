@@ -23,25 +23,71 @@ public class RemoteIpAddressSingleEvaluator(IReadOnlyList<IPAddress> ipAddresses
 
         var isMatch = false;
 
-        var clientAddress = context.HttpContext.GetRemoteIPAddress();
+        // checking each of Forwarded, X-Forwarded-For, and Connection.RemoteIpAddress
+        // we can't be sure of the order Forwarded and X-Forwarded-For were appended by any proxies
+        // (or if there even were any proxies)
 
-        if (clientAddress is not null)
+        foreach (var clientAddress in context.HttpContext.GetRemoteIPAddressesFromForwardedHeader())
         {
-            foreach (var ipAddress in IpAddresses)
+            isMatch = CheckForIpAddressMatch(clientAddress);
+            if (isMatch)
             {
-                if (ipAddress.Equals(clientAddress))
+                context.MatchedValues.Add(new EvaluatorMatchValue(
+                    MatchVariableName: "RemoteIpAddress",
+                    OperatorName: "Equals",
+                    MatchVariableValue: clientAddress.ToString()));
+                break; // no need to check further if we already have a match
+            }
+        }
+
+        if (!isMatch)
+        {
+            foreach (var clientAddress in context.HttpContext.GetRemoteIPAddressesFromXForwardedForHeader())
+            {
+                isMatch = CheckForIpAddressMatch(clientAddress);
+                if (isMatch)
                 {
                     isMatch = true;
                     context.MatchedValues.Add(new EvaluatorMatchValue(
                         MatchVariableName: "RemoteIpAddress",
                         OperatorName: "Equals",
-                        MatchVariableValue: ipAddress.ToString()));
-                    break;
+                        MatchVariableValue: clientAddress.ToString()));
+                    break; // no need to check further if we already have a match
+                }
+            }
+        }
+
+        if (!isMatch)
+        {
+            var socketAddress = context.HttpContext.Connection.RemoteIpAddress;
+
+            if (socketAddress is not null)
+            {
+                isMatch = CheckForIpAddressMatch(socketAddress);
+                if (isMatch)
+                {
+                    context.MatchedValues.Add(new EvaluatorMatchValue(
+                        MatchVariableName: "RemoteIpAddress",
+                        OperatorName: "Equals",
+                        MatchVariableValue: socketAddress.ToString()));
                 }
             }
         }
 
         //return Negate ? !isMatch : isMatch; // this is equivalent to a XOR, which is the ^ bool operator
         return ValueTask.FromResult(Negate ^ isMatch);
+    }
+
+    private bool CheckForIpAddressMatch(IPAddress? clientAddress)
+    {
+        foreach (var ipAddress in IpAddresses)
+        {
+            if (ipAddress.Equals(clientAddress))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
