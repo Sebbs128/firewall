@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 using Yarp.Extensions.Firewall.GeoIP;
@@ -31,48 +32,46 @@ public class GeoIPRemoteAddressEvaluator(IReadOnlyList<string> countries, bool n
         // we can't be sure of the order Forwarded and X-Forwarded-For were appended by any proxies
         // (or if there even were any proxies)
 
-        var clientAddress = context.HttpContext.GetRemoteIPAddressFromForwardedHeader();
-
-        if (clientAddress is not null)
+        foreach (var clientAddress in context.HttpContext.GetRemoteIPAddressesFromForwardedHeader())
         {
-            isMatch = CheckForIPAddressCountryMatch(clientAddress, dbProvider);
+            isMatch = CheckForIPAddressCountryMatch(clientAddress, dbProvider, out var country);
             if (isMatch)
             {
                 context.MatchedValues.Add(new EvaluatorMatchValue(
                     MatchVariableName: "GeoIPRemoteAddress",
                     OperatorName: "Equals",
-                    MatchVariableValue: dbProvider.LookupCountry(clientAddress)?.Name ?? string.Empty));
+                    MatchVariableValue: country!.Name ?? string.Empty));
             }
         }
 
         if (!isMatch)
         {
-            clientAddress = context.HttpContext.GetRemoteIPAddressFromXForwardedForHeader();
-            if (clientAddress is not null)
+            foreach (var clientAddress in context.HttpContext.GetRemoteIPAddressesFromXForwardedForHeader())
             {
-                isMatch = CheckForIPAddressCountryMatch(clientAddress, dbProvider);
+                isMatch = CheckForIPAddressCountryMatch(clientAddress, dbProvider, out var country);
                 if (isMatch)
                 {
                     context.MatchedValues.Add(new EvaluatorMatchValue(
                         MatchVariableName: "GeoIPRemoteAddress",
                         OperatorName: "Equals",
-                        MatchVariableValue: dbProvider.LookupCountry(clientAddress)?.Name ?? string.Empty));
+                        MatchVariableValue: country!.Name ?? string.Empty));
                 }
             }
         }
 
         if (!isMatch)
         {
-            clientAddress = context.HttpContext.Connection.RemoteIpAddress;
-            if (clientAddress is not null)
+            var socketAddress = context.HttpContext.Connection.RemoteIpAddress;
+
+            if (socketAddress is not null)
             {
-                isMatch = CheckForIPAddressCountryMatch(clientAddress, dbProvider);
+                isMatch = CheckForIPAddressCountryMatch(socketAddress, dbProvider, out var country);
                 if (isMatch)
                 {
                     context.MatchedValues.Add(new EvaluatorMatchValue(
                         MatchVariableName: "GeoIPRemoteAddress",
                         OperatorName: "Equals",
-                        MatchVariableValue: dbProvider.LookupCountry(clientAddress)?.Name ?? string.Empty));
+                        MatchVariableValue: country!.Name ?? string.Empty));
                 }
             }
         }
@@ -81,8 +80,12 @@ public class GeoIPRemoteAddressEvaluator(IReadOnlyList<string> countries, bool n
         return ValueTask.FromResult(Negate ^ isMatch);
     }
 
-    private bool CheckForIPAddressCountryMatch(IPAddress clientAddress, IGeoIPDatabaseProvider dbProvider)
+    private bool CheckForIPAddressCountryMatch(
+        IPAddress clientAddress,
+        IGeoIPDatabaseProvider dbProvider,
+        [NotNullWhen(true)] out Country? result)
     {
+        result = null;
         var requestCountry = dbProvider.LookupCountry(clientAddress);
         if (requestCountry?.Name is not null)
         {
@@ -90,6 +93,7 @@ public class GeoIPRemoteAddressEvaluator(IReadOnlyList<string> countries, bool n
             {
                 if (country.Equals(requestCountry.Name, StringComparison.InvariantCultureIgnoreCase))
                 {
+                    result = requestCountry;
                     return true;
                 }
             }

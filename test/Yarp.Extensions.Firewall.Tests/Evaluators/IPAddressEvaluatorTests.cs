@@ -271,8 +271,28 @@ public class IPAddressEvaluatorTests : ConditionExtensionsTestsBase
             "192.0.2.60"
         },
         {
+            [ new([192, 0, 2, 60]) ],
+            new("for=127.0.0.1, for=192.0.2.60:1006"),
+            "192.0.2.60"
+        },
+        {
+            [ new([192, 0, 2, 60]) ],
+            new(["for=127.0.0.1", "for=192.0.2.60:1006"]),
+            "192.0.2.60"
+        },
+        {
             [ new([0x20, 0x01, 0x0D, 0xB8, 0xCA, 0xFE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x17]) ],
             new("for=[2001:db8:cafe::17]:4711"),
+            "2001:db8:cafe::17"
+        },
+        {
+            [ new([0x20, 0x01, 0x0D, 0xB8, 0xCA, 0xFE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x17]) ],
+            new("for=192.0.2.60:1006, for=[2001:db8:cafe::17]:4711"),
+            "2001:db8:cafe::17"
+        },
+        {
+            [ new([0x20, 0x01, 0x0D, 0xB8, 0xCA, 0xFE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x17]) ],
+            new(["for=192.0.2.60:1006", "for=[2001:db8:cafe::17]:4711"]),
             "2001:db8:cafe::17"
         }
     };
@@ -290,8 +310,28 @@ public class IPAddressEvaluatorTests : ConditionExtensionsTestsBase
             "192.0.2.60"
         },
         {
+            [ new(new IPAddress([192, 0, 0, 0]), 22) ],
+            new("for=127.0.0.1, for=192.0.2.60:1006"),
+            "192.0.2.60"
+        },
+        {
+            [ new(new IPAddress([192, 0, 0, 0]), 22) ],
+            new(["for=127.0.0.1", "for=192.0.2.60:1006"]),
+            "192.0.2.60"
+        },
+        {
             [ new(new IPAddress([0x20, 0x01, 0x0D, 0xB8, 0xCA, 0xFE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 48) ],
             new("for=[2001:db8:cafe::17]:4711"),
+            "2001:db8:cafe::17"
+        },
+        {
+            [ new(new IPAddress([0x20, 0x01, 0x0D, 0xB8, 0xCA, 0xFE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 48) ],
+            new("for=192.0.2.60:1006, for=[2001:db8:cafe::17]:4711"),
+            "2001:db8:cafe::17"
+        },
+        {
+            [ new(new IPAddress([0x20, 0x01, 0x0D, 0xB8, 0xCA, 0xFE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 48) ],
+            new(["for=192.0.2.60:1006", "for=[2001:db8:cafe::17]:4711"]),
             "2001:db8:cafe::17"
         }
     };
@@ -302,6 +342,36 @@ public class IPAddressEvaluatorTests : ConditionExtensionsTestsBase
             [ new([127, 0, 0, 1]) ],
             new("127.0.0.1"),
             "127.0.0.1"
+        },
+        {
+            [ new([192, 0, 2, 60]) ],
+            new("192.0.2.60"),
+            "192.0.2.60"
+        },
+        {
+            [ new([192, 0, 2, 60]) ],
+            new("127.0.0.1, 192.0.2.60"),
+            "192.0.2.60"
+        },
+        {
+            [ new([192, 0, 2, 60]) ],
+            new(["127.0.0.1", "192.0.2.60"]),
+            "192.0.2.60"
+        },
+        {
+            [ new([0x20, 0x01, 0x0D, 0xB8, 0xCA, 0xFE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x17]) ],
+            new("2001:db8:cafe::17"),
+            "2001:db8:cafe::17"
+        },
+        {
+            [ new([0x20, 0x01, 0x0D, 0xB8, 0xCA, 0xFE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x17]) ],
+            new("192.0.2.60:1006, 2001:db8:cafe::17"),
+            "2001:db8:cafe::17"
+        },
+        {
+            [ new([0x20, 0x01, 0x0D, 0xB8, 0xCA, 0xFE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x17]) ],
+            new(["192.0.2.60:1006", "2001:db8:cafe::17"]),
+            "2001:db8:cafe::17"
         }
     };
 
@@ -311,6 +381,36 @@ public class IPAddressEvaluatorTests : ConditionExtensionsTestsBase
             [ new(new IPAddress([127, 0, 0, 1]), 32) ],
             new("127.0.0.1"),
             "127.0.0.1"
+        },
+        {
+            [ new(new IPAddress([192, 0, 0, 0]), 22) ],
+            new("192.0.2.60"),
+            "192.0.2.60"
+        },
+        {
+            [ new(new IPAddress([192, 0, 0, 0]), 22) ],
+            new("127.0.0.1, 192.0.2.60"),
+            "192.0.2.60"
+        },
+        {
+            [ new(new IPAddress([192, 0, 0, 0]), 22) ],
+            new(["127.0.0.1", "192.0.2.60"]),
+            "192.0.2.60"
+        },
+        {
+            [ new(new IPAddress([0x20, 0x01, 0x0D, 0xB8, 0xCA, 0xFE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 48) ],
+            new("2001:db8:cafe::17"),
+            "2001:db8:cafe::17"
+        },
+        {
+            [ new(new IPAddress([0x20, 0x01, 0x0D, 0xB8, 0xCA, 0xFE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 48) ],
+            new("192.0.2.60, 2001:db8:cafe::17"),
+            "2001:db8:cafe::17"
+        },
+        {
+            [ new(new IPAddress([0x20, 0x01, 0x0D, 0xB8, 0xCA, 0xFE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 48) ],
+            new(["192.0.2.60", "2001:db8:cafe::17"]),
+            "2001:db8:cafe::17"
         }
     };
 }

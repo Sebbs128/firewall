@@ -46,22 +46,9 @@ public static class HttpContextExtensions
                 {
                     if (directive.StartsWith("for=", StringComparison.OrdinalIgnoreCase))
                     {
-                        var span = directive.AsSpan(4).Trim('"');
-                        // Forwarded allows for an optional port number after the IP address
-                        // IPAddress.TryParse() will handle this fine for an IPv6 address formatted according to RFC 7239
-                        // but not for IPv4 addresses with a port number
-                        if (span is not ['[', ..])
+                        if (TryParseForDirective(directive, out var address))
                         {
-                            var lastColonIndex = span.LastIndexOf(':');
-                            if (lastColonIndex >= 0)
-                            {
-                                span = span[..lastColonIndex];
-                            }
-                        }
-
-                        if (IPAddress.TryParse(span, out var value))
-                        {
-                            return value;
+                            return address;
                         }
                     }
                 }
@@ -69,6 +56,58 @@ public static class HttpContextExtensions
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Retrieves all remote <see cref="IPAddress"/>es of the client associated with the current request based on the Forwarded header <c>for</c> directive.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns>
+    /// An enumerable collection of valid IP addresses found in the X-Forwarded-For header.
+    /// </returns>
+    public static IEnumerable<IPAddress> GetRemoteIPAddressesFromForwardedHeader(this HttpContext context)
+    {
+        if (context.Request.Headers.TryGetValue("Forwarded", out var header))
+        {
+            foreach (var item in header)
+            {
+                if (string.IsNullOrWhiteSpace(item))
+                {
+                    continue;
+                }
+                // directives are ';' separated, but when there is multiple values for the same directive, they are ',' separated
+                var directives = item.Split([';', ','], StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                foreach (var directive in directives)
+                {
+                    if (TryParseForDirective(directive, out var address) && address != null)
+                    {
+                        yield return address;
+                    }
+                }
+            }
+        }
+    }
+
+    private static bool TryParseForDirective(string directive, out IPAddress? address)
+    {
+        address = null;
+        if (directive.StartsWith("for=", StringComparison.OrdinalIgnoreCase))
+        {
+            var span = directive.AsSpan(4).Trim('"');
+            // Forwarded allows for an optional port number after the IP address
+            // IPAddress.TryParse() will handle this fine for an IPv6 address formatted according to RFC 7239
+            // but not for IPv4 addresses with a port number
+            if (span is not ['[', ..])
+            {
+                var lastColonIndex = span.LastIndexOf(':');
+                if (lastColonIndex >= 0)
+                {
+                    span = span[..lastColonIndex];
+                }
+            }
+            return IPAddress.TryParse(span, out address);
+        }
+        return false;
     }
 
     /// <summary>
@@ -84,13 +123,52 @@ public static class HttpContextExtensions
         {
             foreach (var item in header)
             {
-                if (IPAddress.TryParse(item, out var value))
+                if (string.IsNullOrWhiteSpace(item))
                 {
-                    return value;
+                    continue;
+                }
+
+                var values = item.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                foreach (var value in values)
+                {
+                    if (IPAddress.TryParse(value, out var ipAddress))
+                    {
+                        return ipAddress;
+                    }
                 }
             }
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Retrieves all remote <see cref="IPAddress"/>es of the client associated with the current request based on the X-Forwarded-For header.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns>
+    /// An enumerable collection of valid IP addresses found in the X-Forwarded-For header.
+    /// </returns>
+    public static IEnumerable<IPAddress> GetRemoteIPAddressesFromXForwardedForHeader(this HttpContext context)
+    {
+        if (context.Request.Headers.TryGetValue("X-Forwarded-For", out var header))
+        {
+            foreach (var item in header)
+            {
+                if (string.IsNullOrWhiteSpace(item))
+                {
+                    continue;
+                }
+
+                var values = item.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                foreach (var value in values)
+                {
+                    if (IPAddress.TryParse(value, out var ipAddress))
+                    {
+                        yield return ipAddress;
+                    }
+                }
+            }
+        }
     }
 }
