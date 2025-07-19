@@ -33,7 +33,7 @@ public class SocketIpAddressRangeEvaluator(IReadOnlyList<IPNetwork> ipAddressRan
                     context.MatchedValues.Add(new EvaluatorMatchValue(
                         MatchVariableName: "SocketIpAddress",
                         OperatorName: "InRange",
-                        MatchVariableValue: ipAddressRange.ToString()!));
+                        MatchVariableValue: clientAddress.ToString()!));
                     break;
                 }
             }

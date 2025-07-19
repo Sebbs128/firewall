@@ -1,3 +1,5 @@
+using System.Net;
+
 using Yarp.Extensions.Firewall.Model;
 using Yarp.Extensions.Firewall.Utilities;
 
@@ -21,25 +23,68 @@ public class RemoteIpAddressRangeEvaluator(IReadOnlyList<IPNetwork> ipAddressRan
 
         var isMatch = false;
 
-        var clientAddress = context.HttpContext.GetRemoteIPAddress();
+        // checking each of Forwarded, X-Forwarded-For, and Connection.RemoteIpAddress
+        // we can't be sure of the order Forwarded and X-Forwarded-For were appended by any proxies
+        // (or if there even were any proxies)
 
-        if (clientAddress is not null)
+        foreach (var clientAddress in context.HttpContext.GetRemoteIPAddressesFromForwardedHeader())
         {
-            foreach (var ipAddressRange in IpAddressRanges)
+            isMatch = CheckForIpAddressInRange(clientAddress);
+            if (isMatch)
             {
-                if (ipAddressRange.Contains(clientAddress))
+                context.MatchedValues.Add(new EvaluatorMatchValue(
+                    MatchVariableName: "RemoteIpAddress",
+                    OperatorName: "InRange",
+                    MatchVariableValue: clientAddress.ToString()!));
+                break;
+            }
+        }
+
+        if (!isMatch)
+        {
+            foreach (var clientAddress in context.HttpContext.GetRemoteIPAddressesFromXForwardedForHeader())
+            {
+                isMatch = CheckForIpAddressInRange(clientAddress);
+                if (isMatch)
                 {
-                    isMatch = true;
                     context.MatchedValues.Add(new EvaluatorMatchValue(
                         MatchVariableName: "RemoteIpAddress",
                         OperatorName: "InRange",
-                        MatchVariableValue: ipAddressRange.ToString()!));
+                        MatchVariableValue: clientAddress.ToString()!));
                     break;
+                }
+            }
+        }
+
+        if (!isMatch)
+        {
+            var socketAddress = context.HttpContext.Connection.RemoteIpAddress;
+            if (socketAddress is not null)
+            {
+                isMatch = CheckForIpAddressInRange(socketAddress);
+                if (isMatch)
+                {
+                    context.MatchedValues.Add(new EvaluatorMatchValue(
+                        MatchVariableName: "RemoteIpAddress",
+                        OperatorName: "InRange",
+                        MatchVariableValue: socketAddress.ToString()!));
                 }
             }
         }
 
         //return Negate ? !isMatch : isMatch; // this is equivalent to a XOR, which is the ^ bool operator
         return ValueTask.FromResult(Negate ^ isMatch);
+    }
+
+    private bool CheckForIpAddressInRange(IPAddress clientAddress)
+    {
+        foreach (var ipAddressRange in IpAddressRanges)
+        {
+            if (ipAddressRange.Contains(clientAddress))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

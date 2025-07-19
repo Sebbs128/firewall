@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
+
 using Yarp.Extensions.Firewall.GeoIP;
 using Yarp.Extensions.Firewall.Model;
 using Yarp.Extensions.Firewall.Utilities;
@@ -23,32 +26,78 @@ public class GeoIPRemoteAddressEvaluator(IReadOnlyList<string> countries, bool n
         ArgumentNullException.ThrowIfNull(context);
 
         var isMatch = false;
+        using var dbProvider = _geoIpDbReader.GetCurrent();
 
-        var clientAddress = context.HttpContext.GetRemoteIPAddress();
+        // checking each of Forwarded, X-Forwarded-For, and Connection.RemoteIpAddress
+        // we can't be sure of the order Forwarded and X-Forwarded-For were appended by any proxies
+        // (or if there even were any proxies)
 
-        if (clientAddress is not null)
+        foreach (var clientAddress in context.HttpContext.GetRemoteIPAddressesFromForwardedHeader())
         {
-            using var dbProvider = _geoIpDbReader.GetCurrent();
-            var requestCountry = dbProvider.LookupCountry(clientAddress);
-
-            if (requestCountry?.Name is not null)
+            isMatch = CheckForIPAddressCountryMatch(clientAddress, dbProvider, out var country);
+            if (isMatch)
             {
-                foreach (var country in Countries)
+                context.MatchedValues.Add(new EvaluatorMatchValue(
+                    MatchVariableName: "GeoIPRemoteAddress",
+                    OperatorName: "Equals",
+                    MatchVariableValue: country!.Name ?? string.Empty));
+            }
+        }
+
+        if (!isMatch)
+        {
+            foreach (var clientAddress in context.HttpContext.GetRemoteIPAddressesFromXForwardedForHeader())
+            {
+                isMatch = CheckForIPAddressCountryMatch(clientAddress, dbProvider, out var country);
+                if (isMatch)
                 {
-                    if (country.Equals(requestCountry.Name, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        isMatch = true;
-                        context.MatchedValues.Add(new EvaluatorMatchValue(
-                            MatchVariableName: "GeoIPRemoteAddress",
-                            OperatorName: "Equals",
-                            MatchVariableValue: requestCountry.Name));
-                        break;
-                    }
+                    context.MatchedValues.Add(new EvaluatorMatchValue(
+                        MatchVariableName: "GeoIPRemoteAddress",
+                        OperatorName: "Equals",
+                        MatchVariableValue: country!.Name ?? string.Empty));
+                }
+            }
+        }
+
+        if (!isMatch)
+        {
+            var socketAddress = context.HttpContext.Connection.RemoteIpAddress;
+
+            if (socketAddress is not null)
+            {
+                isMatch = CheckForIPAddressCountryMatch(socketAddress, dbProvider, out var country);
+                if (isMatch)
+                {
+                    context.MatchedValues.Add(new EvaluatorMatchValue(
+                        MatchVariableName: "GeoIPRemoteAddress",
+                        OperatorName: "Equals",
+                        MatchVariableValue: country!.Name ?? string.Empty));
                 }
             }
         }
 
         //return Negate ? !isMatch : isMatch; // this is equivalent to a XOR, which is the ^ bool operator
         return ValueTask.FromResult(Negate ^ isMatch);
+    }
+
+    private bool CheckForIPAddressCountryMatch(
+        IPAddress clientAddress,
+        IGeoIPDatabaseProvider dbProvider,
+        [NotNullWhen(true)] out Country? result)
+    {
+        result = null;
+        var requestCountry = dbProvider.LookupCountry(clientAddress);
+        if (requestCountry?.Name is not null)
+        {
+            foreach (var country in Countries)
+            {
+                if (country.Equals(requestCountry.Name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    result = requestCountry;
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
